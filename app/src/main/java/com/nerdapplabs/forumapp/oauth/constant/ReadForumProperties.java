@@ -12,11 +12,10 @@ import java.util.Properties;
  */
 
 public class ReadForumProperties {
-    InputStream inputStream;
-    public Properties getPropertiesValues(Context context) throws IOException {
+    public static Properties getPropertiesValues(Context context) throws IOException {
         Properties properties = new Properties();
         String propertiesFielName = "app.properties";
-        inputStream = context.getAssets().open(propertiesFielName);
+        InputStream inputStream = context.getAssets().open(propertiesFielName);
         if (inputStream != null) {
             properties.load(inputStream);
         } else {

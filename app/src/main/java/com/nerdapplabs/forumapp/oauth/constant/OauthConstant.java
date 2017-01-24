@@ -9,7 +9,6 @@ public class OauthConstant {
     public static final String REFRESH_TOKEN = "refresh_token";
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
-    public static final String AUTHENTICATION_SERVER_URL = "http://192.168.1.5:8000";
     public static final String RESOURCE_SERVER_URL = "resource_server_url";
     public static final String GRANT_TYPE = "grant_type";
     public static final String SCOPE = "scope";

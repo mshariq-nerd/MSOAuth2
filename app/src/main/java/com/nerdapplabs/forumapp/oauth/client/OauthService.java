@@ -1,8 +1,5 @@
 package com.nerdapplabs.forumapp.oauth.client;
 
-
-import com.nerdapplabs.forumapp.ForumApplication;
-import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 import com.nerdapplabs.forumapp.oauth.service.IOauthService;
 
@@ -18,14 +15,9 @@ import static com.nerdapplabs.forumapp.ForumApplication.getContext;
 
 public class OauthService {
     private IOauthService _oauthService;
-    ReadForumProperties readForumProperties = new ReadForumProperties();
-    Properties properties = readForumProperties.getPropertiesValues(getContext());
 
-    public OauthService() throws IOException {
-    }
-
-
-    public IOauthService getAccessToken() {
+    public IOauthService getAccessToken()  throws IOException {
+        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
