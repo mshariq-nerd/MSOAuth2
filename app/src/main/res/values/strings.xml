@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">ForumApp</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="forgot_password">Forgot Password?</string>
+
+    <string name="fname">First Name</string>
+    <string name="lname">Last Name</string>
+
+    <string name="display_name">Display Name</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="already_member">Already a member? Login</string>
+    <string name="create_account">Create Account</string>
+    <string name="dob">DOB</string>
+    <string name="settings">Settings</string>
+    <string name="profile">Profile</string>
+
+    <string name="reset_password">Reset Password</string>
+    <string name="profile_name">Login</string>
+    <string name="sign_up">SignUp</string>
+
+    <string name="lost_connection">Lost connection.</string>
+    <string name="wifi_connected">Wi-Fi connected.</string>
+    <string name="mobile_data_connected">Mobile data network connected.</string>
+    <string name="connection_error">Unable to load content. Check your network connection.</string>
+
+
+</resources>
