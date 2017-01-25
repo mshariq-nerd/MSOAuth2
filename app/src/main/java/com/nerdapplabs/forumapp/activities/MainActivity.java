@@ -73,13 +73,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateNavigationHeaderView(String userName) {
         View headerView = navigationView.getHeaderView(0);
-        ImageView drawerUserImage = (ImageView) headerView.findViewById(R.id.drawer_image);
         TextView drawerUsername = (TextView) headerView.findViewById(R.id.drawer_username);
         drawerUsername.setText(userName);
         // disable click listener
-        drawerUserImage.setClickable(false);
+        drawerUsername.setClickable(false);
     }
 
+    /**
+     * Method for open login options page
+     * @param v view type
+     */
     public void onDrawerHeaderClick(View v) {
         Intent intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
         startActivity(intent);

@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:gravity="center"
-        android:onClick="onDrawerHeaderClick"
         android:src="@drawable/ic_profile_account"
         app:civ_border_width="2dp"
         app:civ_border_color="#FF000000"/>
@@ -26,7 +25,7 @@
         android:layout_marginTop="10dp"
         android:textColor="@color/accent"
         android:textSize="14sp"
-        android:onClick="onClick"
+        android:onClick="onDrawerHeaderClick"
         android:layout_centerHorizontal="true" />
 
 </LinearLayout>
