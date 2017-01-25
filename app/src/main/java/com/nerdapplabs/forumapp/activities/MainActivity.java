@@ -71,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to update Navigation Drawer header values for logged in user
+     *
+     * @param userName
+     */
     private void updateNavigationHeaderView(String userName) {
         View headerView = navigationView.getHeaderView(0);
         TextView drawerUsername = (TextView) headerView.findViewById(R.id.drawer_username);

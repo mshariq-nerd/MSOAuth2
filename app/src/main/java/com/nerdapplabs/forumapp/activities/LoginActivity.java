@@ -19,12 +19,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nerdapplabs.forumapp.R;
+import com.nerdapplabs.forumapp.oauth.client.OauthService;
+import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 import com.nerdapplabs.forumapp.oauth.response.AccessTokenResponse;
 import com.nerdapplabs.forumapp.oauth.response.UserResponse;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener, View.OnClickListener {
     private static final String TAG = LoginActivity.class.getSimpleName();
@@ -69,6 +77,9 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         Toast.makeText(getBaseContext(), "login failed.", Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Method for client side validation
+     */
 
     public boolean validate() {
         boolean valid = true;
@@ -93,9 +104,10 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         return valid;
     }
 
-    // Showing the network status
-    private void showNetworkErrorMsg(boolean isConnected) {
-
+    /**
+     * Method for displaying the network connection status message
+     */
+    private void showErrorMessage(boolean isConnected) {
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.main_layout);
         String message;
         int color;
@@ -132,12 +144,21 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         }
     }
 
+    /**
+     * Method to check network connection status
+     *
+     * @param isConnected Boolean value
+     */
+
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
-        showNetworkErrorMsg(isConnected);
+        showErrorMessage(isConnected);
     }
 
-    private class AsyncTaskRunner extends AsyncTask<String, Void, String> {
+    /**
+     * Inner class for handling Async data loading
+     */
+    private class AsyncTaskRunner extends AsyncTask<String, Void, Integer> {
         String userName = txtEmailId.getText().toString();
         String password = txtPassword.getText().toString();
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
@@ -155,36 +176,83 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected Integer doInBackground(String... params) {
+            int httpStatusCode = 0;
             if (NetworkConnectivity.isConnected()) {
-                AccessTokenResponse accessTokenResponse = new AccessTokenResponse();
                 try {
-                    accessTokenResponse.getAccessToken(LoginActivity.this, userName, password);
+                    AccessTokenResponse accessTokenResponse = new AccessTokenResponse();
+                    // Api call for access token
+                    httpStatusCode = getAccessToken(LoginActivity.this, userName, password);
+                    // Read access token from preferences
                     String accessToken = Preferences.getString("accessToken", null);
-                    if (accessToken != null) {
+                    if (httpStatusCode == 200 && accessToken != null) {
                         UserResponse userResponse = new UserResponse();
-                        userName = userResponse.login(LoginActivity.this, accessToken);
+                        httpStatusCode = userResponse.login(accessToken);
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                return userName;
             } else {
-                showNetworkErrorMsg(false);
+                showErrorMessage(false);
             }
-            return null;
+            return httpStatusCode;
         }
 
         @Override
-        protected void onPostExecute(String name) {
-            super.onPostExecute(name);
+        protected void onPostExecute(Integer statusCode) {
+            super.onPostExecute(statusCode);
             progressDialog.dismiss();
-            if (name != null) {
+            if (statusCode == 200) {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 finish();
+            } else {
+                txtEmailId.setText("");
+                txtPassword.setText("");
+                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.main_layout);
+                Snackbar.make(linearLayout, "Login failed. Try again", Snackbar.LENGTH_LONG).show();
             }
         }
     }
+
+    /**
+     * Method to get accessToken for a valid user
+     *
+     * @param context  Context reference
+     * @param userName String  name of logged in user
+     * @param password String password for user login
+     * @return statusCode  String HTTP status code return by network call
+     * @throws IOException
+     */
+    public int getAccessToken(final Context context, String userName, String password) throws IOException {
+        // TODO: changes into POST  request
+        OauthService service = new OauthService();
+        ReadForumProperties readForumProperties = new ReadForumProperties();
+        Properties properties = readForumProperties.getPropertiesValues(context);
+        Map<String, String> data = new HashMap<>();
+        data.put("client_id", properties.getProperty("CLIENT_ID"));
+        data.put("client_secret", properties.getProperty("CLIENT_SECRET"));
+        data.put("grant_type", "password");
+        data.put("username", userName);
+        data.put("password", password);
+        Call<AccessTokenResponse> call = service.getAccessToken().getAccessToken(data);
+        Response<AccessTokenResponse> response = call.execute();
+        int statusCode = 0;
+        if (response.isSuccessful()) {
+            if (response.body() == null) {
+                statusCode = 0;
+            } else {
+                statusCode = response.code();
+                // save access token in Preferences
+                Preferences.putString("accessToken", response.body().getAccess_token());
+            }
+        } else {
+            statusCode = response.code();
+            Log.e("Error Code", String.valueOf(response.code()));
+        }
+        return statusCode;
+    }
+
 }

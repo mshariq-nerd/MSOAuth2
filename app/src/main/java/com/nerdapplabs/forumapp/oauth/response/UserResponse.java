@@ -1,6 +1,6 @@
 package com.nerdapplabs.forumapp.oauth.response;
 
-import android.app.Activity;
+import android.util.Log;
 
 import com.nerdapplabs.forumapp.oauth.client.UserService;
 import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Response;
 
 public class UserResponse extends BaseResponse {
     private String username;
@@ -47,18 +48,29 @@ public class UserResponse extends BaseResponse {
 
 
     /**
-     * This is the method for getting logged in user
+     * Method to use for successful user login
      *
-     * @param token The access token for api call
+     * @param token String accessToken for valid user check
+     * @return statusCode int value of http status code
+     * @throws IOException
      */
-    public String login(Activity activity, final String token) throws IOException {
+    public int login(final String token) throws IOException {
         UserService userService = new UserService();
         Call<List<UserResponse>> call = userService.getUser().user(OauthConstant.BEARER + " " + token);
-        List<UserResponse> usersList = call.execute().body();
-        if (token != null) {
-            Preferences.putString("userName", usersList.get(0).getUsername());
-            Preferences.putString("email", usersList.get(0).getEmail());
+        Response<List<UserResponse>> response = call.execute();
+        List<UserResponse> usersList = null;
+        int statusCode = 0;
+        if (response.isSuccessful()) {
+            usersList = response.body();
+            if (token != null) {
+                Preferences.putString("userName", usersList.get(0).getUsername());
+                Preferences.putString("email", usersList.get(0).getEmail());
+                statusCode = response.code();
+            }
+        } else {
+            Log.e("Error Code: login() -> ", String.valueOf(response.code()));
+            statusCode = response.code();
         }
-        return usersList.get(0).getUsername();
+        return statusCode;
     }
 }
