@@ -8,6 +8,7 @@
 
     <string name="fname">First Name</string>
     <string name="lname">Last Name</string>
+    <string name="user_name">User Name</string>
 
     <string name="display_name">Display Name</string>
     <string name="confirm_password">Confirm Password</string>
@@ -21,10 +22,13 @@
     <string name="profile_name">Login</string>
     <string name="sign_up">SignUp</string>
 
-    <string name="lost_connection">Lost connection.</string>
-    <string name="wifi_connected">Wi-Fi connected.</string>
-    <string name="mobile_data_connected">Mobile data network connected.</string>
-    <string name="connection_error">Unable to load content. Check your network connection.</string>
+    <string name="internet_connected">Connected to Internet</string>
+    <string name="internet_connection_error">Unable to load content. Check your network connection.</string>
+    <string name="authenticating">Authenticating...</string>
+    <string name="login_error">Login failed. Please try again.</string>
+
+    <string name="username_validation_error">Enter a valid user name.</string>
+    <string name="password_validation_error">Between 4 and 10 alphanumeric characters.</string>
 
 
 </resources>

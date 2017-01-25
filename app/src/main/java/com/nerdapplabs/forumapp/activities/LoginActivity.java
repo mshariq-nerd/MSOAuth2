@@ -19,24 +19,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nerdapplabs.forumapp.R;
-import com.nerdapplabs.forumapp.oauth.client.OauthService;
-import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 import com.nerdapplabs.forumapp.oauth.response.AccessTokenResponse;
 import com.nerdapplabs.forumapp.oauth.response.UserResponse;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import retrofit2.Call;
-import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener, View.OnClickListener {
     private static final String TAG = LoginActivity.class.getSimpleName();
-    private EditText txtEmailId;
+    private EditText txtUserName;
     private EditText txtPassword;
     private Button btnLogin;
     private TextView txtForgotPasswordLink;
@@ -50,7 +42,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
-        txtEmailId = (EditText) findViewById(R.id.edt_email);
+        txtUserName = (EditText) findViewById(R.id.edt_user_name);
         txtPassword = (EditText) findViewById(R.id.edt_password);
         btnLogin = (Button) findViewById(R.id.btn_login);
         txtForgotPasswordLink = (TextView) findViewById(R.id.txt_link_forgot_password);
@@ -74,7 +66,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
     }
 
     public void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "login failed.", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), getString(R.string.login_error), Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -84,18 +76,18 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
     public boolean validate() {
         boolean valid = true;
 
-        String email = txtEmailId.getText().toString();
+        String email = txtUserName.getText().toString();
         String password = txtPassword.getText().toString();
 
         if (email.isEmpty() || email.length() < 4) {
-            txtEmailId.setError("enter a valid email address");
+            txtUserName.setError(getString(R.string.username_validation_error));
             valid = false;
         } else {
-            txtEmailId.setError(null);
+            txtUserName.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            txtPassword.setError("between 4 and 10 alphanumeric characters");
+            txtPassword.setError(getString(R.string.username_validation_error));
             valid = false;
         } else {
             txtPassword.setError(null);
@@ -112,10 +104,10 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         String message;
         int color;
         if (isConnected) {
-            message = "Connected to Internet";
+            message = getString(R.string.internet_connected);
             color = Color.WHITE;
         } else {
-            message = "Sorry! Not connected to internet";
+            message = getString(R.string.internet_connection_error);
             color = Color.RED;
         }
 
@@ -159,7 +151,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
      * Inner class for handling Async data loading
      */
     private class AsyncTaskRunner extends AsyncTask<String, Void, Integer> {
-        String userName = txtEmailId.getText().toString();
+        String userName = txtUserName.getText().toString();
         String password = txtPassword.getText().toString();
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme_Dark_Dialog);
@@ -171,7 +163,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
             imm.hideSoftInputFromWindow(btnLogin.getWindowToken(),
                     InputMethodManager.RESULT_UNCHANGED_SHOWN);
             progressDialog.setIndeterminate(true);
-            progressDialog.setMessage("Authenticating...");
+            progressDialog.setMessage(getString(R.string.authenticating));
             progressDialog.show();
         }
 
@@ -182,13 +174,12 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
                 try {
                     AccessTokenResponse accessTokenResponse = new AccessTokenResponse();
                     // Api call for access token
-                    httpStatusCode = getAccessToken(LoginActivity.this, userName, password);
+                    httpStatusCode = accessTokenResponse.getAccessToken(LoginActivity.this, userName, password);
                     // Read access token from preferences
                     String accessToken = Preferences.getString("accessToken", null);
                     if (httpStatusCode == 200 && accessToken != null) {
                         UserResponse userResponse = new UserResponse();
                         httpStatusCode = userResponse.login(accessToken);
-
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -209,50 +200,11 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 finish();
             } else {
-                txtEmailId.setText("");
+                txtUserName.setText("");
                 txtPassword.setText("");
                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.main_layout);
-                Snackbar.make(linearLayout, "Login failed. Try again", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(linearLayout, getString(R.string.login_error), Snackbar.LENGTH_LONG).show();
             }
         }
     }
-
-    /**
-     * Method to get accessToken for a valid user
-     *
-     * @param context  Context reference
-     * @param userName String  name of logged in user
-     * @param password String password for user login
-     * @return statusCode  String HTTP status code return by network call
-     * @throws IOException
-     */
-    public int getAccessToken(final Context context, String userName, String password) throws IOException {
-        // TODO: changes into POST  request
-        OauthService service = new OauthService();
-        ReadForumProperties readForumProperties = new ReadForumProperties();
-        Properties properties = readForumProperties.getPropertiesValues(context);
-        Map<String, String> data = new HashMap<>();
-        data.put("client_id", properties.getProperty("CLIENT_ID"));
-        data.put("client_secret", properties.getProperty("CLIENT_SECRET"));
-        data.put("grant_type", "password");
-        data.put("username", userName);
-        data.put("password", password);
-        Call<AccessTokenResponse> call = service.getAccessToken().getAccessToken(data);
-        Response<AccessTokenResponse> response = call.execute();
-        int statusCode = 0;
-        if (response.isSuccessful()) {
-            if (response.body() == null) {
-                statusCode = 0;
-            } else {
-                statusCode = response.code();
-                // save access token in Preferences
-                Preferences.putString("accessToken", response.body().getAccess_token());
-            }
-        } else {
-            statusCode = response.code();
-            Log.e("Error Code", String.valueOf(response.code()));
-        }
-        return statusCode;
-    }
-
 }
