@@ -58,7 +58,6 @@ public class UserResponse extends BaseResponse {
         this.dob = dob;
     }
 
-
     @Override
     public String toString() {
 
