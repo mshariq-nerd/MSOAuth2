@@ -116,6 +116,8 @@ public class UserResponse extends BaseResponse {
             // TODO: Need to fix api for correct json object format
             //userProfileObject.setDob(response.body().getDob());
             userProfileObject.setEmail(response.body().getEmail());
+            Preferences.putString("userName", response.body().getUsername());
+            Preferences.putString("email", response.body().getEmail());
         } else {
             Log.e("Error in profile()", String.valueOf(response.code()));
         }

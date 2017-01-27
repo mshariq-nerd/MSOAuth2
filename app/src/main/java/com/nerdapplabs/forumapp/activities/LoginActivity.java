@@ -179,7 +179,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
                     String accessToken = Preferences.getString("accessToken", null);
                     if (httpStatusCode == 200 && accessToken != null) {
                         UserResponse userResponse = new UserResponse();
-                        httpStatusCode = userResponse.login(accessToken);
+                        userResponse.getUserProfile(accessToken);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
