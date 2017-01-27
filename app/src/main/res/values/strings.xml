@@ -36,5 +36,7 @@
     <string name="email_validation_error">Enter a valid email address.</string>
     <string name="dob_validation_error">Enter valid DOB.</string>
     <string name="sign_up_success">Registration complete. Welcome!.</string>
+    <string name="date_picker_title">Select Date</string>
+
 
 </resources>

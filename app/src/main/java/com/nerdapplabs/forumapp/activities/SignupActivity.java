@@ -3,13 +3,14 @@ package com.nerdapplabs.forumapp.activities;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -69,8 +70,8 @@ public class SignupActivity extends AppCompatActivity implements DatePickerDialo
                 datePickerDialog = DatePickerDialog.newInstance(SignupActivity.this, year, month, day);
                 datePickerDialog.setThemeDark(false);
                 datePickerDialog.showYearPickerFirst(false);
-                datePickerDialog.setAccentColor(Color.parseColor("#009688"));
-                datePickerDialog.setTitle("Select Date");
+                datePickerDialog.setAccentColor(ContextCompat.getColor(SignupActivity.this, R.color.white));
+                datePickerDialog.setTitle(getString(R.string.date_picker_title));
                 datePickerDialog.show(getFragmentManager(), "DatePickerDialog");
             }
         });
@@ -251,6 +252,17 @@ public class SignupActivity extends AppCompatActivity implements DatePickerDialo
                 Snackbar.make(linearLayout, getString(R.string.login_error), Snackbar.LENGTH_LONG).show();
             }
         }
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            Intent intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
+            startActivity(intent);
+            finish();
+            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
