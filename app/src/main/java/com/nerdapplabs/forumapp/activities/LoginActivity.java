@@ -28,8 +28,8 @@ import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener, View.OnClickListener {
     private static final String TAG = LoginActivity.class.getSimpleName();
-    private EditText txtUserName;
-    private EditText txtPassword;
+    private EditText edtUserName;
+    private EditText edtPassword;
     private Button btnLogin;
     private TextView txtForgotPasswordLink;
 
@@ -42,8 +42,8 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
-        txtUserName = (EditText) findViewById(R.id.edt_user_name);
-        txtPassword = (EditText) findViewById(R.id.edt_password);
+        edtUserName = (EditText) findViewById(R.id.edt_user_name);
+        edtPassword = (EditText) findViewById(R.id.edt_password);
         btnLogin = (Button) findViewById(R.id.btn_login);
         txtForgotPasswordLink = (TextView) findViewById(R.id.txt_link_forgot_password);
         btnLogin.setOnClickListener(this);
@@ -72,25 +72,24 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
     /**
      * Method for client side validation
      */
-
     public boolean validate() {
         boolean valid = true;
 
-        String email = txtUserName.getText().toString();
-        String password = txtPassword.getText().toString();
+        String email = edtUserName.getText().toString();
+        String password = edtPassword.getText().toString();
 
         if (email.isEmpty() || email.length() < 4) {
-            txtUserName.setError(getString(R.string.username_validation_error));
+            edtUserName.setError(getString(R.string.username_validation_error));
             valid = false;
         } else {
-            txtUserName.setError(null);
+            edtUserName.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            txtPassword.setError(getString(R.string.username_validation_error));
+            edtPassword.setError(getString(R.string.username_validation_error));
             valid = false;
         } else {
-            txtPassword.setError(null);
+            edtPassword.setError(null);
         }
 
         return valid;
@@ -100,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
      * Method for displaying the network connection status message
      */
     private void showErrorMessage(boolean isConnected) {
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.main_layout);
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.login_layout);
         String message;
         int color;
         if (isConnected) {
@@ -151,8 +150,8 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
      * Inner class for handling Async data loading
      */
     private class AsyncTaskRunner extends AsyncTask<String, Void, Integer> {
-        String userName = txtUserName.getText().toString();
-        String password = txtPassword.getText().toString();
+        String userName = edtUserName.getText().toString();
+        String password = edtPassword.getText().toString();
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme_Dark_Dialog);
 
@@ -200,9 +199,9 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 finish();
             } else {
-                txtUserName.setText("");
-                txtPassword.setText("");
-                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.main_layout);
+                edtUserName.setText("");
+                edtPassword.setText("");
+                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.login_layout);
                 Snackbar.make(linearLayout, getString(R.string.login_error), Snackbar.LENGTH_LONG).show();
             }
         }

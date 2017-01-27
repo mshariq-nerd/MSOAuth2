@@ -15,7 +15,7 @@
     <string name="already_member">Already a member? Login</string>
     <string name="create_account">Create Account</string>
     <string name="dob">DOB</string>
-    <string name="settings">Settings</string>
+    <string name="settings">Profile</string>
     <string name="profile">Profile</string>
 
     <string name="reset_password">Reset Password</string>
@@ -28,7 +28,13 @@
     <string name="login_error">Login failed. Please try again.</string>
 
     <string name="username_validation_error">Enter a valid user name.</string>
-    <string name="password_validation_error">Between 4 and 10 alphanumeric characters.</string>
+    <string name="display_name_validation_error">Enter a valid display name.</string>
 
+    <string name="password_validation_error">Between 4 and 10 alphanumeric characters.</string>
+    <string name="password_match_error">Password do not match.</string>
+
+    <string name="email_validation_error">Enter a valid email address.</string>
+    <string name="dob_validation_error">Enter valid DOB.</string>
+    <string name="sign_up_success">Registration complete. Welcome!.</string>
 
 </resources>

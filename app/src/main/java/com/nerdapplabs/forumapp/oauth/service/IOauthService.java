@@ -13,6 +13,6 @@ import retrofit2.http.QueryMap;
 
 public interface IOauthService {
 
-    @GET("/oauth/v2/token")
+    @GET("/authoauth/web/api/user/access/token")
     Call<AccessTokenResponse> getAccessToken(@QueryMap Map<String, String> options);
 }

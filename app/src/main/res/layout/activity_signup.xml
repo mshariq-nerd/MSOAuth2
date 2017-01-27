@@ -5,12 +5,13 @@
     android:fitsSystemWindows="true">
 
     <LinearLayout
+        android:id="@+id/signup_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
-        android:paddingTop="56dp">
+        android:paddingTop="24dp">
 
         <!-- First Name Label -->
         <android.support.design.widget.TextInputLayout
@@ -51,7 +52,7 @@
             android:layout_marginTop="8dp">
 
             <EditText
-                android:id="@+id/edt_email"
+                android:id="@+id/edt_user_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/email"
@@ -69,9 +70,9 @@
                 android:id="@+id/edt_dob"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusable="false"
                 android:hint="@string/dob"
-                android:windowSoftInputMode="stateHidden"
-                android:focusable="false" />
+                android:windowSoftInputMode="stateHidden" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Display Name -->
@@ -135,7 +136,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:gravity="center"
-            android:onClick="onClick"
+            android:onClick="onLoginLinkClick"
             android:text="@string/already_member"
             android:textSize="16dip" />
 

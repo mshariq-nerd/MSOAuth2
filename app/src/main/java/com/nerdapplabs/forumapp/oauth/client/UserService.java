@@ -31,4 +31,20 @@ public class UserService {
         _userService = retrofit.create(IUserService.class);
         return _userService;
     }
+
+
+    public IUserService getUserProfile() throws IOException {
+        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(properties.getProperty("AUTHENTICATION_SERVER_URL"))
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        _userService = retrofit.create(IUserService.class);
+        return _userService;
+    }
 }
