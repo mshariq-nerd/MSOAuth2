@@ -5,11 +5,10 @@ import android.util.Log;
 
 import com.nerdapplabs.forumapp.oauth.client.OauthService;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
+import com.nerdapplabs.forumapp.oauth.request.AccessTokenRequest;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import retrofit2.Call;
@@ -62,17 +61,16 @@ public class AccessTokenResponse extends BaseResponse {
      * @throws IOException
      */
     public int getAccessToken(final Context context, String userName, String password) throws IOException {
-        // TODO: changes into POST  request
         OauthService service = new OauthService();
         ReadForumProperties readForumProperties = new ReadForumProperties();
         Properties properties = readForumProperties.getPropertiesValues(context);
-        Map<String, String> data = new HashMap<>();
-        data.put("client_id", properties.getProperty("CLIENT_ID"));
-        data.put("client_secret", properties.getProperty("CLIENT_SECRET"));
-        data.put("grant_type", "password");
-        data.put("username", userName);
-        data.put("password", password);
-        Call<AccessTokenResponse> call = service.getAccessToken().getAccessToken(data);
+        AccessTokenRequest accessTokenRequest = new AccessTokenRequest();
+        accessTokenRequest.setClient_id(properties.getProperty("CLIENT_ID"));
+        accessTokenRequest.setClient_secret(properties.getProperty("CLIENT_SECRET"));
+        accessTokenRequest.setGrant_type("password");
+        accessTokenRequest.setUsername(userName);
+        accessTokenRequest.setPassword(password);
+        Call<AccessTokenResponse> call = service.getAccessToken().getAccessToken(accessTokenRequest);
         Response<AccessTokenResponse> response = call.execute();
         int statusCode = 0;
         if (response.isSuccessful()) {
