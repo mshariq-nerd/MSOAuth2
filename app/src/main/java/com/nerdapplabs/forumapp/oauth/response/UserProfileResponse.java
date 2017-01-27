@@ -57,9 +57,7 @@ public class UserProfileResponse {
         return dob;
     }
 
-    public void setDob(String dob) {
-        this.dob = dob;
-    }
+
 
     /**
      * To get logged in user profile

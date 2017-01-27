@@ -24,8 +24,8 @@
                 android:id="@+id/edt_user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/email"
-                android:inputType="textEmailAddress" />
+                android:hint="@string/user_name"
+                android:inputType="textPersonName" />
         </android.support.design.widget.TextInputLayout>
 
         <!--  Password Label -->

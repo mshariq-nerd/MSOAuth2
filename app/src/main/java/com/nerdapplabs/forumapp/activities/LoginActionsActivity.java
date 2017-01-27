@@ -10,9 +10,8 @@ import android.widget.Button;
 import com.nerdapplabs.forumapp.R;
 
 public class LoginActionsActivity extends AppCompatActivity implements View.OnClickListener {
-
     private Button btnSignup, btnLogin;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

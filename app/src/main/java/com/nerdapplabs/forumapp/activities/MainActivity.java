@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nerdapplabs.forumapp.R;
@@ -86,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Method for open login options page
+     *
      * @param v view type
      */
     public void onDrawerHeaderClick(View v) {
@@ -110,9 +110,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             String accessToken = Preferences.getString("accessToken", null);
-            if (null != accessToken){
+            if (null != accessToken) {
                 Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
                 startActivity(intent);
+                finish();
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
             return true;

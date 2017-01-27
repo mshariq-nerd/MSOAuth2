@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -205,5 +206,17 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
                 Snackbar.make(linearLayout, getString(R.string.login_error), Snackbar.LENGTH_LONG).show();
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            Intent intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
+            startActivity(intent);
+            finish();
+            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -1,10 +1,13 @@
 package com.nerdapplabs.forumapp.activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.nerdapplabs.forumapp.R;
@@ -28,6 +31,11 @@ public class UserProfileActivity extends AppCompatActivity {
         txtUserName = (TextView) findViewById(R.id.txt_user_name);
         txtUserEmail = (TextView) findViewById(R.id.txt_user_email);
         txtUserDOB = (TextView) findViewById(R.id.txt_user_dob);
+
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         new UserProfileAsyncTaskRunner().execute();
     }
@@ -76,5 +84,16 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }
