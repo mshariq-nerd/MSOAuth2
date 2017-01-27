@@ -8,7 +8,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.nerdapplabs.forumapp.R;
-import com.nerdapplabs.forumapp.oauth.response.UserProfileResponse;
+import com.nerdapplabs.forumapp.oauth.response.UserResponse;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private class UserProfileAsyncTaskRunner extends AsyncTask<Void, Void, Void> {
         final ProgressDialog progressDialog = new ProgressDialog(UserProfileActivity.this,
                 R.style.AppTheme_Dark_Dialog);
-        UserProfileResponse userProfile;
+        UserResponse user;
 
         @Override
         protected void onPreExecute() {
@@ -56,10 +56,10 @@ public class UserProfileActivity extends AppCompatActivity {
             try {
                 // Read access token from preferences
                 String accessToken = Preferences.getString("accessToken", null);
-                userProfile = new UserProfileResponse();
+                user = new UserResponse();
                 // Get user profile details
-                userProfile = userProfile.getUserProfile(accessToken);
-                Log.d(TAG, userProfile.getFirstname());
+                user = user.getUserProfile(accessToken);
+                Log.d(TAG, user.getFirstname());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -69,9 +69,9 @@ public class UserProfileActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            txtUserProfileName.setText(userProfile.getFirstname() + " " + userProfile.getLastname());
-            txtUserName.setText(userProfile.getUsername());
-            txtUserEmail.setText(userProfile.getEmail());
+            txtUserProfileName.setText(user.getFirstname() + " " + user.getLastname());
+            txtUserName.setText(user.getUsername());
+            txtUserEmail.setText(user.getEmail());
             progressDialog.dismiss();
         }
     }

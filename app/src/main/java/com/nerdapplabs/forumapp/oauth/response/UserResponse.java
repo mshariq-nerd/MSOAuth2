@@ -13,8 +13,10 @@ import retrofit2.Response;
 
 public class UserResponse extends BaseResponse {
     private String username;
+    private String firstname;
+    private String lastname;
     private String email;
-
+    private String dob;
 
     public String getUsername() {
         return username;
@@ -24,12 +26,36 @@ public class UserResponse extends BaseResponse {
         this.username = username;
     }
 
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
     }
 
 
@@ -55,8 +81,8 @@ public class UserResponse extends BaseResponse {
      */
     public int login(final String token) throws IOException {
         UserService userService = new UserService();
-        Call<UserProfileResponse> call = userService.getUser().profile(OauthConstant.BEARER + " " + token);
-        Response<UserProfileResponse> response = call.execute();
+        Call<UserResponse> call = userService.getUser().profile(OauthConstant.BEARER + " " + token);
+        Response<UserResponse> response = call.execute();
         int statusCode = 0;
         if (response.isSuccessful()) {
             if (token != null) {
@@ -69,5 +95,32 @@ public class UserResponse extends BaseResponse {
             statusCode = response.code();
         }
         return statusCode;
+    }
+
+    /**
+     * To get logged in user profile
+     *
+     * @param token
+     * @return
+     * @throws IOException
+     */
+    public UserResponse getUserProfile(final String token) throws IOException {
+        UserResponse userProfileObject = null;
+        UserService userService = new UserService();
+        Call<UserResponse> call = userService.getUser().profile(OauthConstant.BEARER + " " + token);
+        Response<UserResponse> response = call.execute();
+        if (response.isSuccessful()) {
+            userProfileObject = new UserResponse();
+            userProfileObject.setFirstname(response.body().getFirstname());
+            userProfileObject.setLastname(response.body().getLastname());
+            userProfileObject.setUsername(response.body().getUsername());
+            // TODO: Need to fix api for correct json object format
+            //userProfileObject.setDob(response.body().getDob());
+            userProfileObject.setEmail(response.body().getEmail());
+        } else {
+            Log.e("Error in profile()", String.valueOf(response.code()));
+        }
+
+        return userProfileObject;
     }
 }
