@@ -7,7 +7,6 @@ import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -56,15 +55,13 @@ public class UserResponse extends BaseResponse {
      */
     public int login(final String token) throws IOException {
         UserService userService = new UserService();
-        Call<List<UserResponse>> call = userService.getUser().user(OauthConstant.BEARER + " " + token);
-        Response<List<UserResponse>> response = call.execute();
-        List<UserResponse> usersList = null;
+        Call<UserProfileResponse> call = userService.getUser().profile(OauthConstant.BEARER + " " + token);
+        Response<UserProfileResponse> response = call.execute();
         int statusCode = 0;
         if (response.isSuccessful()) {
-            usersList = response.body();
             if (token != null) {
-                Preferences.putString("userName", usersList.get(0).getUsername());
-                Preferences.putString("email", usersList.get(0).getEmail());
+                Preferences.putString("userName", response.body().getUsername());
+                Preferences.putString("email", response.body().getEmail());
                 statusCode = response.code();
             }
         } else {

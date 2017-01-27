@@ -1,6 +1,5 @@
 package com.nerdapplabs.forumapp.oauth.client;
 
-import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 import com.nerdapplabs.forumapp.oauth.service.IUserService;
 
@@ -18,22 +17,6 @@ public class UserService {
     private IUserService _userService;
 
     public IUserService getUser() throws IOException {
-        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(properties.getProperty("AUTHENTICATION_SERVER_URL"))
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-        _userService = retrofit.create(IUserService.class);
-        return _userService;
-    }
-
-
-    public IUserService getUserProfile() throws IOException {
         Properties properties = ReadForumProperties.getPropertiesValues(getContext());
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);

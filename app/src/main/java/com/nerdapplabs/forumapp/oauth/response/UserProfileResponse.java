@@ -71,7 +71,7 @@ public class UserProfileResponse {
     public UserProfileResponse getUserProfile(final String token) throws IOException {
         UserProfileResponse userProfileObject = null;
         UserService userService = new UserService();
-        Call<UserProfileResponse> call = userService.getUserProfile().profile(OauthConstant.BEARER + " " + token);
+        Call<UserProfileResponse> call = userService.getUser().profile(OauthConstant.BEARER + " " + token);
         Response<UserProfileResponse> response = call.execute();
         if (response.isSuccessful()) {
             userProfileObject = new UserProfileResponse();
