@@ -20,8 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nerdapplabs.forumapp.R;
-import com.nerdapplabs.forumapp.oauth.response.AccessTokenResponse;
-import com.nerdapplabs.forumapp.oauth.response.UserResponse;
+import com.nerdapplabs.forumapp.oauth.client.OauthService;
+import com.nerdapplabs.forumapp.oauth.client.UserService;
+import com.nerdapplabs.forumapp.pojo.User;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
@@ -150,11 +151,12 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
     /**
      * Inner class for handling Async data loading
      */
-    private class AsyncTaskRunner extends AsyncTask<String, Void, Integer> {
+    private class AsyncTaskRunner extends AsyncTask<String, Void, Void> {
         String userName = edtUserName.getText().toString();
         String password = edtPassword.getText().toString();
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme_Dark_Dialog);
+        User user;
 
         @Override
         protected void onPreExecute() {
@@ -168,38 +170,52 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         }
 
         @Override
-        protected Integer doInBackground(String... params) {
-            int httpStatusCode = 0;
+        protected Void doInBackground(String... params) {
+            String accessToken;
+
             if (NetworkConnectivity.isConnected()) {
                 try {
-                    AccessTokenResponse accessTokenResponse = new AccessTokenResponse();
+                    OauthService oauthService = new OauthService();
                     // Api call for access token
-                    httpStatusCode = accessTokenResponse.getAccessToken(LoginActivity.this, userName, password);
+                    accessToken = oauthService.getAccessToken(LoginActivity.this, userName, password);
                     // Read access token from preferences
-                    String accessToken = Preferences.getString("accessToken", null);
-                    if (httpStatusCode == 200 && accessToken != null) {
-                        UserResponse userResponse = new UserResponse();
-                        userResponse.getUserProfile(accessToken);
+
+                    if (null != accessToken) {
+                        Preferences.putString("accessToken", accessToken);
+                        UserService userService = new UserService();
+                        user = userService.getUser(accessToken);
+                        if (null != user) {
+                            Preferences.putString("userName", user.getUserName());
+                            Preferences.putString("email", user.getEmailAddress());
+                        }
+                    } else {
+                        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.login_layout);
+                        Snackbar.make(linearLayout, getString(R.string.login_error), Snackbar.LENGTH_LONG).show();
                     }
+
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
                 showErrorMessage(false);
             }
-            return httpStatusCode;
+
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Integer statusCode) {
-            super.onPostExecute(statusCode);
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
             progressDialog.dismiss();
-            if (statusCode == 200) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                finish();
-            } else {
+            if (null != user) {
+                if (null != user.getUserName()) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    finish();
+                }
+            }else {
                 edtUserName.setText("");
                 edtPassword.setText("");
                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.login_layout);
