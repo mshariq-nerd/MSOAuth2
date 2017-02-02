@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
+import com.nerdapplabs.forumapp.oauth.response.ResetPasswordResponse;
 import com.nerdapplabs.forumapp.oauth.service.IUserService;
 import com.nerdapplabs.forumapp.pojo.User;
 
@@ -56,5 +57,26 @@ public class UserService {
 
         return user;
     }
+
+
+    /**
+     * @param userName
+     * @return
+     * @throws IOException
+     */
+    public ResetPasswordResponse resetPassword(final String userName) throws IOException {
+
+        Call<ResetPasswordResponse> call = userService().request(userName);
+        Response<ResetPasswordResponse> response = call.execute();
+        ResetPasswordResponse resetPassword = null;
+        if (response.isSuccessful()) {
+            resetPassword = response.body();
+        } else {
+            Log.e("Error in profile()", String.valueOf(response.code()));
+        }
+
+        return resetPassword;
+    }
+
 }
 

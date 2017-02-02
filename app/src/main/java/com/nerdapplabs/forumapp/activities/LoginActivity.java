@@ -59,16 +59,11 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
     public void login() {
         Log.d(TAG, "login");
         if (!validate()) {
-            onLoginFailed();
             return;
         } else {
             AsyncTaskRunner runner = new AsyncTaskRunner();
             runner.execute();
         }
-    }
-
-    public void onLoginFailed() {
-        Toast.makeText(getBaseContext(), getString(R.string.login_error), Toast.LENGTH_LONG).show();
     }
 
     /**

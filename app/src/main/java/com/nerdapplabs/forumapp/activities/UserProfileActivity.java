@@ -67,7 +67,6 @@ public class UserProfileActivity extends AppCompatActivity {
                 UserService userService = new UserService();
                 // Get user profile details
                 user = userService.getUser(accessToken);
-                // Log.d(TAG, user.getFirstname());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -80,6 +79,7 @@ public class UserProfileActivity extends AppCompatActivity {
             txtUserProfileName.setText(user.getFirstName() + " " + user.getLastName());
             txtUserName.setText(user.getUserName());
             txtUserEmail.setText(user.getEmailAddress());
+            txtUserDOB.setText(user.getDob());
             progressDialog.dismiss();
         }
     }

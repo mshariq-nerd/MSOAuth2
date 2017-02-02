@@ -9,6 +9,6 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface ISignUpService {
-    @POST("/authoauth/web/api/user/register")
+    @POST("user/register")
     Call<SignUpResponse> signUp(@Body SignUpRequest signUpRequest);
 }

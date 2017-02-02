@@ -8,6 +8,6 @@ import retrofit2.http.POST;
 
 public interface IOauthService {
 
-    @POST("/authoauth/web/api/user/access/token")
+    @POST("user/access/token")
     Call<AccessToken> getAccessToken(@Body AccessToken accessTokenRequest);
 }

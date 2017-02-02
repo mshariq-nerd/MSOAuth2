@@ -35,6 +35,14 @@ public class AccessToken {
     @SerializedName("token_type")
     private String tokenType;
 
+    @SerializedName("scope")
+    private String scope;
+
+
+    public AccessToken() {
+        this.scope = "API";
+    }
+
     public String getUserName() {
         return userName;
     }
