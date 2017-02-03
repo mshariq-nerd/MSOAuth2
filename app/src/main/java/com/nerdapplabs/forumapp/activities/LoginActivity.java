@@ -3,10 +3,8 @@ package com.nerdapplabs.forumapp.activities;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,14 +13,15 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.nerdapplabs.forumapp.ForumApplication;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.OauthService;
-import com.nerdapplabs.forumapp.oauth.client.UserService;
-import com.nerdapplabs.forumapp.pojo.User;
+import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
+import com.nerdapplabs.forumapp.utility.Duration;
+import com.nerdapplabs.forumapp.utility.MessageSnackbar;
+import com.nerdapplabs.forumapp.utility.ErrorType;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
@@ -52,6 +51,13 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         txtForgotPasswordLink.setOnClickListener(this);
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // register internet connection status listener
+        ForumApplication.getInstance().setConnectivityListener(this);
+    }
 
     /**
      * Method to login into Application
@@ -83,37 +89,13 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         }
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            edtPassword.setError(getString(R.string.username_validation_error));
+            edtPassword.setError(getString(R.string.password_validation_error));
             valid = false;
         } else {
             edtPassword.setError(null);
         }
 
         return valid;
-    }
-
-    /**
-     * Method for displaying the network connection status message
-     */
-    private void showErrorMessage(boolean isConnected) {
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.login_layout);
-        String message;
-        int color;
-        if (isConnected) {
-            message = getString(R.string.internet_connected);
-            color = Color.WHITE;
-        } else {
-            message = getString(R.string.internet_connection_error);
-            color = Color.RED;
-        }
-
-        Snackbar snackbar = Snackbar
-                .make(linearLayout, message, Snackbar.LENGTH_LONG);
-
-        View sbView = snackbar.getView();
-        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setTextColor(color);
-        snackbar.show();
     }
 
     /**
@@ -140,18 +122,19 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
-        showErrorMessage(isConnected);
+        NetworkConnectivity.showNetworkConnectMessage(LoginActivity.this, isConnected);
     }
 
     /**
      * Inner class for handling Async data loading
      */
-    private class AsyncTaskRunner extends AsyncTask<String, Void, Void> {
+    private class AsyncTaskRunner extends AsyncTask<String, Void, Boolean> {
         String userName = edtUserName.getText().toString();
         String password = edtPassword.getText().toString();
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme_Dark_Dialog);
-        User user;
+        String accessToken = null;
+        String responseMessage = getString(R.string.login_error);
 
         @Override
         protected void onPreExecute() {
@@ -165,56 +148,45 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         }
 
         @Override
-        protected Void doInBackground(String... params) {
-            String accessToken;
+        protected Boolean doInBackground(String... params) {
 
+            Boolean isNetworkConnected = false;
             if (NetworkConnectivity.isConnected()) {
                 try {
+                    isNetworkConnected = true;
                     OauthService oauthService = new OauthService();
                     // Api call for access token
-                    accessToken = oauthService.getAccessToken(LoginActivity.this, userName, password);
+                    responseMessage = oauthService.getAccessToken(LoginActivity.this, userName, password);
                     // Read access token from preferences
-
-                    if (null != accessToken) {
-                        Preferences.putString("accessToken", accessToken);
-                        UserService userService = new UserService();
-                        user = userService.getUser(accessToken);
-                        if (null != user) {
-                            Preferences.putString("userName", user.getUserName());
-                            Preferences.putString("email", user.getEmailAddress());
-                        }
-                    } else {
-                        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.login_layout);
-                        Snackbar.make(linearLayout, getString(R.string.login_error), Snackbar.LENGTH_LONG).show();
+                    accessToken = Preferences.getString(OauthConstant.ACCESS_TOKEN, null);
+                    if (accessToken != null) {
+                        Preferences.putString("userName", userName);
                     }
-
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else {
-                showErrorMessage(false);
             }
-
-            return null;
+            return isNetworkConnected;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Boolean isConnected) {
+            super.onPostExecute(isConnected);
             progressDialog.dismiss();
-            if (null != user) {
-                if (null != user.getUserName()) {
+            if (isConnected) {
+                if (null != accessToken) {
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                     overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                     finish();
+                } else {
+                    edtUserName.setText("");
+                    edtPassword.setText("");
+                    MessageSnackbar.with(LoginActivity.this, null).type(ErrorType.ERROR).message(responseMessage)
+                            .duration(Duration.SHORT).show();
                 }
-            }else {
-                edtUserName.setText("");
-                edtPassword.setText("");
-                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.login_layout);
-                Snackbar.make(linearLayout, getString(R.string.login_error), Snackbar.LENGTH_LONG).show();
+            } else {
+                NetworkConnectivity.showNetworkConnectMessage(LoginActivity.this, false);
             }
         }
     }

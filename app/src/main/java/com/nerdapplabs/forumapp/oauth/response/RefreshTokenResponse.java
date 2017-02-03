@@ -1,4 +1,4 @@
 package com.nerdapplabs.forumapp.oauth.response;
 
-public class RefreshTokenResponse extends BaseResponse {
+public class RefreshTokenResponse {
 }

@@ -6,9 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.nerdapplabs.forumapp.R;
+import com.nerdapplabs.forumapp.utility.Duration;
+import com.nerdapplabs.forumapp.utility.MessageSnackbar;
+import com.nerdapplabs.forumapp.utility.ErrorType;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 public class LoginActionsActivity extends AppCompatActivity implements View.OnClickListener {
@@ -33,7 +35,8 @@ public class LoginActionsActivity extends AppCompatActivity implements View.OnCl
         if (null != successMessage) {
             // clear preferences
             Preferences.clear();
-            Toast.makeText(getApplicationContext(), successMessage, Toast.LENGTH_LONG).show();
+            MessageSnackbar.with(this, null).type(ErrorType.WARNING).message(successMessage)
+                    .duration(Duration.LONG).show();
             getIntent().removeExtra("EMAIL_SENT_MESSAGE");
         }
     }

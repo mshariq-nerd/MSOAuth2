@@ -28,13 +28,9 @@ public class User {
     @SerializedName("email_confirmation")
     private String emailConfirmation;
 
-    @SerializedName("scope")
-    private String scope;
+    @SerializedName("show_message")
+    private String showMessage;
 
-//
-//    public User() {
-//        this.scope = "API";
-//    }
 
     public String getUserName() {
         return userName;
@@ -90,5 +86,13 @@ public class User {
 
     public void setEmailConfirmation(String emailConfirmation) {
         this.emailConfirmation = emailConfirmation;
+    }
+
+    public String getShowMessage() {
+        return showMessage;
+    }
+
+    public void setShowMessage(String showMessage) {
+        this.showMessage = showMessage;
     }
 }

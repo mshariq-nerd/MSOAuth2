@@ -1,9 +1,13 @@
 package com.nerdapplabs.forumapp.oauth.client;
 
-import android.util.Log;
+import android.app.Activity;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
+import com.nerdapplabs.forumapp.oauth.response.ErrorResponse;
 import com.nerdapplabs.forumapp.oauth.response.ResetPasswordResponse;
 import com.nerdapplabs.forumapp.oauth.service.IUserService;
 import com.nerdapplabs.forumapp.pojo.User;
@@ -45,38 +49,57 @@ public class UserService {
      * @return
      * @throws IOException
      */
-    public User getUser(final String token) throws IOException {
+    public User getUser(Activity activity, final String token) throws IOException {
         Call<User> call = userService().profile(OauthConstant.BEARER + " " + token);
         Response<User> response = call.execute();
-        User user = null;
-        if (response.isSuccessful()) {
+        User user = new User();
+        if (response.isSuccessful() && response.body() != null) {
             user = response.body();
         } else {
-            Log.e("Error in profile()", String.valueOf(response.code()));
+            Gson gson = new GsonBuilder().create();
+            ErrorResponse errorResponse;
+            String message;
+            try {
+                errorResponse = gson.fromJson(response.errorBody().string(), ErrorResponse.class);
+                if (null != errorResponse && errorResponse.getCode() == "500") {
+                    message = activity.getString(R.string.login_error);
+                    user.setShowMessage(message);
+                } else {
+                    message = errorResponse.getErrorDescription();
+                    user.setShowMessage(message);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
         return user;
     }
 
 
     /**
-     * @param userName
-     * @return
+     * Method to reset user password
+     *
+     * @param userName String userName for password reset
+     * @return ResetPasswordResponse object of password reset
      * @throws IOException
      */
-    public ResetPasswordResponse resetPassword(final String userName) throws IOException {
-
+    public String resetPassword(final String userName) throws IOException {
         Call<ResetPasswordResponse> call = userService().request(userName);
         Response<ResetPasswordResponse> response = call.execute();
-        ResetPasswordResponse resetPassword = null;
-        if (response.isSuccessful()) {
-            resetPassword = response.body();
+        String message = null;
+        if (response.isSuccessful() && response.body() != null) {
+            message = response.body().getMessage();
         } else {
-            Log.e("Error in profile()", String.valueOf(response.code()));
+            Gson gson = new GsonBuilder().create();
+            ErrorResponse errorResponse;
+            try {
+                errorResponse = gson.fromJson(response.errorBody().string(), ErrorResponse.class);
+                message = errorResponse.getShowMessage();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
-        return resetPassword;
+        return message;
     }
-
 }
 

@@ -9,14 +9,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.nerdapplabs.forumapp.ForumApplication;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.UserService;
+import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
 import com.nerdapplabs.forumapp.pojo.User;
+import com.nerdapplabs.forumapp.utility.Duration;
+import com.nerdapplabs.forumapp.utility.MessageSnackbar;
+import com.nerdapplabs.forumapp.utility.ErrorType;
+import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
 
-public class UserProfileActivity extends AppCompatActivity {
+public class UserProfileActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener {
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     private TextView txtUserProfileName, txtUserName,
             txtUserEmail, txtUserDOB;
@@ -42,11 +48,17 @@ public class UserProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-
         super.onResume();
+        // register internet connection status listener
+        ForumApplication.getInstance().setConnectivityListener(this);
     }
 
-    private class UserProfileAsyncTaskRunner extends AsyncTask<Void, Void, Void> {
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        NetworkConnectivity.showNetworkConnectMessage(this, isConnected);
+    }
+
+    private class UserProfileAsyncTaskRunner extends AsyncTask<Void, Void, Boolean> {
         final ProgressDialog progressDialog = new ProgressDialog(UserProfileActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         User user;
@@ -60,27 +72,42 @@ public class UserProfileActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                // Read access token from preferences
-                String accessToken = Preferences.getString("accessToken", null);
-                UserService userService = new UserService();
-                // Get user profile details
-                user = userService.getUser(accessToken);
-            } catch (IOException e) {
-                e.printStackTrace();
+        protected Boolean doInBackground(Void... params) {
+            Boolean isNetworkConnected = false;
+            if (NetworkConnectivity.isConnected()) {
+                try {
+                    isNetworkConnected = true;
+                    // Read access token from preferences
+                    String accessToken = Preferences.getString(OauthConstant.ACCESS_TOKEN, null);
+                    UserService userService = new UserService();
+                    // Get user profile details
+                    user = userService.getUser(UserProfileActivity.this, accessToken);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            return null;
+            return isNetworkConnected;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            txtUserProfileName.setText(user.getFirstName() + " " + user.getLastName());
-            txtUserName.setText(user.getUserName());
-            txtUserEmail.setText(user.getEmailAddress());
-            txtUserDOB.setText(user.getDob());
+        protected void onPostExecute(Boolean isConnected) {
+            super.onPostExecute(isConnected);
             progressDialog.dismiss();
+            if (isConnected) {
+                if (user != null && user.getUserName() != null) {
+                    txtUserProfileName.setText(user.getFirstName() + " " + user.getLastName());
+                    txtUserName.setText(user.getUserName());
+                    txtUserEmail.setText(user.getEmailAddress());
+                    txtUserDOB.setText(user.getDob());
+                    MessageSnackbar.with(UserProfileActivity.this, null).type(ErrorType.SUCCESS).message(user.getShowMessage())
+                            .duration(Duration.SHORT).show();
+                } else {
+                    MessageSnackbar.with(UserProfileActivity.this, null).type(ErrorType.ERROR).message(user.getShowMessage())
+                            .duration(Duration.SHORT).show();
+                }
+            } else {
+                NetworkConnectivity.showNetworkConnectMessage(UserProfileActivity.this, false);
+            }
         }
     }
 

@@ -4,21 +4,26 @@ import com.google.gson.annotations.SerializedName;
 import com.nerdapplabs.forumapp.pojo.AccessToken;
 
 public class SignUpResponse {
-    private String username;
-    private String msg;
 
-    @SerializedName("access_token")
+    @SerializedName("username")
+    private String userName;
+
+    @SerializedName("oauth")
     private AccessToken accessToken;
 
-    public String getUsername() {
-        return username;
-    }
+    @SerializedName("show_message")
+    private String showMessage;
 
-    public String getMsg() {
-        return msg;
+
+    public String getUserName() {
+        return userName;
     }
 
     public AccessToken getAccessToken() {
         return accessToken;
+    }
+
+    public String getShowMessage() {
+        return showMessage;
     }
 }

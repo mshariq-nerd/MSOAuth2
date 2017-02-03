@@ -23,9 +23,9 @@
     <string name="sign_up">SignUp</string>
 
     <string name="internet_connected">Connected to Internet</string>
-    <string name="internet_connection_error">Unable to load content. Check your network connection.</string>
+    <string name="internet_connection_error">Unable to connect. Check your network connection.</string>
     <string name="authenticating">Authenticating...</string>
-    <string name="login_error">Login failed. Please try again.</string>
+    <string name="login_error">Failed with error. Please try again!</string>
 
     <string name="username_validation_error">Enter a valid user name.</string>
     <string name="display_name_validation_error">Enter a valid display name.</string>
