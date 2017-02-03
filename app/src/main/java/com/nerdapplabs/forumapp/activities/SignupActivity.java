@@ -20,9 +20,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nerdapplabs.forumapp.R;
+import com.nerdapplabs.forumapp.oauth.client.SignUpService;
 import com.nerdapplabs.forumapp.oauth.request.SignUpRequest;
 import com.nerdapplabs.forumapp.oauth.response.SignUpResponse;
+import com.nerdapplabs.forumapp.pojo.AccessToken;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
+import com.nerdapplabs.forumapp.utility.Preferences;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.io.IOException;
@@ -191,28 +194,21 @@ public class SignupActivity extends AppCompatActivity implements DatePickerDialo
     /**
      * Inner class for handling Async data loading
      */
-    private class SignupAsyncTaskRunner extends AsyncTask<String, Void, Integer> {
+    private class SignupAsyncTaskRunner extends AsyncTask<String, Void, Void> {
         String firstName = edtFirstName.getText().toString();
         String lastName = edtLastName.getText().toString();
         String email = edtEmail.getText().toString();
         String dob = edtDateOfBirth.getText().toString();
         String userName = edtDisplayName.getText().toString();
         String password = edtPassword.getText().toString();
-        SignUpRequest signUpRequestObj = new SignUpRequest();
+        SignUpRequest signUpRequest = new SignUpRequest();
+        SignUpResponse response;
 
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
                 R.style.AppTheme_Dark_Dialog);
 
         @Override
         protected void onPreExecute() {
-            signUpRequestObj.setFirstname(firstName);
-            signUpRequestObj.setLastname(lastName);
-            signUpRequestObj.setDob(dob);
-            signUpRequestObj.setUsername(userName);
-            signUpRequestObj.setPassword(password);
-            signUpRequestObj.setEmail(email);
-            signUpRequestObj.setEmail_confirmation("0");
-
             super.onPreExecute();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(btnSignUp.getWindowToken(),
@@ -223,30 +219,44 @@ public class SignupActivity extends AppCompatActivity implements DatePickerDialo
         }
 
         @Override
-        protected Integer doInBackground(String... params) {
-            int httpStatusCode = 0;
+        protected Void doInBackground(String... params) {
+            signUpRequest.setFirstName(firstName);
+            signUpRequest.setLastName(lastName);
+            signUpRequest.setDob(dob);
+            signUpRequest.setUserName(userName);
+            signUpRequest.setPassword(password);
+            signUpRequest.setEmailAddress(email);
+            signUpRequest.setEmailConfirmation("0");
             if (NetworkConnectivity.isConnected()) {
                 try {
-                    SignUpResponse signUpResponse = new SignUpResponse();
-                    httpStatusCode = signUpResponse.getSignupUser(SignupActivity.this, signUpRequestObj);
+                    SignUpService signUpResponse = new SignUpService();
+                    response = signUpResponse.registerUser(SignupActivity.this, signUpRequest);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else {
-                //showErrorMessage(false);
             }
-            return httpStatusCode;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Integer statusCode) {
-            super.onPostExecute(statusCode);
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
             progressDialog.dismiss();
-            if (statusCode == 200) {
-                Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                finish();
+
+            if (null != response) {
+                AccessToken token = response.getAccessToken();
+                String userName = response.getUsername();
+                // save access token and user name in Preferences
+                if (null != token)
+                    Preferences.putString("accessToken", token.getAccessToken());
+
+                Preferences.putString("userName", userName);
+                if (!userName.isEmpty()) {
+                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    finish();
+                }
             } else {
                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.signup_layout);
                 Snackbar.make(linearLayout, getString(R.string.login_error), Snackbar.LENGTH_LONG).show();

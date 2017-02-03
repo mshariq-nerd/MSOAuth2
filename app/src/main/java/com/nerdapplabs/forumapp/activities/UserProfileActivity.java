@@ -6,12 +6,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.nerdapplabs.forumapp.R;
-import com.nerdapplabs.forumapp.oauth.response.UserResponse;
+import com.nerdapplabs.forumapp.oauth.client.UserService;
+import com.nerdapplabs.forumapp.pojo.User;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private class UserProfileAsyncTaskRunner extends AsyncTask<Void, Void, Void> {
         final ProgressDialog progressDialog = new ProgressDialog(UserProfileActivity.this,
                 R.style.AppTheme_Dark_Dialog);
-        UserResponse user;
+        User user;
 
         @Override
         protected void onPreExecute() {
@@ -64,10 +64,9 @@ public class UserProfileActivity extends AppCompatActivity {
             try {
                 // Read access token from preferences
                 String accessToken = Preferences.getString("accessToken", null);
-                user = new UserResponse();
+                UserService userService = new UserService();
                 // Get user profile details
-                user = user.getUserProfile(accessToken);
-                Log.d(TAG, user.getFirstname());
+                user = userService.getUser(accessToken);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -77,9 +76,10 @@ public class UserProfileActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            txtUserProfileName.setText(user.getFirstname() + " " + user.getLastname());
-            txtUserName.setText(user.getUsername());
-            txtUserEmail.setText(user.getEmail());
+            txtUserProfileName.setText(user.getFirstName() + " " + user.getLastName());
+            txtUserName.setText(user.getUserName());
+            txtUserEmail.setText(user.getEmailAddress());
+            txtUserDOB.setText(user.getDob());
             progressDialog.dismiss();
         }
     }

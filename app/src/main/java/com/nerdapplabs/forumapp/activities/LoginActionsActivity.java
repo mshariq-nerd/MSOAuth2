@@ -6,8 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.nerdapplabs.forumapp.R;
+import com.nerdapplabs.forumapp.utility.Preferences;
 
 public class LoginActionsActivity extends AppCompatActivity implements View.OnClickListener {
     private Button btnSignup, btnLogin;
@@ -22,7 +24,18 @@ public class LoginActionsActivity extends AppCompatActivity implements View.OnCl
 
         btnSignup.setOnClickListener(this);
         btnLogin.setOnClickListener(this);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String successMessage = getIntent().getStringExtra("EMAIL_SENT_MESSAGE");
+        if (null != successMessage) {
+            // clear preferences
+            Preferences.clear();
+            Toast.makeText(getApplicationContext(), successMessage, Toast.LENGTH_LONG).show();
+            getIntent().removeExtra("EMAIL_SENT_MESSAGE");
+        }
     }
 
     @Override

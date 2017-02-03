@@ -1,19 +1,30 @@
 package com.nerdapplabs.forumapp.activities;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.nerdapplabs.forumapp.R;
-import com.nerdapplabs.forumapp.utility.Preferences;
+import com.nerdapplabs.forumapp.oauth.client.UserService;
+import com.nerdapplabs.forumapp.oauth.response.ResetPasswordResponse;
 
-public class ResetPasswordActivity extends AppCompatActivity implements View.OnClickListener{
+import java.io.IOException;
+
+public class ResetPasswordActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final String TAG = ResetPasswordActivity.class.getSimpleName();
     private EditText edtUserName;
+    private Button btnRestPassword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,7 +34,29 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        edtUserName = (EditText)findViewById(R.id.edt_username);
+        edtUserName = (EditText) findViewById(R.id.edt_username);
+        btnRestPassword = (Button) findViewById(R.id.btn_reset_password);
+        btnRestPassword.setOnClickListener(this);
+    }
+
+
+    /**
+     * Method for client side validation
+     */
+    public boolean validate() {
+        boolean valid = true;
+
+        String email = edtUserName.getText().toString();
+
+        if (email.isEmpty() || email.length() < 4) {
+            edtUserName.setError(getString(R.string.username_validation_error));
+            valid = false;
+        } else {
+            edtUserName.setError(null);
+        }
+
+
+        return valid;
     }
 
     @Override
@@ -40,9 +73,55 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.btn_reset_password){
+        if (view.getId() == R.id.btn_reset_password) {
+            Log.d(TAG, "ResetPassword");
+            if (!validate()) {
+                return;
+            } else {
+                new ResetPasswordAsyncTaskRunner().execute();
+            }
+        }
+    }
 
+    private class ResetPasswordAsyncTaskRunner extends AsyncTask<Void, Void, ResetPasswordResponse> {
+        final ProgressDialog progressDialog = new ProgressDialog(ResetPasswordActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        String userName = edtUserName.getText().toString();
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(btnRestPassword.getWindowToken(),
+                    InputMethodManager.RESULT_UNCHANGED_SHOWN);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage(getString(R.string.authenticating));
+            progressDialog.show();
         }
 
+        @Override
+        protected ResetPasswordResponse doInBackground(Void... params) {
+            ResetPasswordResponse resetPasswordResponse = null;
+            try {
+                UserService userService = new UserService();
+                resetPasswordResponse = userService.resetPassword(userName.trim());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return resetPasswordResponse;
+        }
+
+        @Override
+        protected void onPostExecute(ResetPasswordResponse response) {
+            super.onPostExecute(response);
+            progressDialog.dismiss();
+            if (null != response && !response.getMessage().equals(null) && !response.getMessage().equals("")) {
+                Intent intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
+                intent.putExtra("EMAIL_SENT_MESSAGE", response.getMessage());
+                startActivity(intent);
+                finish();
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            }
+        }
     }
 }

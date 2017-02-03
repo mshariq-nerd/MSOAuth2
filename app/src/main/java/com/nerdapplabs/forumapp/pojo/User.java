@@ -1,15 +1,12 @@
-package com.nerdapplabs.forumapp.oauth.request;
-
+package com.nerdapplabs.forumapp.pojo;
 
 import com.google.gson.annotations.SerializedName;
 
-public class SignUpRequest {
-    @SerializedName("client_id")
-    private String clientId;
+/**
+ * Created by mohd on 27/01/17.
+ */
 
-    @SerializedName("client_secret")
-    private String clientSecret;
-
+public class User {
     @SerializedName("username")
     private String userName;
 
@@ -31,40 +28,67 @@ public class SignUpRequest {
     @SerializedName("email_confirmation")
     private String emailConfirmation;
 
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
+    @SerializedName("scope")
+    private String scope;
 
-    public void setClientSecret(String clientSecret) {
-        this.clientSecret = clientSecret;
+//
+//    public User() {
+//        this.scope = "API";
+//    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    public String getDob() {
+        return dob;
     }
 
     public void setDob(String dob) {
         this.dob = dob;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmailConfirmation() {
+        return emailConfirmation;
     }
 
     public void setEmailConfirmation(String emailConfirmation) {
         this.emailConfirmation = emailConfirmation;
     }
 }
-
