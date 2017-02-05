@@ -13,10 +13,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.nerdapplabs.forumapp.ForumApplication;
 import com.nerdapplabs.forumapp.R;
+import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
+import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener {
 
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
@@ -63,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        // register internet connection status listener
+        ForumApplication.getInstance().setConnectivityListener(this);
+
         // Get logged in UserName
         String userName = Preferences.getString("userName", null);
         if (null != userName) {
@@ -109,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            String accessToken = Preferences.getString("accessToken", null);
+            String accessToken = Preferences.getString(OauthConstant.ACCESS_TOKEN, null);
             if (null != accessToken) {
                 Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
                 startActivity(intent);
@@ -121,5 +127,10 @@ public class MainActivity extends AppCompatActivity {
             mDrawerLayout.openDrawer(GravityCompat.START);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        NetworkConnectivity.showNetworkConnectMessage(MainActivity.this, isConnected);
     }
 }

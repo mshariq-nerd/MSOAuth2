@@ -3,9 +3,15 @@ package com.nerdapplabs.forumapp.oauth.client;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.nerdapplabs.forumapp.R;
+import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
+import com.nerdapplabs.forumapp.oauth.response.ErrorResponse;
 import com.nerdapplabs.forumapp.oauth.service.IOauthService;
 import com.nerdapplabs.forumapp.pojo.AccessToken;
+import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -56,18 +62,30 @@ public class OauthService {
         AccessToken accessTokenRequest = new AccessToken();
         accessTokenRequest.setClientId(properties.getProperty("CLIENT_ID"));
         accessTokenRequest.setClientSecret(properties.getProperty("CLIENT_SECRET"));
-        accessTokenRequest.setGrantType("password");
+        accessTokenRequest.setGrantType(OauthConstant.PASSWORD);
         accessTokenRequest.setUserName(userName);
         accessTokenRequest.setPassword(password);
         Call<AccessToken> call = accessTokenService().getAccessToken(accessTokenRequest);
         Response<AccessToken> response = call.execute();
-        String accessToken = null;
-        if (response.isSuccessful()) {
+        String message = null;
+        if (response.isSuccessful() && response.body() != null) {
             // save access token in Preferences
-            accessToken = response.body().getAccessToken();
+            String accessToken = response.body().getAccessToken();
+            Preferences.putString(OauthConstant.ACCESS_TOKEN, accessToken);
         } else {
-            Log.e("Error Code", String.valueOf(response.code()));
+            Gson gson = new GsonBuilder().create();
+            ErrorResponse errorResponse;
+            try {
+                errorResponse = gson.fromJson(response.errorBody().string(), ErrorResponse.class);
+                if (errorResponse.getCode() == "500") {
+                    message = context.getString(R.string.login_error);
+                } else {
+                    message = errorResponse.getShowMessage();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        return accessToken;
+        return message;
     }
 }

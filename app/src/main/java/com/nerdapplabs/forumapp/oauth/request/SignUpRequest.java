@@ -31,6 +31,15 @@ public class SignUpRequest {
     @SerializedName("email_confirmation")
     private String emailConfirmation;
 
+    @SerializedName("scope")
+    private String scope;
+
+
+    public SignUpRequest() {
+        this.scope = "API";
+    }
+
+
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }

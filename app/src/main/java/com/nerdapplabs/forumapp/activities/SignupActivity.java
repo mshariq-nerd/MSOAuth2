@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,15 +14,15 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.nerdapplabs.forumapp.ForumApplication;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.SignUpService;
 import com.nerdapplabs.forumapp.oauth.request.SignUpRequest;
-import com.nerdapplabs.forumapp.oauth.response.SignUpResponse;
-import com.nerdapplabs.forumapp.pojo.AccessToken;
+import com.nerdapplabs.forumapp.utility.Duration;
+import com.nerdapplabs.forumapp.utility.MessageSnackbar;
+import com.nerdapplabs.forumapp.utility.ErrorType;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -31,7 +30,7 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import java.io.IOException;
 import java.util.Calendar;
 
-public class SignupActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, View.OnClickListener {
+public class SignupActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener, DatePickerDialog.OnDateSetListener, View.OnClickListener {
     private static final String TAG = SignupActivity.class.getSimpleName();
     private Calendar calendar;
     private DatePickerDialog datePickerDialog;
@@ -82,6 +81,12 @@ public class SignupActivity extends AppCompatActivity implements DatePickerDialo
         btnSignUp.setOnClickListener(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // register internet connection status listener
+        ForumApplication.getInstance().setConnectivityListener(this);
+    }
 
     public boolean validate() {
         boolean valid = true;
@@ -172,7 +177,6 @@ public class SignupActivity extends AppCompatActivity implements DatePickerDialo
         }
     }
 
-
     /**
      * Method to login into Application
      */
@@ -186,15 +190,15 @@ public class SignupActivity extends AppCompatActivity implements DatePickerDialo
         }
     }
 
-    public void onLoginFailed() {
-        Toast.makeText(getBaseContext(), getString(R.string.login_error), Toast.LENGTH_LONG).show();
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        NetworkConnectivity.showNetworkConnectMessage(SignupActivity.this, isConnected);
     }
-
 
     /**
      * Inner class for handling Async data loading
      */
-    private class SignupAsyncTaskRunner extends AsyncTask<String, Void, Void> {
+    private class SignupAsyncTaskRunner extends AsyncTask<String, Void, Boolean> {
         String firstName = edtFirstName.getText().toString();
         String lastName = edtLastName.getText().toString();
         String email = edtEmail.getText().toString();
@@ -202,8 +206,7 @@ public class SignupActivity extends AppCompatActivity implements DatePickerDialo
         String userName = edtDisplayName.getText().toString();
         String password = edtPassword.getText().toString();
         SignUpRequest signUpRequest = new SignUpRequest();
-        SignUpResponse response;
-
+        String responseMessage;
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
                 R.style.AppTheme_Dark_Dialog);
 
@@ -219,7 +222,7 @@ public class SignupActivity extends AppCompatActivity implements DatePickerDialo
         }
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected Boolean doInBackground(String... params) {
             signUpRequest.setFirstName(firstName);
             signUpRequest.setLastName(lastName);
             signUpRequest.setDob(dob);
@@ -227,39 +230,38 @@ public class SignupActivity extends AppCompatActivity implements DatePickerDialo
             signUpRequest.setPassword(password);
             signUpRequest.setEmailAddress(email);
             signUpRequest.setEmailConfirmation("0");
+            Boolean isNetworkConnected = false;
             if (NetworkConnectivity.isConnected()) {
                 try {
+                    isNetworkConnected = true;
                     SignUpService signUpResponse = new SignUpService();
-                    response = signUpResponse.registerUser(SignupActivity.this, signUpRequest);
+                    responseMessage = signUpResponse.registerUser(SignupActivity.this, signUpRequest);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            return null;
+            return isNetworkConnected;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Boolean isConnected) {
+            super.onPostExecute(isConnected);
             progressDialog.dismiss();
-
-            if (null != response) {
-                AccessToken token = response.getAccessToken();
-                String userName = response.getUsername();
-                // save access token and user name in Preferences
-                if (null != token)
-                    Preferences.putString("accessToken", token.getAccessToken());
-
-                Preferences.putString("userName", userName);
-                if (!userName.isEmpty()) {
+            if (isConnected) {
+                String loggedInUser = Preferences.getString("userName", null);
+                if (loggedInUser != null) {
                     Intent intent = new Intent(SignupActivity.this, MainActivity.class);
                     startActivity(intent);
                     overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                     finish();
+                } else {
+                    if (!responseMessage.isEmpty()) {
+                        MessageSnackbar.with(SignupActivity.this, null).type(ErrorType.ERROR)
+                                .message(responseMessage).duration(Duration.LONG).show();
+                    }
                 }
             } else {
-                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.signup_layout);
-                Snackbar.make(linearLayout, getString(R.string.login_error), Snackbar.LENGTH_LONG).show();
+                NetworkConnectivity.showNetworkConnectMessage(SignupActivity.this, false);
             }
         }
     }

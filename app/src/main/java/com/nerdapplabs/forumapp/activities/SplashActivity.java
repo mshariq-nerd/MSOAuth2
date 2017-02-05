@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 public class SplashActivity extends AppCompatActivity {
-    private static int TIME_OUT = 2000; // Time to launch Main Activity
+    private static int TIME_OUT = 500; // Time to launch Main Activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

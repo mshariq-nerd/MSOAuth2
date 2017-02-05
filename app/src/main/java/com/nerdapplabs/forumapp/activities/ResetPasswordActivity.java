@@ -14,13 +14,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.nerdapplabs.forumapp.ForumApplication;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.UserService;
-import com.nerdapplabs.forumapp.oauth.response.ResetPasswordResponse;
+import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 
 import java.io.IOException;
 
-public class ResetPasswordActivity extends AppCompatActivity implements View.OnClickListener {
+public class ResetPasswordActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener, View.OnClickListener {
     private static final String TAG = ResetPasswordActivity.class.getSimpleName();
     private EditText edtUserName;
     private Button btnRestPassword;
@@ -39,6 +40,13 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
         btnRestPassword.setOnClickListener(this);
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // register internet connection status listener
+        ForumApplication.getInstance().setConnectivityListener(this);
+    }
 
     /**
      * Method for client side validation
@@ -83,10 +91,16 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    private class ResetPasswordAsyncTaskRunner extends AsyncTask<Void, Void, ResetPasswordResponse> {
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        NetworkConnectivity.showNetworkConnectMessage(this, isConnected);
+    }
+
+    private class ResetPasswordAsyncTaskRunner extends AsyncTask<Void, Void, Boolean> {
         final ProgressDialog progressDialog = new ProgressDialog(ResetPasswordActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         String userName = edtUserName.getText().toString();
+        String responseMessage = "";
 
         @Override
         protected void onPreExecute() {
@@ -100,27 +114,34 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
         }
 
         @Override
-        protected ResetPasswordResponse doInBackground(Void... params) {
-            ResetPasswordResponse resetPasswordResponse = null;
-            try {
-                UserService userService = new UserService();
-                resetPasswordResponse = userService.resetPassword(userName.trim());
-            } catch (IOException e) {
-                e.printStackTrace();
+        protected Boolean doInBackground(Void... params) {
+            Boolean isNetworkConnected = false;
+            if (NetworkConnectivity.isConnected()) {
+                try {
+                    isNetworkConnected = true;
+                    UserService userService = new UserService();
+                    responseMessage = userService.resetPassword(userName.trim());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            return resetPasswordResponse;
+            return isNetworkConnected;
         }
 
         @Override
-        protected void onPostExecute(ResetPasswordResponse response) {
-            super.onPostExecute(response);
+        protected void onPostExecute(Boolean isConnected) {
+            super.onPostExecute(isConnected);
             progressDialog.dismiss();
-            if (null != response && !response.getMessage().equals(null) && !response.getMessage().equals("")) {
-                Intent intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
-                intent.putExtra("EMAIL_SENT_MESSAGE", response.getMessage());
-                startActivity(intent);
-                finish();
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            if (isConnected) {
+                if (null != responseMessage && !responseMessage.equals("")) {
+                    Intent intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
+                    intent.putExtra("EMAIL_SENT_MESSAGE", responseMessage);
+                    startActivity(intent);
+                    finish();
+                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                }
+            } else {
+                NetworkConnectivity.showNetworkConnectMessage(ResetPasswordActivity.this, false);
             }
         }
     }

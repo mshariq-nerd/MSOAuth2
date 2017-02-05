@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by mohd on 27/01/17.
  */
 
-public class ResetPasswordResponse  extends  BaseResponse{
+public class ResetPasswordResponse  {
     @SerializedName("show_message")
     String message;
 
