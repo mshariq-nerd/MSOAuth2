@@ -20,8 +20,8 @@ import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.OauthService;
 import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
 import com.nerdapplabs.forumapp.utility.Duration;
-import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.ErrorType;
+import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
@@ -180,8 +180,6 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
                     overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                     finish();
                 } else {
-                    edtUserName.setText("");
-                    edtPassword.setText("");
                     MessageSnackbar.with(LoginActivity.this, null).type(ErrorType.ERROR).message(responseMessage)
                             .duration(Duration.SHORT).show();
                 }
