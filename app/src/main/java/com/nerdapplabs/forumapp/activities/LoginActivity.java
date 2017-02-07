@@ -188,8 +188,6 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
                     overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                     finish();
                 } else {
-                    edtUserName.setText("");
-                    edtPassword.setText("");
                     MessageSnackbar.with(LoginActivity.this, null).type(ErrorType.ERROR).message(responseMessage)
                             .duration(Duration.SHORT).show();
                 }
