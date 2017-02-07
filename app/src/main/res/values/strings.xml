@@ -3,7 +3,7 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="login">Login</string>
+    <string name="login">Log in</string>
     <string name="forgot_password">Forgot Password?</string>
 
     <string name="fname">First Name</string>
@@ -20,7 +20,7 @@
 
     <string name="reset_password">Reset Password</string>
     <string name="profile_name">Login</string>
-    <string name="sign_up">SignUp</string>
+    <string name="sign_up">Sign Up</string>
 
     <string name="internet_connected">Connected to Internet</string>
     <string name="internet_connection_error">Unable to connect. Check your network connection.</string>

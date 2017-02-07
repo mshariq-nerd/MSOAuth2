@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -38,9 +39,15 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         txtUserEmail = (TextView) findViewById(R.id.txt_user_email);
         txtUserDOB = (TextView) findViewById(R.id.txt_user_dob);
 
+        // Adding Toolbar to Main screen
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        // Adding menu icon to Toolbar
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
+            supportActionBar.setHomeAsUpIndicator(R.drawable.ic_action_back);
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayShowTitleEnabled(false);
         }
 
         new UserProfileAsyncTaskRunner().execute();

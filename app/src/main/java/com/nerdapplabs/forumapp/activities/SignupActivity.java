@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,8 +22,8 @@ import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.SignUpService;
 import com.nerdapplabs.forumapp.oauth.request.SignUpRequest;
 import com.nerdapplabs.forumapp.utility.Duration;
-import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.ErrorType;
+import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -56,10 +57,18 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
 
         txtLoginLink = (TextView) findViewById(R.id.txt_link_login);
         btnSignUp = (Button) findViewById(R.id.btn_signup);
+
+        // Adding Toolbar to Main screen
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        // Adding menu icon to Toolbar
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
+            supportActionBar.setHomeAsUpIndicator(R.drawable.ic_action_back);
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayShowTitleEnabled(false);
         }
+        
         calendar = Calendar.getInstance();
 
         year = calendar.get(Calendar.YEAR);

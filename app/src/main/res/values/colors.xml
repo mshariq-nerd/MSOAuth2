@@ -16,7 +16,9 @@
 
     <color name="dark_grey">#424242</color>
     <color name="medium_grey">#9E9E9E</color>
+    <color name="button_blue">#1dcaff</color>
     <color name="button_grey">#757575</color>
-    <color name="accent">#00B0FF</color>
+    <color name="accent">#4099ff</color>
+
 
 </resources>
