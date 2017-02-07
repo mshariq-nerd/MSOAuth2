@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
         if (supportActionBar != null) {
             supportActionBar.setHomeAsUpIndicator(R.drawable.ic_action_menu);
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayShowTitleEnabled(false);
         }
 
         // Set behavior of Navigation drawer

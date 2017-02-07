@@ -41,6 +41,7 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayShowTitleEnabled(false);
         }
 
         new UserProfileAsyncTaskRunner().execute();

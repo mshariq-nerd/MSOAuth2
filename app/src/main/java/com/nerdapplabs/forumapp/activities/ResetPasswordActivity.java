@@ -33,6 +33,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements NetworkC
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayShowTitleEnabled(false);
         }
 
         edtUserName = (EditText) findViewById(R.id.edt_username);

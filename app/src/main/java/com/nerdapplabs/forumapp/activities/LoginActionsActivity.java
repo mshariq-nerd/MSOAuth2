@@ -2,15 +2,17 @@ package com.nerdapplabs.forumapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.utility.Duration;
-import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.ErrorType;
+import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 public class LoginActionsActivity extends AppCompatActivity implements View.OnClickListener {
@@ -26,6 +28,17 @@ public class LoginActionsActivity extends AppCompatActivity implements View.OnCl
 
         btnSignup.setOnClickListener(this);
         btnLogin.setOnClickListener(this);
+
+        // Adding Toolbar to Main screen
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        // Adding menu icon to Toolbar
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setHomeAsUpIndicator(R.drawable.ic_action_back);
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayShowTitleEnabled(false);
+        }
     }
 
     @Override
@@ -58,6 +71,7 @@ public class LoginActionsActivity extends AppCompatActivity implements View.OnCl
         }
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
