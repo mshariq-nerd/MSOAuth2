@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ForumApp</string>
+    <string name="app_name" translatable="false">ForumApp</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
@@ -17,6 +17,7 @@
     <string name="dob">DOB</string>
     <string name="settings">Profile</string>
     <string name="profile">Profile</string>
+    <string name="change_language">Change Language in Hindi:</string>
 
     <string name="reset_password">Reset Password</string>
     <string name="profile_name">Login</string>

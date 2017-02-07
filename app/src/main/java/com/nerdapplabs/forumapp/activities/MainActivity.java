@@ -1,5 +1,6 @@
 package com.nerdapplabs.forumapp.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.nerdapplabs.forumapp.ForumApplication;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
+import com.nerdapplabs.forumapp.utility.LocaleHelper;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
@@ -61,6 +63,11 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
                         return true;
                     }
                 });
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleHelper.onAttach(base));
     }
 
 

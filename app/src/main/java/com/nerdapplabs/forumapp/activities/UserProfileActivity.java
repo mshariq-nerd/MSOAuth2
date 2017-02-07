@@ -1,13 +1,19 @@
 package com.nerdapplabs.forumapp.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.nerdapplabs.forumapp.ForumApplication;
@@ -16,8 +22,9 @@ import com.nerdapplabs.forumapp.oauth.client.UserService;
 import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
 import com.nerdapplabs.forumapp.pojo.User;
 import com.nerdapplabs.forumapp.utility.Duration;
-import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.ErrorType;
+import com.nerdapplabs.forumapp.utility.LocaleHelper;
+import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
@@ -27,7 +34,8 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     private TextView txtUserProfileName, txtUserName,
             txtUserEmail, txtUserDOB;
-
+    private SwitchCompat btnchangeLanguage;
+    static Boolean isTouched = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +57,31 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
             supportActionBar.setDisplayHomeAsUpEnabled(true);
             supportActionBar.setDisplayShowTitleEnabled(false);
         }
+
+        btnchangeLanguage = (SwitchCompat) findViewById(R.id.btn_locale_change);
+        btnchangeLanguage.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                isTouched = true;
+                return false;
+            }
+        });
+
+        btnchangeLanguage.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isTouched) {
+                    isTouched = false;
+                    if (isChecked) {
+                        Log.e(TAG, "Value of Hindi: " + isChecked);
+                        changeLanguage("hi");
+                    } else {
+                        Log.e(TAG, "Value of US: " + isChecked);
+                        changeLanguage("en-US");
+                    }
+                }
+            }
+        });
 
         new UserProfileAsyncTaskRunner().execute();
     }
@@ -130,4 +163,15 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         return super.onOptionsItemSelected(item);
     }
 
+    private void changeLanguage(String languageCode) {
+
+
+        LocaleHelper.setLocale(this, languageCode);
+        this.recreate();
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleHelper.onAttach(base));
+    }
 }
