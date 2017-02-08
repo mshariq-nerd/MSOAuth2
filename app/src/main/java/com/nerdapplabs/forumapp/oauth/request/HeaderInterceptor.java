@@ -24,7 +24,7 @@ public class HeaderInterceptor implements Interceptor {
         Properties  properties = ReadForumProperties.getPropertiesValues(getContext());;
         Request request = chain.request();
         request = request.newBuilder()
-                .addHeader(OauthConstant.X_ACCEPT_VERSION, properties.getProperty("X_Accept_Version"))
+                .addHeader(OauthConstant.X_ACCEPT_VERSION, properties.getProperty("X_ACCEPT_VERSION"))
                 .build();
         Response response = chain.proceed(request);
         return response;
