@@ -22,7 +22,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.nerdapplabs.forumapp.ForumApplication.getContext;
+import static com.nerdapplabs.forumapp.MSOAuth2.getContext;
 
 public class UserService {
     private IUserService _userService;

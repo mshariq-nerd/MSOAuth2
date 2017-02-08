@@ -14,9 +14,9 @@ import java.io.IOException;
  * Created by mohd on 20/01/17.
  */
 
-public class ForumApplication extends Application {
+public class MSOAuth2 extends Application {
 
-    private static ForumApplication mInstance;
+    private static MSOAuth2 mInstance;
 
     @Override
     public void onCreate() {
@@ -36,7 +36,7 @@ public class ForumApplication extends Application {
         super.attachBaseContext(LocaleHelper.onAttach(base, "en"));
     }
 
-    public static synchronized ForumApplication getInstance() {
+    public static synchronized MSOAuth2 getInstance() {
         return mInstance;
     }
 

@@ -1,8 +1,9 @@
 package com.nerdapplabs.forumapp.utility;
 
 /**
- * Created by mohd on 07/02/17.
+ * Created by Mohd Shariq on 07/02/17.
  */
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,9 +18,6 @@ import java.util.Locale;
  * This class is used to change your application locale and persist this change for the next time
  * that your app is going to be used.
  * <p/>
- * You can also change the locale of your application on the fly by using the setLocale method.
- * <p/>
- *
  */
 public class LocaleHelper {
 

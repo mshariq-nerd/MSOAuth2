@@ -1,7 +1,6 @@
 package com.nerdapplabs.forumapp.oauth.client;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,7 +22,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.nerdapplabs.forumapp.ForumApplication.getContext;
+import static com.nerdapplabs.forumapp.MSOAuth2.getContext;
 
 public class OauthService {
     private IOauthService _oauthService;

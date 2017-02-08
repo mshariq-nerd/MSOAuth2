@@ -1,5 +1,6 @@
 package com.nerdapplabs.forumapp.activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -7,19 +8,17 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.nerdapplabs.forumapp.ForumApplication;
+import com.jaredrummler.materialspinner.MaterialSpinner;
+import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.UserService;
 import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
+import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 import com.nerdapplabs.forumapp.pojo.User;
 import com.nerdapplabs.forumapp.utility.Duration;
 import com.nerdapplabs.forumapp.utility.ErrorType;
@@ -29,13 +28,14 @@ import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
+import java.util.Properties;
 
 public class UserProfileActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener {
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     private TextView txtUserProfileName, txtUserName,
-            txtUserEmail, txtUserDOB;
-    private SwitchCompat btnchangeLanguage;
-    static Boolean isTouched = false;
+            txtUserEmail, txtUserDOB, titleUserName, titleDOB;
+    private MaterialSpinner spinnerChooseLanguage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +46,9 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         txtUserName = (TextView) findViewById(R.id.txt_user_name);
         txtUserEmail = (TextView) findViewById(R.id.txt_user_email);
         txtUserDOB = (TextView) findViewById(R.id.txt_user_dob);
+
+        titleUserName = (TextView) findViewById(R.id.lbl_user_name);
+        titleDOB = (TextView) findViewById(R.id.lbl_user_dob);
 
         // Adding Toolbar to Main screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -58,30 +61,27 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
             supportActionBar.setDisplayShowTitleEnabled(false);
         }
 
-        btnchangeLanguage = (SwitchCompat) findViewById(R.id.btn_locale_change);
-        btnchangeLanguage.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                isTouched = true;
-                return false;
-            }
-        });
 
-        btnchangeLanguage.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isTouched) {
-                    isTouched = false;
-                    if (isChecked) {
-                        Log.e(TAG, "Value of Hindi: " + isChecked);
-                        changeLanguage("hi");
+        try {
+            final Properties properties = ReadForumProperties.getPropertiesValues(this);
+            spinnerChooseLanguage = (MaterialSpinner) findViewById(R.id.spinner);
+            spinnerChooseLanguage.setItems("English", "Hindi");
+            spinnerChooseLanguage.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+
+                @Override
+                public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                    if (position == 0) {
+                        Log.d(TAG, "Clicked " + item + " " + "Position : " + position);
+                        updateViews(properties.getProperty("LANGUAGE_ENGLISH"));
                     } else {
-                        Log.e(TAG, "Value of US: " + isChecked);
-                        changeLanguage("en-US");
+                        Log.d(TAG, "Clicked " + item + " " + "Position : " + position);
+                        updateViews(properties.getProperty("LANGUAGE_HINDI"));
                     }
                 }
-            }
-        });
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         new UserProfileAsyncTaskRunner().execute();
     }
@@ -90,7 +90,7 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
     protected void onResume() {
         super.onResume();
         // register internet connection status listener
-        ForumApplication.getInstance().setConnectivityListener(this);
+        MSOAuth2.getInstance().setConnectivityListener(this);
     }
 
     @Override
@@ -163,11 +163,11 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         return super.onOptionsItemSelected(item);
     }
 
-    private void changeLanguage(String languageCode) {
+    private void updateViews(String languageCode) {
+        Log.d(TAG, "languageCode " + languageCode);
+        Activity activity =(Activity) LocaleHelper.setLocale(this, languageCode);
+        activity.recreate();
 
-
-        LocaleHelper.setLocale(this, languageCode);
-        this.recreate();
     }
 
     @Override

@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.nerdapplabs.forumapp.ForumApplication;
+import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 
 /**
@@ -37,7 +37,7 @@ public class NetworkConnectivity extends BroadcastReceiver {
 
     public static boolean isConnected() {
         ConnectivityManager
-                cm = (ConnectivityManager) ForumApplication.getInstance().getApplicationContext()
+                cm = (ConnectivityManager) MSOAuth2.getInstance().getApplicationContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null

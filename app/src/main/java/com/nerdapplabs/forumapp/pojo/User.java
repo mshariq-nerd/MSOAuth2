@@ -3,7 +3,7 @@ package com.nerdapplabs.forumapp.pojo;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by mohd on 27/01/17.
+ * Created by Mohd Shariq on 27/01/17.
  */
 
 public class User {

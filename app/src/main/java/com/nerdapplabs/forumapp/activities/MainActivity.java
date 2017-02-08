@@ -14,7 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.nerdapplabs.forumapp.ForumApplication;
+import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
 import com.nerdapplabs.forumapp.utility.LocaleHelper;
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
     protected void onResume() {
         super.onResume();
         // register internet connection status listener
-        ForumApplication.getInstance().setConnectivityListener(this);
+        MSOAuth2.getInstance().setConnectivityListener(this);
 
         // Get logged in UserName
         String userName = Preferences.getString("userName", null);
