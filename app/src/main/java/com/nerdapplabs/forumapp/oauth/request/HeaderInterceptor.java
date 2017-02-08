@@ -25,7 +25,7 @@ public class HeaderInterceptor implements Interceptor {
         ;
         Request request = chain.request();
         request = request.newBuilder()
-                .addHeader(OAuthConstant.API_VERSION, properties.getProperty("API_VERSION"))
+                .addHeader(OAuthConstant.X_ACCEPT_VERSION, properties.getProperty("API_VERSION"))
                 .build();
         Response response = chain.proceed(request);
         return response;
