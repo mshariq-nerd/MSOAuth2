@@ -20,6 +20,7 @@ public class OauthConstant {
     public static final String URL_ENCODED_CONTENT = "application/x-www-form-urlencoded";
     public static final String EXPIRES_IN = "expires_in";
     public static final String TOKEN_TYPE = "token_type";
+    public static final String X_ACCEPT_VERSION = "X-Accept-Version ";
     public static final int HTTP_OK = 200;
     public static final int HTTP_FORBIDDEN = 403;
     public static final int HTTP_UNAUTHORIZED = 401;

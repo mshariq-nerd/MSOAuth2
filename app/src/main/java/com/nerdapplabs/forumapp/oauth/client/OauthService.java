@@ -1,13 +1,13 @@
 package com.nerdapplabs.forumapp.oauth.client;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
+import com.nerdapplabs.forumapp.oauth.request.HeaderInterceptor;
 import com.nerdapplabs.forumapp.oauth.response.ErrorResponse;
 import com.nerdapplabs.forumapp.oauth.service.IOauthService;
 import com.nerdapplabs.forumapp.pojo.AccessToken;
@@ -32,8 +32,9 @@ public class OauthService {
         Properties properties = ReadForumProperties.getPropertiesValues(getContext());
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-
+        OkHttpClient.Builder httpClient = new OkHttpClient().newBuilder();
+        httpClient.addNetworkInterceptor(new HeaderInterceptor());
+        OkHttpClient client = httpClient.addInterceptor(interceptor).build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(properties.getProperty("AUTHENTICATION_SERVER_URL"))
                 .addConverterFactory(GsonConverterFactory.create())
