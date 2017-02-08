@@ -5,7 +5,7 @@ import android.app.Activity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nerdapplabs.forumapp.R;
-import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
+import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 import com.nerdapplabs.forumapp.oauth.request.HeaderInterceptor;
 import com.nerdapplabs.forumapp.oauth.response.ErrorResponse;
@@ -52,7 +52,7 @@ public class UserService {
      * @throws IOException
      */
     public User getUser(Activity activity, final String token) throws IOException {
-        Call<User> call = userService().profile(OauthConstant.BEARER + " " + token);
+        Call<User> call = userService().profile(OAuthConstant.BEARER + " " + token);
         Response<User> response = call.execute();
         User user = new User();
         if (response.isSuccessful() && response.body() != null) {

@@ -5,7 +5,7 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nerdapplabs.forumapp.R;
-import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
+import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 import com.nerdapplabs.forumapp.oauth.request.HeaderInterceptor;
 import com.nerdapplabs.forumapp.oauth.response.ErrorResponse;
@@ -63,7 +63,7 @@ public class OauthService {
         AccessToken accessTokenRequest = new AccessToken();
         accessTokenRequest.setClientId(properties.getProperty("CLIENT_ID"));
         accessTokenRequest.setClientSecret(properties.getProperty("CLIENT_SECRET"));
-        accessTokenRequest.setGrantType(OauthConstant.PASSWORD);
+        accessTokenRequest.setGrantType(OAuthConstant.PASSWORD);
         accessTokenRequest.setUserName(userName);
         accessTokenRequest.setPassword(password);
         Call<AccessToken> call = accessTokenService().getAccessToken(accessTokenRequest);
@@ -72,7 +72,7 @@ public class OauthService {
         if (response.isSuccessful() && response.body() != null) {
             // save access token in Preferences
             String accessToken = response.body().getAccessToken();
-            Preferences.putString(OauthConstant.ACCESS_TOKEN, accessToken);
+            Preferences.putString(OAuthConstant.ACCESS_TOKEN, accessToken);
         } else {
             Gson gson = new GsonBuilder().create();
             ErrorResponse errorResponse;

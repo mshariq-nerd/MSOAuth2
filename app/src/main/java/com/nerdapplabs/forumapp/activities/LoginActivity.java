@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.nerdapplabs.forumapp.ForumApplication;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.OauthService;
-import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
+import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.utility.Duration;
 import com.nerdapplabs.forumapp.utility.ErrorType;
 import com.nerdapplabs.forumapp.utility.MessageSnackbar;
@@ -166,7 +166,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
                     // Api call for access token
                     responseMessage = oauthService.getAccessToken(LoginActivity.this, userName, password);
                     // Read access token from preferences
-                    accessToken = Preferences.getString(OauthConstant.ACCESS_TOKEN, null);
+                    accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
                     if (accessToken != null) {
                         Preferences.putString("userName", userName);
                     }

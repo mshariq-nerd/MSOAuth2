@@ -1,6 +1,6 @@
 package com.nerdapplabs.forumapp.oauth.request;
 
-import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
+import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 
 import java.io.IOException;
@@ -21,10 +21,11 @@ public class HeaderInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        Properties  properties = ReadForumProperties.getPropertiesValues(getContext());;
+        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
+        ;
         Request request = chain.request();
         request = request.newBuilder()
-                .addHeader(OauthConstant.X_ACCEPT_VERSION, properties.getProperty("X_ACCEPT_VERSION"))
+                .addHeader(OAuthConstant.API_VERSION, properties.getProperty("API_VERSION"))
                 .build();
         Response response = chain.proceed(request);
         return response;

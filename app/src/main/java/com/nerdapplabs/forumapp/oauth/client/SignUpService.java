@@ -7,7 +7,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nerdapplabs.forumapp.R;
-import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
+import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 import com.nerdapplabs.forumapp.oauth.request.HeaderInterceptor;
 import com.nerdapplabs.forumapp.oauth.request.SignUpRequest;
@@ -19,7 +19,6 @@ import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -68,7 +67,7 @@ public class SignUpService {
             AccessToken token = response.body().getAccessToken();
             String userName = response.body().getUserName();
             // save access token and user name in Preferences
-            Preferences.putString(OauthConstant.ACCESS_TOKEN, token.getAccessToken());
+            Preferences.putString(OAuthConstant.ACCESS_TOKEN, token.getAccessToken());
             Preferences.putString("userName", userName);
             message = response.body().getShowMessage();
         } else {
