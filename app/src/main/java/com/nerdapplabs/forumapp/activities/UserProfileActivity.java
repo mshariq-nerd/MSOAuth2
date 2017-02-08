@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.nerdapplabs.forumapp.ForumApplication;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.UserService;
-import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
+import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.pojo.User;
 import com.nerdapplabs.forumapp.utility.Duration;
 import com.nerdapplabs.forumapp.utility.MessageSnackbar;
@@ -85,7 +85,7 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
                 try {
                     isNetworkConnected = true;
                     // Read access token from preferences
-                    String accessToken = Preferences.getString(OauthConstant.ACCESS_TOKEN, null);
+                    String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
                     UserService userService = new UserService();
                     // Get user profile details
                     user = userService.getUser(UserProfileActivity.this, accessToken);

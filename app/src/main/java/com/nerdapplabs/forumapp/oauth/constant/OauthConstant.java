@@ -1,7 +1,7 @@
 package com.nerdapplabs.forumapp.oauth.constant;
 
 
-public class OauthConstant {
+public class OAuthConstant {
 
     public static final String ACCESS_TOKEN = "access_token";
     public static final String CLIENT_ID = "client_id";
@@ -20,6 +20,7 @@ public class OauthConstant {
     public static final String URL_ENCODED_CONTENT = "application/x-www-form-urlencoded";
     public static final String EXPIRES_IN = "expires_in";
     public static final String TOKEN_TYPE = "token_type";
+    public static final String API_VERSION = "X-Accept-Version ";
     public static final int HTTP_OK = 200;
     public static final int HTTP_FORBIDDEN = 403;
     public static final int HTTP_UNAUTHORIZED = 401;

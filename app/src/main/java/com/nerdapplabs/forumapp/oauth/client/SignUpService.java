@@ -7,8 +7,9 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nerdapplabs.forumapp.R;
-import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
+import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
+import com.nerdapplabs.forumapp.oauth.request.HeaderInterceptor;
 import com.nerdapplabs.forumapp.oauth.request.SignUpRequest;
 import com.nerdapplabs.forumapp.oauth.response.ErrorResponse;
 import com.nerdapplabs.forumapp.oauth.response.SignUpResponse;
@@ -18,7 +19,6 @@ import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -35,8 +35,9 @@ public class SignUpService {
     public ISignUpService signUpService() throws IOException {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(5, TimeUnit.MINUTES)
-                .readTimeout(5, TimeUnit.MINUTES).addInterceptor(interceptor).build();
+        OkHttpClient.Builder httpClient = new OkHttpClient().newBuilder();
+        httpClient.addNetworkInterceptor(new HeaderInterceptor());
+        OkHttpClient client = httpClient.addInterceptor(interceptor).build();
         Properties properties = ReadForumProperties.getPropertiesValues(getContext());
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(properties.getProperty("AUTHENTICATION_SERVER_URL"))
@@ -66,7 +67,7 @@ public class SignUpService {
             AccessToken token = response.body().getAccessToken();
             String userName = response.body().getUserName();
             // save access token and user name in Preferences
-            Preferences.putString(OauthConstant.ACCESS_TOKEN, token.getAccessToken());
+            Preferences.putString(OAuthConstant.ACCESS_TOKEN, token.getAccessToken());
             Preferences.putString("userName", userName);
             message = response.body().getShowMessage();
         } else {
