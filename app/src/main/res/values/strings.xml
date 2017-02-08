@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">ForumApp</string>
+    <string name="app_name">MSOAuth2</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
@@ -18,7 +18,7 @@
     <string name="settings">Profile</string>
     <string name="profile">Profile</string>
     <string name="change_language">Change Language in Hindi:</string>
-
+    <string name="login_option">Profile</string>
     <string name="reset_password">Reset Password</string>
     <string name="profile_name">Login</string>
     <string name="sign_up">Sign Up</string>

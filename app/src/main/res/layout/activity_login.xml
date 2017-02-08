@@ -1,80 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
         <!-- Add Actionbar header-->
         <include layout="@layout/actionbar_header_toolbar" />
-    </LinearLayout>
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:fitsSystemWindows="true">
-
-        <LinearLayout
-            android:id="@+id/login_layout"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:paddingTop="56dp">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
 
-            <!--  Email Label -->
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
+                android:id="@+id/login_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:paddingTop="56dp">
 
-                <EditText
-                    android:id="@+id/edt_user_name"
+                <!--  Email Label -->
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/user_name"
-                    android:inputType="textPersonName" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp">
 
-            <!--  Password Label -->
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
+                    <EditText
+                        android:id="@+id/edt_user_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/user_name"
+                        android:inputType="textPersonName" />
+                </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/edt_password"
+                <!--  Password Label -->
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/password"
-                    android:inputType="textPassword" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp">
 
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/btn_login"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:padding="12dp"
-                android:background="@drawable/button_background"
-                android:textColor="@color/white"
-                android:text="@string/login" />
+                    <EditText
+                        android:id="@+id/edt_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/password"
+                        android:inputType="textPassword" />
+                </android.support.design.widget.TextInputLayout>
 
-            <TextView
-                android:id="@+id/txt_link_forgot_password"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:text="@string/forgot_password"
-                android:textSize="16dip" />
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_login"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/button_background"
+                    android:padding="12dp"
+                    android:text="@string/login"
+                    android:textColor="@color/white" />
 
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+                <TextView
+                    android:id="@+id/txt_link_forgot_password"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:text="@string/forgot_password"
+                    android:textSize="16dip" />
+
+            </LinearLayout>
+        </ScrollView>
+    </android.support.design.widget.CoordinatorLayout>
+</android.support.v4.widget.DrawerLayout>
