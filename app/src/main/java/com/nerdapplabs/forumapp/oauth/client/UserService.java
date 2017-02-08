@@ -14,6 +14,8 @@ import com.nerdapplabs.forumapp.oauth.service.IUserService;
 import com.nerdapplabs.forumapp.pojo.User;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import okhttp3.OkHttpClient;
@@ -52,7 +54,14 @@ public class UserService {
      * @throws IOException
      */
     public User getUser(Activity activity, final String token) throws IOException {
-        Call<User> call = userService().profile(OAuthConstant.BEARER + " " + token);
+
+        // TODO: Need to check how to pass multiple header values in HeaderInterceptor.java class
+        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
+        Map<String, String> headerMap = new HashMap<>();
+        headerMap.put(OAuthConstant.AUTHORIZATION, OAuthConstant.BEARER + " " + token);
+        headerMap.put(OAuthConstant.X_ACCEPT_VERSION, properties.getProperty("API_VERSION"));
+
+        Call<User> call = userService().profile(headerMap);
         Response<User> response = call.execute();
         User user = new User();
         if (response.isSuccessful() && response.body() != null) {
