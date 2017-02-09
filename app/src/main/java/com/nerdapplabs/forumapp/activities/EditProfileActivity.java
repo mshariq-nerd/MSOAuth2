@@ -232,7 +232,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
                     // Read access token from preferences
                     String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
                     UserService userService = new UserService();
-                    baseResponse = userService.updateProfile(EditProfileActivity.this, user, accessToken);
+                    baseResponse = userService.updateProfile(user, accessToken);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -246,9 +246,12 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
             progressDialog.dismiss();
             if (isConnected) {
                 if (baseResponse != null) {
-                    if (baseResponse.getCode() == 200 || baseResponse.getCode() == 201) {
+                    if (baseResponse.getCode() == OAuthConstant.HTTP_OK || baseResponse.getCode() == OAuthConstant.HTTP_CREATED) {
                         MessageSnackbar.with(EditProfileActivity.this, null).type(ErrorType.SUCCESS)
                                 .message(baseResponse.getShowMessage()).duration(Duration.LONG).show();
+                    } else if (baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
+                        MessageSnackbar.with(EditProfileActivity.this, null).type(ErrorType.ERROR)
+                                .message(getString(R.string.server_error)).duration(Duration.LONG).show();
                     } else {
                         MessageSnackbar.with(EditProfileActivity.this, null).type(ErrorType.ERROR)
                                 .message(baseResponse.getShowMessage()).duration(Duration.LONG).show();

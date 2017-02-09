@@ -78,8 +78,8 @@ public class OauthService {
             BaseResponse baseResponse;
             try {
                 baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
-                if (baseResponse.getCode() == 500) {
-                    message = context.getString(R.string.login_error);
+                if (baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
+                    message = context.getString(R.string.server_error);
                 } else {
                     message = baseResponse.getShowMessage();
                 }

@@ -2,7 +2,6 @@ package com.nerdapplabs.forumapp.oauth.client;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -75,8 +74,8 @@ public class SignUpService {
             BaseResponse baseResponse;
             try {
                 baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
-                if (baseResponse.getCode() == 500) {
-                    message = context.getString(R.string.login_error);
+                if (baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
+                    message = context.getString(R.string.server_error);
                 } else {
                     message = baseResponse.getShowMessage();
                 }

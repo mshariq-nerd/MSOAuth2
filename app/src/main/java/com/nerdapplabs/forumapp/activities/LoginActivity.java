@@ -142,7 +142,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         String accessToken = null;
-        String responseMessage = getString(R.string.login_error);
+        String responseMessage = getString(R.string.server_error);
 
         @Override
         protected void onPreExecute() {

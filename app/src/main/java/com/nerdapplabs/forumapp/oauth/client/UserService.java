@@ -72,8 +72,8 @@ public class UserService {
             String message;
             try {
                 baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
-                if (null != baseResponse && baseResponse.getCode() == 500) {
-                    message = activity.getString(R.string.login_error);
+                if (null != baseResponse && baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
+                    message = activity.getString(R.string.server_error);
                     user.setShowMessage(message);
                 } else {
                     message = baseResponse.getErrorDescription();
@@ -88,20 +88,20 @@ public class UserService {
 
 
     /**
-     * To get logged in user profile
+     * Method to update user profile
      *
-     * @param token
-     * @return
+     * @param user  User  object to update
+     * @param token String AccessToken for network request
+     * @return BaseResponse
      * @throws IOException
      */
-    public BaseResponse updateProfile(Activity activity, User user, String token) throws IOException {
+    public BaseResponse updateProfile(User user, String token) throws IOException {
 
         // TODO: Need to check how to pass multiple header values in HeaderInterceptor.java class
         Properties properties = ReadForumProperties.getPropertiesValues(getContext());
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put(OAuthConstant.AUTHORIZATION, OAuthConstant.BEARER + " " + token);
         headerMap.put(OAuthConstant.X_ACCEPT_VERSION, properties.getProperty("API_VERSION"));
-
 
         Call<BaseResponse> call = userService().editProfile(headerMap, user);
         Response<BaseResponse> response = call.execute();
@@ -112,9 +112,6 @@ public class UserService {
         } else {
             Gson gson = new GsonBuilder().create();
             baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
-            if (baseResponse.getCode() == 500) {
-                baseResponse.setShowMessage(activity.getString(R.string.login_error));
-            }
         }
         return baseResponse;
     }
