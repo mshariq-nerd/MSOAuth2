@@ -1,5 +1,6 @@
 package com.nerdapplabs.forumapp.oauth.service;
 
+import com.nerdapplabs.forumapp.oauth.request.ChangePasswordRequest;
 import com.nerdapplabs.forumapp.oauth.response.BaseResponse;
 import com.nerdapplabs.forumapp.oauth.response.ResetPasswordResponse;
 import com.nerdapplabs.forumapp.pojo.User;
@@ -23,6 +24,9 @@ public interface IUserService {
     Call<BaseResponse> editProfile(@HeaderMap Map<String, String> headers, @Body User user);
 
 
-    @GET("user/resetting/request/email")
-    Call<ResetPasswordResponse> request(@Query("username") String username);
+    @GET("user/resetting/requestNewPassword/email")
+    Call<ResetPasswordResponse> requestNewPassword(@Query("username") String username);
+
+    @POST("user/change/password")
+    Call<BaseResponse> changeOldPassword(@HeaderMap Map<String, String> headers, @Body ChangePasswordRequest user);
 }

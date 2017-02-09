@@ -7,11 +7,13 @@ import com.google.gson.GsonBuilder;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
+import com.nerdapplabs.forumapp.oauth.request.ChangePasswordRequest;
 import com.nerdapplabs.forumapp.oauth.request.HeaderInterceptor;
 import com.nerdapplabs.forumapp.oauth.response.BaseResponse;
 import com.nerdapplabs.forumapp.oauth.response.ResetPasswordResponse;
 import com.nerdapplabs.forumapp.oauth.service.IUserService;
 import com.nerdapplabs.forumapp.pojo.User;
+import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -91,7 +93,7 @@ public class UserService {
      * Method to update user profile
      *
      * @param user  User  object to update
-     * @param token String AccessToken for network request
+     * @param token String AccessToken for network requestNewPassword
      * @return BaseResponse
      * @throws IOException
      */
@@ -118,15 +120,14 @@ public class UserService {
 
 
     /**
-     * Method to reset user password
+     * Method to send reset user password email
      *
      * @param userName String userName for password reset
      * @return ResetPasswordResponse object of password reset
      * @throws IOException
      */
-
     public String resetPassword(final String userName) throws IOException {
-        Call<ResetPasswordResponse> call = userService().request(userName);
+        Call<ResetPasswordResponse> call = userService().requestNewPassword(userName);
         Response<ResetPasswordResponse> response = call.execute();
         String message = null;
         if (response.isSuccessful() && response.body() != null) {
@@ -142,6 +143,27 @@ public class UserService {
             }
         }
         return message;
+    }
+
+
+    public BaseResponse changeOldPassword(ChangePasswordRequest changePasswordRequest) throws IOException {
+        // TODO: Need to check how to pass multiple header values in HeaderInterceptor.java class
+        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
+        Map<String, String> headerMap = new HashMap<>();
+        headerMap.put(OAuthConstant.AUTHORIZATION, OAuthConstant.BEARER + " " + Preferences.getString(OAuthConstant.ACCESS_TOKEN, null));
+        headerMap.put(OAuthConstant.X_ACCEPT_VERSION, properties.getProperty("API_VERSION"));
+
+        Call<BaseResponse> call = userService().changeOldPassword(headerMap, changePasswordRequest);
+        Response<BaseResponse> response = call.execute();
+        BaseResponse baseResponse = new BaseResponse();
+        if (response.isSuccessful() && response.body() != null) {
+            baseResponse.setShowMessage(response.body().getShowMessage());
+            baseResponse.setCode(response.body().getCode());
+        } else {
+            Gson gson = new GsonBuilder().create();
+            baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
+        }
+        return baseResponse;
     }
 }
 

@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -57,7 +59,16 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         txtForgotPasswordLink = (TextView) findViewById(R.id.txt_link_forgot_password);
         btnLogin.setOnClickListener(this);
         txtForgotPasswordLink.setOnClickListener(this);
+
+        Intent intent = getIntent();
+        if (intent.getStringExtra("success_msg") != null) {
+            MessageSnackbar.with(LoginActivity.this, null).type(ErrorType.SUCCESS).message(intent.getStringExtra("success_msg"))
+                    .duration(Duration.SHORT).show();
+            intent.removeExtra("success_msg");
+        }
     }
+
+
 
 
     @Override
@@ -147,9 +158,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(btnLogin.getWindowToken(),
-                    InputMethodManager.RESULT_UNCHANGED_SHOWN);
+            hideSoftKeyboard();
             progressDialog.setIndeterminate(true);
             progressDialog.setMessage(getString(R.string.authenticating));
             progressDialog.show();
@@ -208,4 +217,14 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         }
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * Hides the soft keyboard
+     */
+    public void hideSoftKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(btnLogin.getWindowToken(),
+                InputMethodManager.RESULT_UNCHANGED_SHOWN);
+    }
+
 }
