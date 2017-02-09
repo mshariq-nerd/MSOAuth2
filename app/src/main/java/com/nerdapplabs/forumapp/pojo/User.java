@@ -2,11 +2,13 @@ package com.nerdapplabs.forumapp.pojo;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by mohd on 27/01/17.
  */
 
-public class User {
+public class User implements Serializable {
     @SerializedName("username")
     private String userName;
 

@@ -8,7 +8,7 @@ import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 import com.nerdapplabs.forumapp.oauth.request.HeaderInterceptor;
-import com.nerdapplabs.forumapp.oauth.response.ErrorResponse;
+import com.nerdapplabs.forumapp.oauth.response.BaseResponse;
 import com.nerdapplabs.forumapp.oauth.response.ResetPasswordResponse;
 import com.nerdapplabs.forumapp.oauth.service.IUserService;
 import com.nerdapplabs.forumapp.pojo.User;
@@ -68,15 +68,15 @@ public class UserService {
             user = response.body();
         } else {
             Gson gson = new GsonBuilder().create();
-            ErrorResponse errorResponse;
+            BaseResponse baseResponse;
             String message;
             try {
-                errorResponse = gson.fromJson(response.errorBody().string(), ErrorResponse.class);
-                if (null != errorResponse && errorResponse.getCode() == "500") {
+                baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
+                if (null != baseResponse && baseResponse.getCode() == 500) {
                     message = activity.getString(R.string.login_error);
                     user.setShowMessage(message);
                 } else {
-                    message = errorResponse.getErrorDescription();
+                    message = baseResponse.getErrorDescription();
                     user.setShowMessage(message);
                 }
             } catch (IOException e) {
@@ -88,12 +88,46 @@ public class UserService {
 
 
     /**
+     * To get logged in user profile
+     *
+     * @param token
+     * @return
+     * @throws IOException
+     */
+    public BaseResponse updateProfile(Activity activity, User user, String token) throws IOException {
+
+        // TODO: Need to check how to pass multiple header values in HeaderInterceptor.java class
+        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
+        Map<String, String> headerMap = new HashMap<>();
+        headerMap.put(OAuthConstant.AUTHORIZATION, OAuthConstant.BEARER + " " + token);
+        headerMap.put(OAuthConstant.X_ACCEPT_VERSION, properties.getProperty("API_VERSION"));
+
+
+        Call<BaseResponse> call = userService().editProfile(headerMap, user);
+        Response<BaseResponse> response = call.execute();
+        BaseResponse baseResponse = new BaseResponse();
+        if (response.isSuccessful() && response.body() != null) {
+            baseResponse.setShowMessage(response.body().getShowMessage());
+            baseResponse.setCode(response.body().getCode());
+        } else {
+            Gson gson = new GsonBuilder().create();
+            baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
+            if (baseResponse.getCode() == 500) {
+                baseResponse.setShowMessage(activity.getString(R.string.login_error));
+            }
+        }
+        return baseResponse;
+    }
+
+
+    /**
      * Method to reset user password
      *
      * @param userName String userName for password reset
      * @return ResetPasswordResponse object of password reset
      * @throws IOException
      */
+
     public String resetPassword(final String userName) throws IOException {
         Call<ResetPasswordResponse> call = userService().request(userName);
         Response<ResetPasswordResponse> response = call.execute();
@@ -102,10 +136,10 @@ public class UserService {
             message = response.body().getMessage();
         } else {
             Gson gson = new GsonBuilder().create();
-            ErrorResponse errorResponse;
+            BaseResponse baseResponse;
             try {
-                errorResponse = gson.fromJson(response.errorBody().string(), ErrorResponse.class);
-                message = errorResponse.getShowMessage();
+                baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
+                message = baseResponse.getShowMessage();
             } catch (IOException e) {
                 e.printStackTrace();
             }

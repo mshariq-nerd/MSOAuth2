@@ -11,7 +11,7 @@ import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 import com.nerdapplabs.forumapp.oauth.request.HeaderInterceptor;
 import com.nerdapplabs.forumapp.oauth.request.SignUpRequest;
-import com.nerdapplabs.forumapp.oauth.response.ErrorResponse;
+import com.nerdapplabs.forumapp.oauth.response.BaseResponse;
 import com.nerdapplabs.forumapp.oauth.response.SignUpResponse;
 import com.nerdapplabs.forumapp.oauth.service.ISignUpService;
 import com.nerdapplabs.forumapp.pojo.AccessToken;
@@ -72,14 +72,13 @@ public class SignUpService {
             message = response.body().getShowMessage();
         } else {
             Gson gson = new GsonBuilder().create();
-            ErrorResponse errorResponse;
+            BaseResponse baseResponse;
             try {
-                errorResponse = gson.fromJson(response.errorBody().string(), ErrorResponse.class);
-                Log.e("Error :", errorResponse.getShowMessage());
-                if (errorResponse.getCode() == "500") {
+                baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
+                if (baseResponse.getCode() == 500) {
                     message = context.getString(R.string.login_error);
                 } else {
-                    message = errorResponse.getShowMessage();
+                    message = baseResponse.getShowMessage();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
