@@ -44,6 +44,9 @@
     <string name="logout">Sign out</string>
     <string name="save">Save</string>
     <string name="logout_message">Logout successfully</string>
+    <string name="logout_alert_message">Do you want to logout?</string>
     <string name="session_expired_message">Session expired. Please login again</string>
+    <string name="alert_ok">Ok</string>
+    <string name="alert_cancel">Cancel</string>
 
 </resources>
