@@ -107,6 +107,23 @@
                     android:layout_marginLeft="50dp"
                     android:layout_toRightOf="@+id/lbl_user_dob" />
 
+                <TextView
+                    android:id="@+id/lbl_language"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/lbl_user_dob"
+                    android:layout_margin="20dp"
+                    android:elevation="4dp"
+                    android:text="@string/change_language" />
+
+                <com.jaredrummler.materialspinner.MaterialSpinner
+                    android:id="@+id/spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/lbl_language"
+                    android:layout_below="@+id/txt_user_dob"
+                    android:layout_toRightOf="@+id/lbl_language" />
+
             </RelativeLayout>
 
             <LinearLayout
