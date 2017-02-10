@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.OauthService;
-import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
+import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.utility.Duration;
 import com.nerdapplabs.forumapp.utility.ErrorType;
 import com.nerdapplabs.forumapp.utility.MessageSnackbar;
@@ -57,6 +57,15 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         txtForgotPasswordLink = (TextView) findViewById(R.id.txt_link_forgot_password);
         btnLogin.setOnClickListener(this);
         txtForgotPasswordLink.setOnClickListener(this);
+
+        Intent intent = getIntent();
+        if (null != intent.getStringExtra("success_msg")) {
+            MessageSnackbar.showMessage(LoginActivity.this, intent.getStringExtra("success_msg"), ErrorType.SUCCESS);
+            intent.removeExtra("success_msg");
+        } else if (null != intent.getStringExtra("failure_msg")) {
+            MessageSnackbar.showMessage(LoginActivity.this, intent.getStringExtra("failure_msg"), ErrorType.ERROR);
+            intent.removeExtra("failure_msg");
+        }
     }
 
 
@@ -142,14 +151,12 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         String accessToken = null;
-        String responseMessage = getString(R.string.login_error);
+        String responseMessage = getString(R.string.server_error);
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(btnLogin.getWindowToken(),
-                    InputMethodManager.RESULT_UNCHANGED_SHOWN);
+            hideSoftKeyboard();
             progressDialog.setIndeterminate(true);
             progressDialog.setMessage(getString(R.string.authenticating));
             progressDialog.show();
@@ -166,7 +173,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
                     // Api call for access token
                     responseMessage = oauthService.getAccessToken(LoginActivity.this, userName, password);
                     // Read access token from preferences
-                    accessToken = Preferences.getString(OauthConstant.ACCESS_TOKEN, null);
+                    accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
                     if (accessToken != null) {
                         Preferences.putString("userName", userName);
                     }
@@ -188,8 +195,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
                     overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                     finish();
                 } else {
-                    MessageSnackbar.with(LoginActivity.this, null).type(ErrorType.ERROR).message(responseMessage)
-                            .duration(Duration.SHORT).show();
+                    MessageSnackbar.showMessage(LoginActivity.this, responseMessage, ErrorType.ERROR);
                 }
             } else {
                 NetworkConnectivity.showNetworkConnectMessage(LoginActivity.this, false);
@@ -207,5 +213,14 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
             overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Hides the soft keyboard
+     */
+    public void hideSoftKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(btnLogin.getWindowToken(),
+                InputMethodManager.RESULT_UNCHANGED_SHOWN);
     }
 }

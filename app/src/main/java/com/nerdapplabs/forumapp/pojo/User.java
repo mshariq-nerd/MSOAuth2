@@ -2,11 +2,17 @@ package com.nerdapplabs.forumapp.pojo;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by Mohd Shariq on 27/01/17.
  */
 
-public class User {
+public class User implements Serializable {
+
+    @SerializedName("code")
+    private int code;
+
     @SerializedName("username")
     private String userName;
 
@@ -94,5 +100,13 @@ public class User {
 
     public void setShowMessage(String showMessage) {
         this.showMessage = showMessage;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 }

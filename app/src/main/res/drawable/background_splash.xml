@@ -4,13 +4,6 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/ic_launcher" />
-
-    </item>
-    <item android:top="100dp">
-
-        <bitmap
-            android:gravity="center"
             android:src="@drawable/ic_msoauth2" />
     </item>
 </layer-list>

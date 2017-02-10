@@ -16,11 +16,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.nerdapplabs.forumapp.MSOAuth2;
+import com.nerdapplabs.forumapp.ForumApplication;
 import com.nerdapplabs.forumapp.R;
-import com.nerdapplabs.forumapp.oauth.client.SignUpService;
-import com.nerdapplabs.forumapp.oauth.request.SignUpRequest;
-import com.nerdapplabs.forumapp.utility.Duration;
+import com.nerdapplabs.forumapp.oauth.client.UserService;
+import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
+import com.nerdapplabs.forumapp.oauth.response.BaseResponse;
+import com.nerdapplabs.forumapp.pojo.User;
 import com.nerdapplabs.forumapp.utility.ErrorType;
 import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
@@ -30,32 +31,34 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import java.io.IOException;
 import java.util.Calendar;
 
-public class SignupActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener,
+public class EditProfileActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener,
         DatePickerDialog.OnDateSetListener, View.OnClickListener {
-    private static final String TAG = SignupActivity.class.getSimpleName();
-    private Calendar calendar;
-    private DatePickerDialog datePickerDialog;
-    private EditText edtFirstName, edtLastName, edtEmail, edtDateOfBirth,
-            edtDisplayName, edtPassword, edtConfirmPassword;
-    private Button btnSignUp;
+    private static final String TAG = EditProfileActivity.class.getSimpleName();
+    private EditText edtUserName, edtFirstName,
+            edtLastName, edtEmail, edtDateOfBirth;
+
+    private Button btnSave;
+
 
     private int year, month, day;
+    private DatePickerDialog datePickerDialog;
+
+    User userObj = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
-
-        edtFirstName = (EditText) findViewById(R.id.edt_fname);
-        edtLastName = (EditText) findViewById(R.id.edt_lname);
+        setContentView(R.layout.activity_edit_profile);
+        edtFirstName = (EditText) findViewById(R.id.edt_first_name);
+        edtLastName = (EditText) findViewById(R.id.edt_last_name);
         edtEmail = (EditText) findViewById(R.id.edt_user_email);
         edtDateOfBirth = (EditText) findViewById(R.id.edt_dob);
-        edtDisplayName = (EditText) findViewById(R.id.edt_display_name);
-        edtPassword = (EditText) findViewById(R.id.edt_password);
-        edtConfirmPassword = (EditText) findViewById(R.id.edt_confirm_password);
-        btnSignUp = (Button) findViewById(R.id.btn_signup);
+        edtUserName = (EditText) findViewById(R.id.edt_user_name);
+        btnSave = (Button) findViewById(R.id.btn_save);
 
-        // Adding Toolbar to Main screen
+        btnSave.setOnClickListener(this);
+
+        // Adding Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Adding menu icon to Toolbar
@@ -66,8 +69,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
             supportActionBar.setDisplayShowTitleEnabled(false);
         }
 
-        calendar = Calendar.getInstance();
-
+        Calendar calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -75,23 +77,63 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
         edtDateOfBirth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                datePickerDialog = DatePickerDialog.newInstance(SignupActivity.this, year, month, day);
+                datePickerDialog = DatePickerDialog.newInstance(EditProfileActivity.this, year, month, day);
                 datePickerDialog.setThemeDark(false);
                 datePickerDialog.showYearPickerFirst(false);
-                datePickerDialog.setAccentColor(ContextCompat.getColor(SignupActivity.this, R.color.white));
+                datePickerDialog.setAccentColor(ContextCompat.getColor(EditProfileActivity.this, R.color.white));
                 datePickerDialog.setTitle(getString(R.string.date_picker_title));
                 datePickerDialog.show(getFragmentManager(), "DatePickerDialog");
             }
         });
 
-        btnSignUp.setOnClickListener(this);
+        // To retrieve object in second Activity
+        Intent intent = getIntent();
+        userObj = (User) intent.getSerializableExtra("User");
+        Log.i(TAG, userObj.getUserName());
+
+        // Set User information to EditFields to update
+        if (userObj == null) {
+            throw new NullPointerException("User must not be null");
+        } else {
+            if (userObj.getUserName() != null) {
+                edtUserName.setText(userObj.getUserName());
+            }
+            if (userObj.getFirstName() != null) {
+                edtFirstName.setText(userObj.getFirstName());
+            }
+            if (userObj.getLastName() != null) {
+                edtLastName.setText(userObj.getLastName());
+            }
+            if (userObj.getDob() != null) {
+                // change date format
+                String dob = userObj.getDob().replace("-", "/");
+                Log.d(TAG, dob);
+                edtDateOfBirth.setText(dob);
+            }
+            if (userObj.getEmailAddress() != null) {
+                edtEmail.setText(userObj.getEmailAddress());
+            }
+        }
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         // register internet connection status listener
-        MSOAuth2.getInstance().setConnectivityListener(this);
+        ForumApplication.getInstance().setConnectivityListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.btn_save) {
+            if (!validate()) {
+                return;
+            } else {
+                EditProfileAsyncTaskRunner editProfileAsyncTaskRunner = new EditProfileAsyncTaskRunner();
+                editProfileAsyncTaskRunner.execute();
+            }
+        }
     }
 
     public boolean validate() {
@@ -101,9 +143,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
         String lastName = edtLastName.getText().toString();
         String email = edtEmail.getText().toString();
         String dob = edtDateOfBirth.getText().toString();
-        String displayName = edtDisplayName.getText().toString();
-        String password = edtPassword.getText().toString();
-        String confirmPassword = edtConfirmPassword.getText().toString();
+        String userName = edtUserName.getText().toString();
 
         if (firstName.isEmpty() || firstName.length() < 4) {
             edtFirstName.setError(getString(R.string.username_validation_error));
@@ -133,41 +173,19 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
             edtDateOfBirth.setError(null);
         }
 
-        if (displayName.isEmpty() || displayName.length() < 4) {
-            edtDisplayName.setError(getString(R.string.display_name_validation_error));
+        if (userName.isEmpty() || userName.length() < 4) {
+            edtUserName.setError(getString(R.string.display_name_validation_error));
             valid = false;
         } else {
-            edtDisplayName.setError(null);
-        }
-
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            edtPassword.setError(getString(R.string.password_validation_error));
-            valid = false;
-        } else {
-            edtPassword.setError(null);
-        }
-
-        if (confirmPassword.isEmpty() || confirmPassword.length() < 4 || confirmPassword.length() > 10) {
-            edtConfirmPassword.setError(getString(R.string.password_validation_error));
-            valid = false;
-        } else {
-            if (!confirmPassword.equals(password)) {
-                edtConfirmPassword.setError(getString(R.string.password_match_error));
-                valid = false;
-            } else {
-                edtConfirmPassword.setError(null);
-            }
+            edtUserName.setError(null);
         }
 
         return valid;
     }
 
-
-    public void onLoginLinkClick(View v) {
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        startActivityForResult(intent, 0);
-        finish();
-        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        NetworkConnectivity.showNetworkConnectMessage(EditProfileActivity.this, isConnected);
     }
 
     @Override
@@ -176,51 +194,25 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
         edtDateOfBirth.setText(date);
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.btn_signup) {
-            signUp();
-        }
-    }
-
-    /**
-     * Method to login into Application
-     */
-    public void signUp() {
-        Log.d(TAG, "Signup");
-        if (!validate()) {
-            return;
-        } else {
-            SignupAsyncTaskRunner signupAsyncTaskRunner = new SignupAsyncTaskRunner();
-            signupAsyncTaskRunner.execute();
-        }
-    }
-
-    @Override
-    public void onNetworkConnectionChanged(boolean isConnected) {
-        NetworkConnectivity.showNetworkConnectMessage(SignupActivity.this, isConnected);
-    }
-
     /**
      * Inner class for handling Async data loading
      */
-    private class SignupAsyncTaskRunner extends AsyncTask<String, Void, Boolean> {
+    private class EditProfileAsyncTaskRunner extends AsyncTask<String, Void, Boolean> {
         String firstName = edtFirstName.getText().toString();
         String lastName = edtLastName.getText().toString();
         String email = edtEmail.getText().toString();
         String dob = edtDateOfBirth.getText().toString();
-        String userName = edtDisplayName.getText().toString();
-        String password = edtPassword.getText().toString();
-        SignUpRequest signUpRequest = new SignUpRequest();
-        String responseMessage;
-        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
+        String userName = edtUserName.getText().toString();
+        User user = new User();
+        BaseResponse baseResponse;
+        final ProgressDialog progressDialog = new ProgressDialog(EditProfileActivity.this,
                 R.style.AppTheme_Dark_Dialog);
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(btnSignUp.getWindowToken(),
+            imm.hideSoftInputFromWindow(btnSave.getWindowToken(),
                     InputMethodManager.RESULT_UNCHANGED_SHOWN);
             progressDialog.setIndeterminate(true);
             progressDialog.setMessage(getString(R.string.authenticating));
@@ -229,18 +221,19 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
 
         @Override
         protected Boolean doInBackground(String... params) {
-            signUpRequest.setFirstName(firstName);
-            signUpRequest.setLastName(lastName);
-            signUpRequest.setDob(dob);
-            signUpRequest.setUserName(userName);
-            signUpRequest.setPassword(password);
-            signUpRequest.setEmailAddress(email);
-            signUpRequest.setEmailConfirmation("0");
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setDob(dob);
+            user.setUserName(userName);
+            user.setEmailAddress(email);
             Boolean isNetworkConnected = false;
             if (NetworkConnectivity.isConnected()) {
                 try {
                     isNetworkConnected = true;
-                    responseMessage = new SignUpService().registerUser(SignupActivity.this, signUpRequest);
+                    // Read access token from preferences
+                    String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
+                    UserService userService = new UserService();
+                    baseResponse = userService.updateProfile(user, accessToken);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -253,20 +246,17 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
             super.onPostExecute(isConnected);
             progressDialog.dismiss();
             if (isConnected) {
-                String loggedInUser = Preferences.getString("userName", null);
-                if (loggedInUser != null) {
-                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                    finish();
-                } else {
-                    if (!responseMessage.isEmpty()) {
-                        MessageSnackbar.with(SignupActivity.this, null).type(ErrorType.ERROR)
-                                .message(responseMessage).duration(Duration.LONG).show();
+                if (baseResponse != null) {
+                    if (baseResponse.getCode() == OAuthConstant.HTTP_OK || baseResponse.getCode() == OAuthConstant.HTTP_CREATED) {
+                        MessageSnackbar.showMessage(EditProfileActivity.this, baseResponse.getShowMessage(), ErrorType.SUCCESS);
+                    } else if (baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
+                        MessageSnackbar.showMessage(EditProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
+                    } else {
+                        MessageSnackbar.showMessage(EditProfileActivity.this, baseResponse.getShowMessage(), ErrorType.ERROR);
                     }
+                } else {
+                    NetworkConnectivity.showNetworkConnectMessage(EditProfileActivity.this, false);
                 }
-            } else {
-                NetworkConnectivity.showNetworkConnectMessage(SignupActivity.this, false);
             }
         }
     }
@@ -275,7 +265,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            Intent intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
+            Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);

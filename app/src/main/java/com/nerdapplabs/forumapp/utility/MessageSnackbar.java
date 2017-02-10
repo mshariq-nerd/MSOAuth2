@@ -6,8 +6,10 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
+import com.nerdapplabs.forumapp.activities.UserProfileActivity;
+
 /**
- * Created by mohd on 03/02/17.
+ * Created by Mohd. Shariq on 03/02/17.
  */
 
 public class MessageSnackbar {
@@ -130,5 +132,10 @@ public class MessageSnackbar {
                 snackbar.dismiss();
             }
         }
+    }
+
+    public static void showMessage(Context context, String message, ErrorType type){
+        MessageSnackbar.with(context, null).type(type)
+                .message(message).duration(Duration.LONG).show();
     }
 }

@@ -1,41 +1,38 @@
 package com.nerdapplabs.forumapp.activities;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
-import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.UserService;
-import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
-import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
+import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.pojo.User;
-import com.nerdapplabs.forumapp.utility.Duration;
 import com.nerdapplabs.forumapp.utility.ErrorType;
-import com.nerdapplabs.forumapp.utility.LocaleHelper;
 import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
-import java.util.Properties;
 
-public class UserProfileActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener {
+public class UserProfileActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener, View.OnClickListener {
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     private TextView txtUserProfileName, txtUserName,
-            txtUserEmail, txtUserDOB, titleUserName, titleDOB;
-    private MaterialSpinner spinnerChooseLanguage;
-
+            txtUserEmail, txtUserDOB;
+    FloatingActionButton btnEditProfile;
+    User user = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +43,10 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         txtUserName = (TextView) findViewById(R.id.txt_user_name);
         txtUserEmail = (TextView) findViewById(R.id.txt_user_email);
         txtUserDOB = (TextView) findViewById(R.id.txt_user_dob);
+        btnEditProfile = (FloatingActionButton) findViewById(R.id.btn_edit_profile);
 
-        titleUserName = (TextView) findViewById(R.id.lbl_user_name);
-        titleDOB = (TextView) findViewById(R.id.lbl_user_dob);
+        Button btnLogout = (Button) findViewById(R.id.btn_logout);
+        TextView btnChangePassword = (TextView) findViewById(R.id.btn_change_password);
 
         // Adding Toolbar to Main screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -61,27 +59,9 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
             supportActionBar.setDisplayShowTitleEnabled(false);
         }
 
-
-        try {
-            final Properties properties = ReadForumProperties.getPropertiesValues(this);
-            spinnerChooseLanguage = (MaterialSpinner) findViewById(R.id.spinner);
-            spinnerChooseLanguage.setItems("English", "Hindi");
-            spinnerChooseLanguage.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
-
-                @Override
-                public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
-                    if (position == 0) {
-                        Log.d(TAG, "Clicked " + item + " " + "Position : " + position);
-                        updateViews(properties.getProperty("LANGUAGE_ENGLISH"));
-                    } else {
-                        Log.d(TAG, "Clicked " + item + " " + "Position : " + position);
-                        updateViews(properties.getProperty("LANGUAGE_HINDI"));
-                    }
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        btnLogout.setOnClickListener(this);
+        btnChangePassword.setOnClickListener(this);
+        btnEditProfile.setOnClickListener(this);
 
         new UserProfileAsyncTaskRunner().execute();
     }
@@ -98,10 +78,29 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         NetworkConnectivity.showNetworkConnectMessage(this, isConnected);
     }
 
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.btn_logout) {
+            logout();
+        }
+
+        if (view.getId() == R.id.btn_edit_profile) {
+            Intent intent = new Intent(this, EditProfileActivity.class);
+            intent.putExtra("User", user);
+            startActivity(intent);
+            finish();
+        }
+
+        if (view.getId() == R.id.btn_change_password) {
+            Intent intent = new Intent(this, ChangePasswordActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
     private class UserProfileAsyncTaskRunner extends AsyncTask<Void, Void, Boolean> {
         final ProgressDialog progressDialog = new ProgressDialog(UserProfileActivity.this,
                 R.style.AppTheme_Dark_Dialog);
-        User user;
 
         @Override
         protected void onPreExecute() {
@@ -118,10 +117,9 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
                 try {
                     isNetworkConnected = true;
                     // Read access token from preferences
-                    String accessToken = Preferences.getString(OauthConstant.ACCESS_TOKEN, null);
-                    UserService userService = new UserService();
+                    String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
                     // Get user profile details
-                    user = userService.getUser(UserProfileActivity.this, accessToken);
+                    user = new UserService().getUser(accessToken);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -134,16 +132,27 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
             super.onPostExecute(isConnected);
             progressDialog.dismiss();
             if (isConnected) {
-                if (user != null && user.getUserName() != null) {
-                    txtUserProfileName.setText(user.getFirstName() + " " + user.getLastName());
-                    txtUserName.setText(user.getUserName());
-                    txtUserEmail.setText(user.getEmailAddress());
-                    txtUserDOB.setText(user.getDob());
-                    MessageSnackbar.with(UserProfileActivity.this, null).type(ErrorType.SUCCESS).message(user.getShowMessage())
-                            .duration(Duration.SHORT).show();
+                if (null != user) {
+                    if (user.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
+                        MessageSnackbar.showMessage(UserProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
+                    } else if (user.getCode() == OAuthConstant.HTTP_UNAUTHORIZED) {
+                        Preferences.clear();
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        intent.putExtra("failure_msg", getString(R.string.session_expired_message));
+                        startActivity(intent);
+                        finish();
+                        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    } else if (user.getCode() == OAuthConstant.HTTP_OK || user.getCode() == OAuthConstant.HTTP_CREATED) {
+                        txtUserProfileName.setText(user.getFirstName() + " " + user.getLastName());
+                        txtUserName.setText(user.getUserName());
+                        txtUserEmail.setText(user.getEmailAddress());
+                        txtUserDOB.setText(user.getDob());
+                        MessageSnackbar.showMessage(UserProfileActivity.this, user.getShowMessage(), ErrorType.SUCCESS);
+                    } else {
+                        MessageSnackbar.showMessage(UserProfileActivity.this, user.getShowMessage(), ErrorType.ERROR);
+                    }
                 } else {
-                    MessageSnackbar.with(UserProfileActivity.this, null).type(ErrorType.ERROR).message(user.getShowMessage())
-                            .duration(Duration.SHORT).show();
+                    MessageSnackbar.showMessage(UserProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
                 }
             } else {
                 NetworkConnectivity.showNetworkConnectMessage(UserProfileActivity.this, false);
@@ -163,15 +172,23 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         return super.onOptionsItemSelected(item);
     }
 
-    private void updateViews(String languageCode) {
-        Log.d(TAG, "languageCode " + languageCode);
-        Activity activity =(Activity) LocaleHelper.setLocale(this, languageCode);
-        activity.recreate();
+    public void logout() {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setTitle(R.string.logout);
+        builder.setMessage(R.string.logout_alert_message);
+        builder.setPositiveButton(R.string.alert_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Preferences.clear();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            }
+        });
+        builder.setNegativeButton(R.string.alert_cancel, null);
+        builder.show();
 
-    }
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(LocaleHelper.onAttach(base));
     }
 }

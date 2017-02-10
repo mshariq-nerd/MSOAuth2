@@ -1,6 +1,5 @@
 package com.nerdapplabs.forumapp.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -16,8 +15,7 @@ import android.widget.TextView;
 
 import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
-import com.nerdapplabs.forumapp.oauth.constant.OauthConstant;
-import com.nerdapplabs.forumapp.utility.LocaleHelper;
+import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
@@ -35,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Create Navigation drawer and inlfate layout
+        // Create Navigation drawer and inflate layout
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 
@@ -63,11 +61,6 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
                         return true;
                     }
                 });
-    }
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(LocaleHelper.onAttach(base));
     }
 
 
@@ -123,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            String accessToken = Preferences.getString(OauthConstant.ACCESS_TOKEN, null);
+            String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
             if (null != accessToken) {
                 Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
                 startActivity(intent);

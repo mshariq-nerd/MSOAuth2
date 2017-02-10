@@ -2,10 +2,10 @@ package com.nerdapplabs.forumapp.oauth.response;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ErrorResponse {
+public class BaseResponse {
 
     @SerializedName("code")
-    private String code = null;
+    private int code = 0;
 
     @SerializedName("error")
     private String error = null;
@@ -25,11 +25,27 @@ public class ErrorResponse {
         return errorDescription;
     }
 
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
     public String getShowMessage() {
         return showMessage;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public void setErrorDescription(String errorDescription) {
+        this.errorDescription = errorDescription;
+    }
+
+    public void setShowMessage(String showMessage) {
+        this.showMessage = showMessage;
     }
 }

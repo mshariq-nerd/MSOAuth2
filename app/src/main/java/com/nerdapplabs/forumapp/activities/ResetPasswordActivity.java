@@ -18,7 +18,12 @@ import android.widget.EditText;
 import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.UserService;
+import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
+import com.nerdapplabs.forumapp.oauth.response.BaseResponse;
+import com.nerdapplabs.forumapp.utility.ErrorType;
+import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
+import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
 
@@ -108,7 +113,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements NetworkC
         final ProgressDialog progressDialog = new ProgressDialog(ResetPasswordActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         String userName = edtUserName.getText().toString();
-        String responseMessage = "";
+        BaseResponse response = null;
 
         @Override
         protected void onPreExecute() {
@@ -127,8 +132,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements NetworkC
             if (NetworkConnectivity.isConnected()) {
                 try {
                     isNetworkConnected = true;
-                    UserService userService = new UserService();
-                    responseMessage = userService.resetPassword(userName.trim());
+                    response = new UserService().resetPassword(userName.trim());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -141,12 +145,27 @@ public class ResetPasswordActivity extends AppCompatActivity implements NetworkC
             super.onPostExecute(isConnected);
             progressDialog.dismiss();
             if (isConnected) {
-                if (null != responseMessage && !responseMessage.equals("")) {
-                    Intent intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
-                    intent.putExtra("EMAIL_SENT_MESSAGE", responseMessage);
-                    startActivity(intent);
-                    finish();
-                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                if (null != response) {
+                    if (response.getCode() == OAuthConstant.HTTP_OK || response.getCode() == OAuthConstant.HTTP_CREATED) {
+                        Intent intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
+                        intent.putExtra("EMAIL_SENT_MESSAGE", response.getShowMessage());
+                        startActivity(intent);
+                        finish();
+                        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    } else if (response.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
+                        MessageSnackbar.showMessage(ResetPasswordActivity.this, getString(R.string.server_error), ErrorType.ERROR);
+                    } else if (response.getCode() == OAuthConstant.HTTP_UNAUTHORIZED) {
+                        Preferences.clear();
+                        Intent intent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
+                        intent.putExtra("failure_msg", getString(R.string.session_expired_message));
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                        finish();
+                    } else {
+                        MessageSnackbar.showMessage(ResetPasswordActivity.this, response.getShowMessage(), ErrorType.ERROR);
+                    }
+                } else {
+                    MessageSnackbar.showMessage(ResetPasswordActivity.this, getString(R.string.server_error), ErrorType.ERROR);
                 }
             } else {
                 NetworkConnectivity.showNetworkConnectMessage(ResetPasswordActivity.this, false);
