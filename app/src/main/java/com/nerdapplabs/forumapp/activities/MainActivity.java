@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Create Navigation drawer and inlfate layout
+        // Create Navigation drawer and inflate layout
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 

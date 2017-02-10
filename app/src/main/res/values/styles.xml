@@ -12,7 +12,6 @@
     </style>
 
 
-
     <style name="AppTheme" parent="AppTheme.Light"></style>
 
     <style name="AppTheme.Dark.Dialog" parent="Theme.AppCompat.Dialog">

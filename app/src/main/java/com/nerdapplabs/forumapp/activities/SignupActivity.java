@@ -240,8 +240,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
             if (NetworkConnectivity.isConnected()) {
                 try {
                     isNetworkConnected = true;
-                    SignUpService signUpResponse = new SignUpService();
-                    responseMessage = signUpResponse.registerUser(SignupActivity.this, signUpRequest);
+                    responseMessage = new SignUpService().registerUser(SignupActivity.this, signUpRequest);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

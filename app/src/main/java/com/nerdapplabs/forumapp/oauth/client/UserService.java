@@ -4,13 +4,11 @@ import android.app.Activity;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 import com.nerdapplabs.forumapp.oauth.request.ChangePasswordRequest;
 import com.nerdapplabs.forumapp.oauth.request.HeaderInterceptor;
 import com.nerdapplabs.forumapp.oauth.response.BaseResponse;
-import com.nerdapplabs.forumapp.oauth.response.ResetPasswordResponse;
 import com.nerdapplabs.forumapp.oauth.service.IUserService;
 import com.nerdapplabs.forumapp.pojo.User;
 import com.nerdapplabs.forumapp.utility.Preferences;
@@ -38,7 +36,7 @@ public class UserService {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder httpClient = new OkHttpClient().newBuilder();
         httpClient.addNetworkInterceptor(new HeaderInterceptor());
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        OkHttpClient client = httpClient.addInterceptor(interceptor).build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(properties.getProperty("AUTHENTICATION_SERVER_URL"))
                 .addConverterFactory(GsonConverterFactory.create())
@@ -55,14 +53,10 @@ public class UserService {
      * @return
      * @throws IOException
      */
-    public User getUser(Activity activity, final String token) throws IOException {
+    public User getUser(final String token) throws IOException {
 
-        // TODO: Need to check how to pass multiple header values in HeaderInterceptor.java class
-        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put(OAuthConstant.AUTHORIZATION, OAuthConstant.BEARER + " " + token);
-        headerMap.put(OAuthConstant.X_ACCEPT_VERSION, properties.getProperty("API_VERSION"));
-
         Call<User> call = userService().profile(headerMap);
         Response<User> response = call.execute();
         User user = new User();
@@ -71,15 +65,13 @@ public class UserService {
         } else {
             Gson gson = new GsonBuilder().create();
             BaseResponse baseResponse;
-            String message;
             try {
                 baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
                 if (null != baseResponse && baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
-                    message = activity.getString(R.string.server_error);
-                    user.setShowMessage(message);
-                } else {
-                    message = baseResponse.getErrorDescription();
-                    user.setShowMessage(message);
+                    user.setCode(baseResponse.getCode());
+                } else if (null != baseResponse && baseResponse.getCode() == 0) {
+                    // TODO: Api side fix required for valid HTTP code return
+                    user.setCode(OAuthConstant.HTTP_UNAUTHORIZED);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -99,12 +91,8 @@ public class UserService {
      */
     public BaseResponse updateProfile(User user, String token) throws IOException {
 
-        // TODO: Need to check how to pass multiple header values in HeaderInterceptor.java class
-        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put(OAuthConstant.AUTHORIZATION, OAuthConstant.BEARER + " " + token);
-        headerMap.put(OAuthConstant.X_ACCEPT_VERSION, properties.getProperty("API_VERSION"));
-
         Call<BaseResponse> call = userService().editProfile(headerMap, user);
         Response<BaseResponse> response = call.execute();
         BaseResponse baseResponse = new BaseResponse();
@@ -123,26 +111,21 @@ public class UserService {
      * Method to send reset user password email
      *
      * @param userName String userName for password reset
-     * @return ResetPasswordResponse object of password reset
+     * @return BaseResponse
      * @throws IOException
      */
-    public String resetPassword(final String userName) throws IOException {
-        Call<ResetPasswordResponse> call = userService().requestNewPassword(userName);
-        Response<ResetPasswordResponse> response = call.execute();
-        String message = null;
+    public BaseResponse resetPassword(final String userName) throws IOException {
+        Call<BaseResponse> call = userService().requestNewPassword(userName);
+        Response<BaseResponse> response = call.execute();
+        BaseResponse baseResponse = new BaseResponse();
         if (response.isSuccessful() && response.body() != null) {
-            message = response.body().getMessage();
+            baseResponse.setShowMessage(response.body().getShowMessage());
+            baseResponse.setCode(response.body().getCode());
         } else {
             Gson gson = new GsonBuilder().create();
-            BaseResponse baseResponse;
-            try {
-                baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
-                message = baseResponse.getShowMessage();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
         }
-        return message;
+        return baseResponse;
     }
 
 
