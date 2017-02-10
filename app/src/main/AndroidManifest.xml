@@ -54,7 +54,8 @@
         </receiver>
 
         <activity android:name=".activities.UserProfileActivity" />
-        <activity android:name=".activities.EditProfileActivity"></activity>
+        <activity android:name=".activities.EditProfileActivity" />
+        <activity android:name=".activities.ChangePasswordActivity"></activity>
     </application>
 
 </manifest>

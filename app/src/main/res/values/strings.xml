@@ -2,16 +2,18 @@
     <string name="app_name">MSOAuth2</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="email">Email</string>
-    <string name="password">Password</string>
     <string name="login">Log in</string>
     <string name="forgot_password">Forgot Password?</string>
+    <string name="password">Password</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_password">Confirm Password</string>
 
     <string name="fname">First Name</string>
     <string name="lname">Last Name</string>
     <string name="user_name">User Name</string>
 
     <string name="display_name">Display Name</string>
-    <string name="confirm_password">Confirm Password</string>
     <string name="already_member">Already a member? Login</string>
     <string name="create_account">Create Account</string>
     <string name="dob">DOB</string>
@@ -33,6 +35,7 @@
 
     <string name="password_validation_error">Between 4 and 10 alphanumeric characters.</string>
     <string name="password_match_error">Password do not match.</string>
+    <string name="password_duplicate_error">New password should not be same as old password.</string>
 
     <string name="email_validation_error">Enter a valid email address.</string>
     <string name="dob_validation_error">Enter valid DOB.</string>

@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 
 /**
- * Created by mohd on 03/02/17.
+ * Created by Mohd. Shariq on 03/02/17.
  */
 
 public class MessageSnackbar {

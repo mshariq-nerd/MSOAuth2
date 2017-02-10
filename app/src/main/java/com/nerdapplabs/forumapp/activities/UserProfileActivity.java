@@ -31,7 +31,7 @@ import java.io.Serializable;
 public class UserProfileActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener, View.OnClickListener {
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     private TextView txtUserProfileName, txtUserName,
-            txtUserEmail, txtUserDOB, btnLogout;
+            txtUserEmail, txtUserDOB, btnLogout, btnChangePassword;
     FloatingActionButton btnEditProfile;
     User user = null;
 
@@ -46,6 +46,7 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         txtUserDOB = (TextView) findViewById(R.id.txt_user_dob);
         btnLogout = (Button) findViewById(R.id.btn_logout);
         btnEditProfile = (FloatingActionButton) findViewById(R.id.btn_edit_profile);
+        btnChangePassword = (TextView) findViewById(R.id.btn_change_password);
 
         // Adding Toolbar to Main screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -59,6 +60,7 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         }
 
         btnLogout.setOnClickListener(this);
+        btnChangePassword.setOnClickListener(this);
         btnEditProfile.setOnClickListener(this);
 
         new UserProfileAsyncTaskRunner().execute();
@@ -85,6 +87,12 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         if (view.getId() == R.id.btn_edit_profile) {
             Intent intent = new Intent(this, EditProfileActivity.class);
             intent.putExtra("User", (Serializable) user);
+            startActivity(intent);
+            finish();
+        }
+
+        if (view.getId() == R.id.btn_change_password){
+            Intent intent = new Intent(this, ChangePasswordActivity.class);
             startActivity(intent);
             finish();
         }
