@@ -5,6 +5,9 @@ import com.nerdapplabs.forumapp.pojo.AccessToken;
 
 public class SignUpResponse {
 
+    @SerializedName("code")
+    private int code;
+
     @SerializedName("username")
     private String userName;
 
@@ -25,5 +28,9 @@ public class SignUpResponse {
 
     public String getShowMessage() {
         return showMessage;
+    }
+
+    public int getCode() {
+        return code;
     }
 }

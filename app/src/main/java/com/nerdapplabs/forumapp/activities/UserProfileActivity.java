@@ -19,19 +19,17 @@ import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.UserService;
 import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.pojo.User;
-import com.nerdapplabs.forumapp.utility.Duration;
 import com.nerdapplabs.forumapp.utility.ErrorType;
 import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 public class UserProfileActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener, View.OnClickListener {
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     private TextView txtUserProfileName, txtUserName,
-            txtUserEmail, txtUserDOB, btnLogout, btnChangePassword;
+            txtUserEmail, txtUserDOB;
     FloatingActionButton btnEditProfile;
     User user = null;
 
@@ -44,9 +42,10 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         txtUserName = (TextView) findViewById(R.id.txt_user_name);
         txtUserEmail = (TextView) findViewById(R.id.txt_user_email);
         txtUserDOB = (TextView) findViewById(R.id.txt_user_dob);
-        btnLogout = (Button) findViewById(R.id.btn_logout);
         btnEditProfile = (FloatingActionButton) findViewById(R.id.btn_edit_profile);
-        btnChangePassword = (TextView) findViewById(R.id.btn_change_password);
+
+        Button btnLogout = (Button) findViewById(R.id.btn_logout);
+        TextView btnChangePassword = (TextView) findViewById(R.id.btn_change_password);
 
         // Adding Toolbar to Main screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -86,12 +85,12 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
 
         if (view.getId() == R.id.btn_edit_profile) {
             Intent intent = new Intent(this, EditProfileActivity.class);
-            intent.putExtra("User", (Serializable) user);
+            intent.putExtra("User", user);
             startActivity(intent);
             finish();
         }
 
-        if (view.getId() == R.id.btn_change_password){
+        if (view.getId() == R.id.btn_change_password) {
             Intent intent = new Intent(this, ChangePasswordActivity.class);
             startActivity(intent);
             finish();
@@ -118,9 +117,8 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
                     isNetworkConnected = true;
                     // Read access token from preferences
                     String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
-                    UserService userService = new UserService();
                     // Get user profile details
-                    user = userService.getUser(UserProfileActivity.this, accessToken);
+                    user = new UserService().getUser(accessToken);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -133,16 +131,27 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
             super.onPostExecute(isConnected);
             progressDialog.dismiss();
             if (isConnected) {
-                if (user != null && user.getUserName() != null) {
-                    txtUserProfileName.setText(user.getFirstName() + " " + user.getLastName());
-                    txtUserName.setText(user.getUserName());
-                    txtUserEmail.setText(user.getEmailAddress());
-                    txtUserDOB.setText(user.getDob());
-                    MessageSnackbar.with(UserProfileActivity.this, null).type(ErrorType.SUCCESS).message(user.getShowMessage())
-                            .duration(Duration.SHORT).show();
+                if (null != user) {
+                    if (user.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
+                        MessageSnackbar.showMessage(UserProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
+                    } else if (user.getCode() == OAuthConstant.HTTP_UNAUTHORIZED) {
+                        Preferences.clear();
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        intent.putExtra("failure_msg", getString(R.string.session_expired_message));
+                        startActivity(intent);
+                        finish();
+                        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    } else if (user.getCode() == OAuthConstant.HTTP_OK || user.getCode() == OAuthConstant.HTTP_CREATED) {
+                        txtUserProfileName.setText(user.getFirstName() + " " + user.getLastName());
+                        txtUserName.setText(user.getUserName());
+                        txtUserEmail.setText(user.getEmailAddress());
+                        txtUserDOB.setText(user.getDob());
+                        MessageSnackbar.showMessage(UserProfileActivity.this, user.getShowMessage(), ErrorType.SUCCESS);
+                    } else {
+                        MessageSnackbar.showMessage(UserProfileActivity.this, user.getShowMessage(), ErrorType.ERROR);
+                    }
                 } else {
-                    MessageSnackbar.with(UserProfileActivity.this, null).type(ErrorType.ERROR).message(user.getShowMessage())
-                            .duration(Duration.SHORT).show();
+                    MessageSnackbar.showMessage(UserProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
                 }
             } else {
                 NetworkConnectivity.showNetworkConnectMessage(UserProfileActivity.this, false);
@@ -162,14 +171,12 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         return super.onOptionsItemSelected(item);
     }
 
-
-    private void logout() {
+    public void logout() {
         Preferences.clear();
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-        Toast.makeText(getApplicationContext(), "Logout successfully", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), getString(R.string.logout_message), Toast.LENGTH_LONG).show();
     }
-
 }

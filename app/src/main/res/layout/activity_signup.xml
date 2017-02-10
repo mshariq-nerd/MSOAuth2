@@ -11,149 +11,149 @@
         <!-- Add Actionbar header-->
         <include layout="@layout/actionbar_header_toolbar" />
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/signup_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:paddingTop="54dp">
-
-            <!-- First Name Label -->
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
+                android:id="@+id/signup_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
+                android:orientation="vertical"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:paddingTop="54dp">
 
-                <EditText
-                    android:id="@+id/edt_fname"
+                <!-- First Name Label -->
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/fname"
-                    android:inputType="textPersonName" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp">
 
-            <!-- Last Name Label -->
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
+                    <EditText
+                        android:id="@+id/edt_fname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/fname"
+                        android:inputType="textPersonName" />
+                </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/edt_lname"
+                <!-- Last Name Label -->
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/lname"
-                    android:inputType="textPersonName" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp">
+
+                    <EditText
+                        android:id="@+id/edt_lname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/lname"
+                        android:inputType="textPersonName" />
+                </android.support.design.widget.TextInputLayout>
 
 
-            <!--  Email Label -->
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
-
-                <EditText
-                    android:id="@+id/edt_user_email"
+                <!--  Email Label -->
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/email"
-                    android:inputType="textEmailAddress" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp">
 
-            <!--  DOB Label -->
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
+                    <EditText
+                        android:id="@+id/edt_user_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/email"
+                        android:inputType="textEmailAddress" />
+                </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/edt_dob"
+                <!--  DOB Label -->
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:hint="@string/dob"
-                    android:windowSoftInputMode="stateHidden" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp">
 
-            <!-- Display Name -->
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
+                    <EditText
+                        android:id="@+id/edt_dob"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:hint="@string/dob"
+                        android:windowSoftInputMode="stateHidden" />
+                </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/edt_display_name"
+                <!-- Display Name -->
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/display_name"
-                    android:inputType="textPersonName" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp">
 
-            <!-- Password Label -->
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
+                    <EditText
+                        android:id="@+id/edt_display_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/display_name"
+                        android:inputType="textPersonName" />
+                </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/edt_password"
+                <!-- Password Label -->
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/password"
-                    android:inputType="textPassword" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp">
 
-            <!-- Password Re-enter Label -->
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
+                    <EditText
+                        android:id="@+id/edt_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/password"
+                        android:inputType="textPassword" />
+                </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/edt_confirm_password"
+                <!-- Password Re-enter Label -->
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/confirm_password"
-                    android:inputType="textPassword" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp">
 
-            <!-- Signup Button -->
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/btn_signup"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:layout_marginTop="24dp"
-                android:padding="12dp"
-                android:background="@drawable/button_background"
-                android:textColor="@color/white"
-                android:text="@string/create_account" />
+                    <EditText
+                        android:id="@+id/edt_confirm_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/confirm_password"
+                        android:inputType="textPassword" />
+                </android.support.design.widget.TextInputLayout>
 
-            <TextView
-                android:id="@+id/txt_link_login"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:gravity="center"
-                android:onClick="onLoginLinkClick"
-                android:text="@string/already_member"
-                android:textSize="16dip" />
+                <!-- Signup Button -->
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_signup"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:layout_marginTop="24dp"
+                    android:padding="12dp"
+                    android:background="@drawable/button_background"
+                    android:textColor="@color/white"
+                    android:text="@string/create_account" />
 
-        </LinearLayout>
-    </ScrollView>
+                <TextView
+                    android:id="@+id/txt_link_login"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:gravity="center"
+                    android:onClick="onLoginLinkClick"
+                    android:text="@string/already_member"
+                    android:textSize="16dip" />
+
+            </LinearLayout>
+        </ScrollView>
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>

@@ -9,6 +9,10 @@ import java.io.Serializable;
  */
 
 public class User implements Serializable {
+
+    @SerializedName("code")
+    private int code;
+
     @SerializedName("username")
     private String userName;
 
@@ -96,5 +100,13 @@ public class User implements Serializable {
 
     public void setShowMessage(String showMessage) {
         this.showMessage = showMessage;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 }

@@ -43,4 +43,7 @@
     <string name="date_picker_title">Select Date</string>
     <string name="logout">Sign out</string>
     <string name="save">Save</string>
+    <string name="logout_message">Logout successfully</string>
+    <string name="session_expired_message">Session expired. Please login again</string>
+
 </resources>

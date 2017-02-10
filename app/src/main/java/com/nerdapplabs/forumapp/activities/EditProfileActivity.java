@@ -22,7 +22,6 @@ import com.nerdapplabs.forumapp.oauth.client.UserService;
 import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.oauth.response.BaseResponse;
 import com.nerdapplabs.forumapp.pojo.User;
-import com.nerdapplabs.forumapp.utility.Duration;
 import com.nerdapplabs.forumapp.utility.ErrorType;
 import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
@@ -40,7 +39,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
 
     private Button btnSave;
 
-    private Calendar calendar;
+
     private int year, month, day;
     private DatePickerDialog datePickerDialog;
 
@@ -70,8 +69,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
             supportActionBar.setDisplayShowTitleEnabled(false);
         }
 
-        calendar = Calendar.getInstance();
-
+        Calendar calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -107,7 +105,10 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
                 edtLastName.setText(userObj.getLastName());
             }
             if (userObj.getDob() != null) {
-                edtDateOfBirth.setText(userObj.getDob());
+                // change date format
+                String dob = userObj.getDob().replace("-", "/");
+                Log.d(TAG, dob);
+                edtDateOfBirth.setText(dob);
             }
             if (userObj.getEmailAddress() != null) {
                 edtEmail.setText(userObj.getEmailAddress());
@@ -247,14 +248,11 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
             if (isConnected) {
                 if (baseResponse != null) {
                     if (baseResponse.getCode() == OAuthConstant.HTTP_OK || baseResponse.getCode() == OAuthConstant.HTTP_CREATED) {
-                        MessageSnackbar.with(EditProfileActivity.this, null).type(ErrorType.SUCCESS)
-                                .message(baseResponse.getShowMessage()).duration(Duration.LONG).show();
+                        MessageSnackbar.showMessage(EditProfileActivity.this, baseResponse.getShowMessage(), ErrorType.SUCCESS);
                     } else if (baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
-                        MessageSnackbar.with(EditProfileActivity.this, null).type(ErrorType.ERROR)
-                                .message(getString(R.string.server_error)).duration(Duration.LONG).show();
+                        MessageSnackbar.showMessage(EditProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
                     } else {
-                        MessageSnackbar.with(EditProfileActivity.this, null).type(ErrorType.ERROR)
-                                .message(baseResponse.getShowMessage()).duration(Duration.LONG).show();
+                        MessageSnackbar.showMessage(EditProfileActivity.this, baseResponse.getShowMessage(), ErrorType.ERROR);
                     }
                 } else {
                     NetworkConnectivity.showNetworkConnectMessage(EditProfileActivity.this, false);

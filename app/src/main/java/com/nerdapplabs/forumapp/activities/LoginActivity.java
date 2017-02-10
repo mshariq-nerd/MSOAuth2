@@ -8,10 +8,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -61,14 +59,14 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         txtForgotPasswordLink.setOnClickListener(this);
 
         Intent intent = getIntent();
-        if (intent.getStringExtra("success_msg") != null) {
-            MessageSnackbar.with(LoginActivity.this, null).type(ErrorType.SUCCESS).message(intent.getStringExtra("success_msg"))
-                    .duration(Duration.SHORT).show();
+        if (null != intent.getStringExtra("success_msg")) {
+            MessageSnackbar.showMessage(LoginActivity.this, intent.getStringExtra("success_msg"), ErrorType.SUCCESS);
             intent.removeExtra("success_msg");
+        } else if (null != intent.getStringExtra("failure_msg")) {
+            MessageSnackbar.showMessage(LoginActivity.this, intent.getStringExtra("failure_msg"), ErrorType.ERROR);
+            intent.removeExtra("failure_msg");
         }
     }
-
-
 
 
     @Override
@@ -197,8 +195,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
                     overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                     finish();
                 } else {
-                    MessageSnackbar.with(LoginActivity.this, null).type(ErrorType.ERROR).message(responseMessage)
-                            .duration(Duration.SHORT).show();
+                    MessageSnackbar.showMessage(LoginActivity.this, responseMessage, ErrorType.ERROR);
                 }
             } else {
                 NetworkConnectivity.showNetworkConnectMessage(LoginActivity.this, false);
@@ -226,5 +223,4 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         imm.hideSoftInputFromWindow(btnLogin.getWindowToken(),
                 InputMethodManager.RESULT_UNCHANGED_SHOWN);
     }
-
 }

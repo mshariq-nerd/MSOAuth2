@@ -19,7 +19,6 @@ import com.nerdapplabs.forumapp.oauth.client.UserService;
 import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.oauth.request.ChangePasswordRequest;
 import com.nerdapplabs.forumapp.oauth.response.BaseResponse;
-import com.nerdapplabs.forumapp.utility.Duration;
 import com.nerdapplabs.forumapp.utility.ErrorType;
 import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
@@ -121,7 +120,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         String oldPassword = edtOldPassword.getText().toString();
         String confirmPassword = edtConfirmPassword.getText().toString();
         ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
-        BaseResponse baseResponse;
+        private BaseResponse baseResponse;
         final ProgressDialog progressDialog = new ProgressDialog(ChangePasswordActivity.this,
                 R.style.AppTheme_Dark_Dialog);
 
@@ -158,8 +157,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
             super.onPostExecute(isConnected);
             progressDialog.dismiss();
             if (isConnected) {
-                if (baseResponse != null) {
-                    if (baseResponse.getCode() == OAuthConstant.HTTP_OK || baseResponse.getCode() == OAuthConstant.HTTP_CREATED) {
+                if (null != baseResponse) {
+                    if (baseResponse.getCode() == OAuthConstant.HTTP_OK || (baseResponse.getCode() == OAuthConstant.HTTP_CREATED)) {
                         Preferences.clear();
                         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                         intent.putExtra("success_msg", baseResponse.getShowMessage());
@@ -167,15 +166,22 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         finish();
                         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                     } else if (baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
-                        MessageSnackbar.with(ChangePasswordActivity.this, null).type(ErrorType.ERROR)
-                                .message(getString(R.string.server_error)).duration(Duration.LONG).show();
+                        MessageSnackbar.showMessage(ChangePasswordActivity.this, getString(R.string.server_error), ErrorType.ERROR);
+                    }else if (baseResponse.getCode() == OAuthConstant.HTTP_UNAUTHORIZED) {
+                        Preferences.clear();
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        intent.putExtra("failure_msg", getString(R.string.session_expired_message));
+                        startActivity(intent);
+                        finish();
+                        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                     } else {
-                        MessageSnackbar.with(ChangePasswordActivity.this, null).type(ErrorType.ERROR)
-                                .message(baseResponse.getShowMessage()).duration(Duration.LONG).show();
+                        MessageSnackbar.showMessage(ChangePasswordActivity.this, baseResponse.getShowMessage(), ErrorType.ERROR);
                     }
                 } else {
-                    NetworkConnectivity.showNetworkConnectMessage(ChangePasswordActivity.this, false);
+                    MessageSnackbar.showMessage(ChangePasswordActivity.this, getString(R.string.server_error), ErrorType.ERROR);
                 }
+            } else {
+                NetworkConnectivity.showNetworkConnectMessage(ChangePasswordActivity.this, false);
             }
         }
     }
