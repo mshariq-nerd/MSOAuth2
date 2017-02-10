@@ -1,18 +1,19 @@
 package com.nerdapplabs.forumapp.activities;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nerdapplabs.forumapp.ForumApplication;
 import com.nerdapplabs.forumapp.R;
@@ -172,11 +173,22 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
     }
 
     public void logout() {
-        Preferences.clear();
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-        finish();
-        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-        Toast.makeText(getApplicationContext(), getString(R.string.logout_message), Toast.LENGTH_LONG).show();
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setTitle(R.string.logout);
+        builder.setMessage(R.string.logout_alert_message);
+        builder.setPositiveButton(R.string.alert_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Preferences.clear();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            }
+        });
+        builder.setNegativeButton(R.string.alert_cancel, null);
+        builder.show();
+
     }
 }
