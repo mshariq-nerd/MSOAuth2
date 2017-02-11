@@ -88,7 +88,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:layout_toRightOf="@+id/lbl_user_name" />
+                    android:layout_toEndOf="@+id/lbl_user_name" />
 
                 <TextView
                     android:id="@+id/lbl_user_dob"
@@ -104,8 +104,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@+id/lbl_user_dob"
                     android:layout_below="@+id/txt_user_name"
-                    android:layout_marginLeft="50dp"
-                    android:layout_toRightOf="@+id/lbl_user_dob" />
+                    android:layout_marginStart="50dp"
+                    android:layout_toEndOf="@+id/lbl_user_dob" />
 
             </RelativeLayout>
 
@@ -156,4 +156,3 @@
         app:layout_anchor="@id/header_cover_image"
         app:layout_anchorGravity="bottom|end" />
 </android.support.design.widget.CoordinatorLayout>
-

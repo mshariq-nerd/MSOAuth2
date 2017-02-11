@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.nerdapplabs.forumapp.ForumApplication;
+import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.UserService;
 import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
@@ -70,7 +70,7 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
     protected void onResume() {
         super.onResume();
         // register internet connection status listener
-        ForumApplication.getInstance().setConnectivityListener(this);
+        MSOAuth2.getInstance().setConnectivityListener(this);
     }
 
     @Override
@@ -189,6 +189,5 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         });
         builder.setNegativeButton(R.string.alert_cancel, null);
         builder.show();
-
     }
 }

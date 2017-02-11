@@ -143,8 +143,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             if (NetworkConnectivity.isConnected()) {
                 try {
                     isNetworkConnected = true;
-                    UserService userService = new UserService();
-                    baseResponse = userService.changeOldPassword(changePasswordRequest);
+                    baseResponse = new UserService().changeOldPassword(changePasswordRequest);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -167,7 +166,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                     } else if (baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
                         MessageSnackbar.showMessage(ChangePasswordActivity.this, getString(R.string.server_error), ErrorType.ERROR);
-                    }else if (baseResponse.getCode() == OAuthConstant.HTTP_UNAUTHORIZED) {
+                    } else if (baseResponse.getCode() == OAuthConstant.HTTP_UNAUTHORIZED) {
                         Preferences.clear();
                         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                         intent.putExtra("failure_msg", getString(R.string.session_expired_message));
@@ -190,7 +189,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            Intent intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
+            Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);

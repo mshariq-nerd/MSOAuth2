@@ -10,13 +10,13 @@ import java.util.Properties;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.nerdapplabs.forumapp.ForumApplication.getContext;
+import static com.nerdapplabs.forumapp.MSOAuth2.getContext;
 
 public class ApiService {
     private IApiService _apiService;
 
     public IApiService getMessage()  throws IOException {
-        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
+        Properties properties = ReadForumProperties.getPropertiesValues();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(properties.getProperty("AUTHENTICATION_SERVER_URL"))
                 .addConverterFactory(GsonConverterFactory.create())

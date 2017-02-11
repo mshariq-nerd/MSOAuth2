@@ -19,8 +19,8 @@
     <string name="dob">DOB</string>
     <string name="settings">Profile</string>
     <string name="profile">Profile</string>
+    <string name="change_language">Change App Language:</string>
     <string name="login_option">Profile</string>
-
     <string name="reset_password">Reset Password</string>
     <string name="profile_name">Login</string>
     <string name="sign_up">Sign Up</string>
@@ -48,5 +48,4 @@
     <string name="session_expired_message">Session expired. Please login again</string>
     <string name="alert_ok">Ok</string>
     <string name="alert_cancel">Cancel</string>
-
 </resources>

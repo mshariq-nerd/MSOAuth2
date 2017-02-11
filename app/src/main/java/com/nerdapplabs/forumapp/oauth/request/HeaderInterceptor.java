@@ -10,7 +10,7 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static com.nerdapplabs.forumapp.ForumApplication.getContext;
+import static com.nerdapplabs.forumapp.MSOAuth2.getContext;
 
 /**
  * Created by Mohd. Shariq on 08/02/17.
@@ -20,7 +20,7 @@ public class HeaderInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
+        Properties properties = ReadForumProperties.getPropertiesValues();
         Request request = chain.request();
         request = request.newBuilder()
                 .addHeader(OAuthConstant.X_ACCEPT_VERSION, properties.getProperty("API_VERSION"))

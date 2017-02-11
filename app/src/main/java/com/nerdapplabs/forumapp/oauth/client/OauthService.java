@@ -23,13 +23,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.nerdapplabs.forumapp.ForumApplication.getContext;
-
 public class OauthService {
     private IOauthService _oauthService;
 
     public IOauthService accessTokenService() throws IOException {
-        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
+        Properties properties = ReadForumProperties.getPropertiesValues();
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder httpClient = new OkHttpClient().newBuilder();
@@ -59,7 +57,7 @@ public class OauthService {
      */
     public String getAccessToken(final Context context, String userName, String password) throws IOException {
         ReadForumProperties readForumProperties = new ReadForumProperties();
-        Properties properties = readForumProperties.getPropertiesValues(context);
+        Properties properties = readForumProperties.getPropertiesValues();
         AccessToken accessTokenRequest = new AccessToken();
         accessTokenRequest.setClientId(properties.getProperty("CLIENT_ID"));
         accessTokenRequest.setClientSecret(properties.getProperty("CLIENT_SECRET"));

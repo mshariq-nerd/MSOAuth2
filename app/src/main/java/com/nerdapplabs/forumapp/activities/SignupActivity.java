@@ -16,7 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.nerdapplabs.forumapp.ForumApplication;
+import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.SignUpService;
 import com.nerdapplabs.forumapp.oauth.request.SignUpRequest;
@@ -91,7 +91,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
     protected void onResume() {
         super.onResume();
         // register internet connection status listener
-        ForumApplication.getInstance().setConnectivityListener(this);
+        MSOAuth2.getInstance().setConnectivityListener(this);
     }
 
     public boolean validate() {

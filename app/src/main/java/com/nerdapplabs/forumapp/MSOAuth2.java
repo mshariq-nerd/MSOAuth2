@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.ContextWrapper;
 
+import com.nerdapplabs.forumapp.utility.LocaleHelper;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
@@ -13,9 +14,9 @@ import java.io.IOException;
  * Created by mohd on 20/01/17.
  */
 
-public class ForumApplication extends Application {
+public class MSOAuth2 extends Application {
 
-    private static ForumApplication mInstance;
+    private static MSOAuth2 mInstance;
 
     @Override
     public void onCreate() {
@@ -30,7 +31,12 @@ public class ForumApplication extends Application {
                 .build();
     }
 
-    public static synchronized ForumApplication getInstance() {
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleHelper.onAttach(base, "en"));
+    }
+
+    public static synchronized MSOAuth2 getInstance() {
         return mInstance;
     }
 

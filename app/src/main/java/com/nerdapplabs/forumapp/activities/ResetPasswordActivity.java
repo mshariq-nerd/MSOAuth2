@@ -15,7 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.nerdapplabs.forumapp.ForumApplication;
+import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.UserService;
 import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
@@ -58,7 +58,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements NetworkC
     protected void onResume() {
         super.onResume();
         // register internet connection status listener
-        ForumApplication.getInstance().setConnectivityListener(this);
+        MSOAuth2.getInstance().setConnectivityListener(this);
     }
 
     /**
