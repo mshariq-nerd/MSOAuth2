@@ -125,7 +125,6 @@ public class UserService {
     }
 
     public BaseResponse changeOldPassword(ChangePasswordRequest changePasswordRequest) throws IOException {
-        // TODO: Need to check how to pass multiple header values in HeaderInterceptor.java class
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put(OAuthConstant.AUTHORIZATION, OAuthConstant.BEARER + " " + Preferences.getString(OAuthConstant.ACCESS_TOKEN, null));
         Call<BaseResponse> call = userService().changeOldPassword(headerMap, changePasswordRequest);
