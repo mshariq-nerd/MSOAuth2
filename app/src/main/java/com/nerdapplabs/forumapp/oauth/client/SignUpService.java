@@ -37,7 +37,7 @@ public class SignUpService {
         OkHttpClient.Builder httpClient = new OkHttpClient().newBuilder();
         httpClient.addNetworkInterceptor(new HeaderInterceptor());
         OkHttpClient client = httpClient.addInterceptor(interceptor).build();
-        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
+        Properties properties = ReadForumProperties.getPropertiesValues();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(properties.getProperty("AUTHENTICATION_SERVER_URL"))
                 .addConverterFactory(GsonConverterFactory.create())
@@ -56,7 +56,7 @@ public class SignUpService {
      */
     public String registerUser(final Context context, SignUpRequest requestObject) throws IOException {
         ReadForumProperties readForumProperties = new ReadForumProperties();
-        Properties properties = readForumProperties.getPropertiesValues(context);
+        Properties properties = readForumProperties.getPropertiesValues();
         requestObject.setClientId(properties.getProperty("CLIENT_ID"));
         requestObject.setClientSecret(properties.getProperty("CLIENT_SECRET"));
         Call<SignUpResponse> call = signUpService().signUp(requestObject);

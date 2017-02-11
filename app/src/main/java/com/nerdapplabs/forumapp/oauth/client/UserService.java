@@ -1,7 +1,5 @@
 package com.nerdapplabs.forumapp.oauth.client;
 
-import android.app.Activity;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
@@ -25,13 +23,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.nerdapplabs.forumapp.MSOAuth2.getContext;
-
 public class UserService {
     private IUserService _userService;
 
     public IUserService userService() throws IOException {
-        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
+        Properties properties = ReadForumProperties.getPropertiesValues();
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder httpClient = new OkHttpClient().newBuilder();
@@ -128,14 +124,10 @@ public class UserService {
         return baseResponse;
     }
 
-
     public BaseResponse changeOldPassword(ChangePasswordRequest changePasswordRequest) throws IOException {
         // TODO: Need to check how to pass multiple header values in HeaderInterceptor.java class
-        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put(OAuthConstant.AUTHORIZATION, OAuthConstant.BEARER + " " + Preferences.getString(OAuthConstant.ACCESS_TOKEN, null));
-        headerMap.put(OAuthConstant.X_ACCEPT_VERSION, properties.getProperty("API_VERSION"));
-
         Call<BaseResponse> call = userService().changeOldPassword(headerMap, changePasswordRequest);
         Response<BaseResponse> response = call.execute();
         BaseResponse baseResponse = new BaseResponse();

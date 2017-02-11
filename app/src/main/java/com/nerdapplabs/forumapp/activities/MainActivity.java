@@ -1,5 +1,6 @@
 package com.nerdapplabs.forumapp.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -8,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,17 +18,29 @@ import android.widget.TextView;
 import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
+import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
+import com.nerdapplabs.forumapp.utility.LocaleHelper;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
-public class MainActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener {
+import java.io.IOException;
+import java.util.Properties;
 
+public class MainActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener {
+    private static final String TAG = MainActivity.class.getSimpleName();
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /**
+         *  This method call is to change
+         *  the language of the application.
+         */
+        changeAppLanguage();
+
         setContentView(R.layout.activity_main);
 
         // Adding Toolbar to Main screen
@@ -133,5 +147,23 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         NetworkConnectivity.showNetworkConnectMessage(MainActivity.this, isConnected);
+    }
+
+    /**
+     * Method to change the application language
+     */
+    private void changeAppLanguage() {
+        try {
+            Properties properties = ReadForumProperties.getPropertiesValues();
+            Log.d(TAG, "languageCode " + properties.getProperty("LOCALE"));
+            LocaleHelper.setLocale(this, properties.getProperty("LOCALE"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleHelper.onAttach(base));
     }
 }

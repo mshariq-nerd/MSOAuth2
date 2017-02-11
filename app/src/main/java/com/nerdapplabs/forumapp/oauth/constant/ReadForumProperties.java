@@ -1,6 +1,9 @@
 package com.nerdapplabs.forumapp.oauth.constant;
 
 import android.content.Context;
+import android.content.res.Resources;
+
+import com.nerdapplabs.forumapp.MSOAuth2;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,14 +15,14 @@ import java.util.Properties;
  */
 
 public class ReadForumProperties {
-    public static Properties getPropertiesValues(Context context) throws IOException {
+    public static Properties getPropertiesValues() throws IOException {
         Properties properties = new Properties();
-        String propertiesFielName = "app.properties";
-        InputStream inputStream = context.getAssets().open(propertiesFielName);
+        String propertiesFileName = "app.properties";
+        InputStream inputStream = MSOAuth2.getContext().getAssets().open(propertiesFileName);
         if (inputStream != null) {
             properties.load(inputStream);
         } else {
-            throw new FileNotFoundException("property file '" + propertiesFielName + "' not found in the classpath");
+            throw new FileNotFoundException("property file '" + propertiesFileName + "' not found in the classpath");
         }
         return properties;
     }

@@ -16,7 +16,7 @@ public class ApiService {
     private IApiService _apiService;
 
     public IApiService getMessage()  throws IOException {
-        Properties properties = ReadForumProperties.getPropertiesValues(getContext());
+        Properties properties = ReadForumProperties.getPropertiesValues();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(properties.getProperty("AUTHENTICATION_SERVER_URL"))
                 .addConverterFactory(GsonConverterFactory.create())

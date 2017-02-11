@@ -1,8 +1,6 @@
 package com.nerdapplabs.forumapp.activities;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,27 +10,22 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.UserService;
 import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
-import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 import com.nerdapplabs.forumapp.pojo.User;
 import com.nerdapplabs.forumapp.utility.ErrorType;
-import com.nerdapplabs.forumapp.utility.LocaleHelper;
 import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
-import java.util.Properties;
 
 public class UserProfileActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener, View.OnClickListener {
     private static final String TAG = UserProfileActivity.class.getSimpleName();
@@ -64,30 +57,6 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
             supportActionBar.setHomeAsUpIndicator(R.drawable.ic_action_back);
             supportActionBar.setDisplayHomeAsUpEnabled(true);
             supportActionBar.setDisplayShowTitleEnabled(false);
-        }
-
-        try {
-            final Properties properties = ReadForumProperties.getPropertiesValues(this);
-            MaterialSpinner spinnerChooseLanguage = (MaterialSpinner) findViewById(R.id.spinner);
-            spinnerChooseLanguage.setItems(getString(R.string.language_english), getString(R.string.language_hindi));
-            spinnerChooseLanguage.setSelectedIndex(Preferences.getInt("language_position", 0));
-            spinnerChooseLanguage.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
-
-                @Override
-                public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
-                    if (position == 0) {
-                        Log.d(TAG, "Clicked " + item + " " + "Position : " + position);
-                        updateViews(properties.getProperty("LANGUAGE_ENGLISH"));
-                        Preferences.putInt("language_position", position);
-                    } else {
-                        Log.d(TAG, "Clicked " + item + " " + "Position : " + position);
-                        updateViews(properties.getProperty("LANGUAGE_HINDI"));
-                        Preferences.putInt("language_position", position);
-                    }
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         btnLogout.setOnClickListener(this);
@@ -220,17 +189,5 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         });
         builder.setNegativeButton(R.string.alert_cancel, null);
         builder.show();
-    }
-
-    private void updateViews(String languageCode) {
-        Log.d(TAG, "languageCode " + languageCode);
-        Activity activity = (Activity) LocaleHelper.setLocale(this, languageCode);
-        activity.recreate();
-
-    }
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(LocaleHelper.onAttach(base));
     }
 }

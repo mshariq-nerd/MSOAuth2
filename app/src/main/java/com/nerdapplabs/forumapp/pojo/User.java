@@ -1,14 +1,26 @@
 package com.nerdapplabs.forumapp.pojo;
 
 import com.google.gson.annotations.SerializedName;
+import com.nerdapplabs.forumapp.oauth.constant.ReadForumProperties;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.Properties;
 
 /**
  * Created by Mohd Shariq on 27/01/17.
  */
 
 public class User implements Serializable {
+
+    public User() {
+        try {
+            Properties properties = ReadForumProperties.getPropertiesValues();
+            this.locale = properties.getProperty("LOCALE");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @SerializedName("code")
     private int code;
@@ -36,6 +48,9 @@ public class User implements Serializable {
 
     @SerializedName("show_message")
     private String showMessage;
+
+    @SerializedName("_locale")
+    private String locale;
 
 
     public String getUserName() {
