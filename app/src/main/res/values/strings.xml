@@ -48,5 +48,7 @@
     <string name="session_expired_message">Session expired. Please login again</string>
     <string name="alert_ok">Ok</string>
     <string name="alert_cancel">Cancel</string>
+    <string name="language_hindi">Hindi</string>
+    <string name="language_english">English</string>
 
 </resources>

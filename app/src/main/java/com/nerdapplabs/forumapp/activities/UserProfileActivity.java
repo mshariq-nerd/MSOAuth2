@@ -68,8 +68,9 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
 
         try {
             final Properties properties = ReadForumProperties.getPropertiesValues(this);
-            MaterialSpinner  spinnerChooseLanguage = (MaterialSpinner) findViewById(R.id.spinner);
-            spinnerChooseLanguage.setItems("English", "Hindi");
+            MaterialSpinner spinnerChooseLanguage = (MaterialSpinner) findViewById(R.id.spinner);
+            spinnerChooseLanguage.setItems(getString(R.string.language_english), getString(R.string.language_hindi));
+            spinnerChooseLanguage.setSelectedIndex(Preferences.getInt("language_position", 0));
             spinnerChooseLanguage.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
 
                 @Override
@@ -77,9 +78,11 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
                     if (position == 0) {
                         Log.d(TAG, "Clicked " + item + " " + "Position : " + position);
                         updateViews(properties.getProperty("LANGUAGE_ENGLISH"));
+                        Preferences.putInt("language_position", position);
                     } else {
                         Log.d(TAG, "Clicked " + item + " " + "Position : " + position);
                         updateViews(properties.getProperty("LANGUAGE_HINDI"));
+                        Preferences.putInt("language_position", position);
                     }
                 }
             });
@@ -221,7 +224,7 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
 
     private void updateViews(String languageCode) {
         Log.d(TAG, "languageCode " + languageCode);
-        Activity activity =(Activity) LocaleHelper.setLocale(this, languageCode);
+        Activity activity = (Activity) LocaleHelper.setLocale(this, languageCode);
         activity.recreate();
 
     }
