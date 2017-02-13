@@ -11,6 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        app:layout_scrollFlags="scroll|enterAlways"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:id="@+id/toolbar_title" />
+    </android.support.v7.widget.Toolbar>
 </android.support.design.widget.AppBarLayout>

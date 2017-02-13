@@ -41,13 +41,14 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
 
         // Adding Toolbar to Main screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         setSupportActionBar(toolbar);
         // Adding menu icon to Toolbar
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setHomeAsUpIndicator(R.drawable.ic_action_back);
+            mTitle.setText(getString(R.string.login_activity_title));
             supportActionBar.setDisplayHomeAsUpEnabled(true);
-            supportActionBar.setDisplayShowTitleEnabled(false);
         }
 
         edtUserName = (EditText) findViewById(R.id.edt_user_name);

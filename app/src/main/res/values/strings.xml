@@ -48,4 +48,11 @@
     <string name="session_expired_message">Session expired. Please login again</string>
     <string name="alert_ok">Ok</string>
     <string name="alert_cancel">Cancel</string>
+    <string name="change_password_activity_title">Change Password</string>
+    <string name="edit_profile_activity_title">Edit Profile</string>
+    <string name="login_actions_activity_title">Login Actions</string>
+    <string name="login_activity_title">Login</string>
+    <string name="reset_password_activity_title">Reset Password</string>
+    <string name="signup_activity_title">Sign up</string>
+    <string name="user_profile_activity_title">User Profile</string>
 </resources>
