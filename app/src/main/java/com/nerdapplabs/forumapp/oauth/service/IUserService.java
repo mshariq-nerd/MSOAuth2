@@ -13,6 +13,9 @@ import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
+/**
+ * Created by Mohd. Shariq on 01/02/17.
+ */
 
 public interface IUserService {
 

@@ -235,6 +235,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
             signUpRequest.setUserName(userName);
             signUpRequest.setPassword(password);
             signUpRequest.setEmailAddress(email);
+            // TODO: Need to fix for valid json request
             signUpRequest.setEmailConfirmation("0");
             Boolean isNetworkConnected = false;
             if (NetworkConnectivity.isConnected()) {

@@ -11,7 +11,7 @@ import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 
 /**
- * Created by mohd on 20/01/17.
+ * Created by Mohd. Shariq on 20/01/17.
  */
 
 public class NetworkConnectivity extends BroadcastReceiver {

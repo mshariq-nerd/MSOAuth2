@@ -27,7 +27,8 @@ import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
 
-public class ResetPasswordActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener, View.OnClickListener {
+public class ResetPasswordActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener,
+        View.OnClickListener {
     private static final String TAG = ResetPasswordActivity.class.getSimpleName();
     private EditText edtUserName;
     private Button btnRestPassword;

@@ -3,6 +3,10 @@ package com.nerdapplabs.forumapp.oauth.request;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Created by Mohd. Shariq on 01/02/17.
+ */
+
 public class SignUpRequest {
     @SerializedName("client_id")
     private String clientId;

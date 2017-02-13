@@ -3,7 +3,7 @@ package com.nerdapplabs.forumapp.pojo;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by mohd on 01/02/17.
+ * Created by Mohd. Shariq on 01/02/17.
  */
 
 public class AccessToken {

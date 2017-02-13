@@ -10,8 +10,6 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static com.nerdapplabs.forumapp.MSOAuth2.getContext;
-
 /**
  * Created by Mohd. Shariq on 08/02/17.
  */

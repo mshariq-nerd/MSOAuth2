@@ -25,9 +25,9 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static com.nerdapplabs.forumapp.MSOAuth2.getContext;
-
+/**
+ * Created by Mohd. Shariq on 23/01/17.
+ */
 public class SignUpService {
     private ISignUpService _signUpService;
 
@@ -49,13 +49,14 @@ public class SignUpService {
 
 
     /**
-     * @param context
-     * @param requestObject
-     * @return
+     *  Method for new user registration
+     *
+     * @param context Context for resource string reference
+     * @param requestObject SignUpRequest parameters objects
+     * @return Message String success message
      * @throws IOException
      */
     public String registerUser(final Context context, SignUpRequest requestObject) throws IOException {
-        ReadForumProperties readForumProperties = new ReadForumProperties();
         Properties properties = ReadForumProperties.getPropertiesValues();
         requestObject.setClientId(properties.getProperty("CLIENT_ID"));
         requestObject.setClientSecret(properties.getProperty("CLIENT_SECRET"));

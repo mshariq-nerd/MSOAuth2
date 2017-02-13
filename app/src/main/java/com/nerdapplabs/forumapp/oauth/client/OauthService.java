@@ -23,6 +23,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Created by Mohd. Shariq on 23/01/17.
+ */
+
 public class OauthService {
     private IOauthService _oauthService;
 
@@ -42,21 +46,16 @@ public class OauthService {
         return _oauthService;
     }
 
-    public IOauthService getApiService() {
-        return _oauthService;
-    }
-
     /**
      * Method to get accessToken for a valid user
      *
      * @param context  Context reference
-     * @param userName String  name of logged in user
-     * @param password String password for user login
+     * @param userName String  User name
+     * @param password String password
      * @return statusCode  String HTTP status code return by network call
      * @throws IOException
      */
     public String getAccessToken(final Context context, String userName, String password) throws IOException {
-        ReadForumProperties readForumProperties = new ReadForumProperties();
         Properties properties = ReadForumProperties.getPropertiesValues();
         AccessToken accessTokenRequest = new AccessToken();
         accessTokenRequest.setClientId(properties.getProperty("CLIENT_ID"));

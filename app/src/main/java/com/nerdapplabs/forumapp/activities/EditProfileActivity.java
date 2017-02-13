@@ -36,13 +36,9 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
     private static final String TAG = EditProfileActivity.class.getSimpleName();
     private EditText edtUserName, edtFirstName,
             edtLastName, edtEmail, edtDateOfBirth;
-
     private Button btnSave;
-
-
     private int year, month, day;
     private DatePickerDialog datePickerDialog;
-
     User userObj = null;
 
     @Override
@@ -91,7 +87,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
         userObj = (User) intent.getSerializableExtra("User");
         Log.i(TAG, userObj.getUserName());
 
-        // Set User information to EditFields to update
+        // Set User information to Edit Fields to update
         if (userObj == null) {
             throw new NullPointerException("User must not be null");
         } else {
@@ -126,6 +122,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
 
     @Override
     public void onClick(View view) {
+        // Update record when save button clicked
         if (view.getId() == R.id.btn_save) {
             if (!validate()) {
                 return;
@@ -136,6 +133,10 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
         }
     }
 
+    /**
+     *  Method used to validate form data
+     * @return valid Boolean for valid data
+     */
     public boolean validate() {
         boolean valid = true;
 
