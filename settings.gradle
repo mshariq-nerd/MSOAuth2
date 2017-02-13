@@ -1,1 +1,1 @@
-include ':app', ':msforum'
+include ':app'
