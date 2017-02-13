@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.UserService;
@@ -43,13 +44,14 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         // Adding Toolbar to Main screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         setSupportActionBar(toolbar);
         // Adding menu icon to Toolbar
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setHomeAsUpIndicator(R.drawable.ic_action_back);
+            mTitle.setText(getString(R.string.change_password_activity_title));
             supportActionBar.setDisplayHomeAsUpEnabled(true);
-            supportActionBar.setDisplayShowTitleEnabled(false);
         }
 
         btnChangePassword.setOnClickListener(new View.OnClickListener() {

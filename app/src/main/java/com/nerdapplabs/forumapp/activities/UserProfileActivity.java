@@ -51,13 +51,14 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
 
         // Adding Toolbar to Main screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         setSupportActionBar(toolbar);
         // Adding menu icon to Toolbar
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setHomeAsUpIndicator(R.drawable.ic_action_back);
+            mTitle.setText(getString(R.string.user_profile_activity_title));
             supportActionBar.setDisplayHomeAsUpEnabled(true);
-            supportActionBar.setDisplayShowTitleEnabled(false);
         }
 
         btnLogout.setOnClickListener(this);
