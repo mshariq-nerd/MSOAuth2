@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.SignUpService;
+import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
 import com.nerdapplabs.forumapp.oauth.request.SignUpRequest;
 import com.nerdapplabs.forumapp.utility.Duration;
 import com.nerdapplabs.forumapp.utility.ErrorType;
@@ -256,7 +257,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
             super.onPostExecute(isConnected);
             progressDialog.dismiss();
             if (isConnected) {
-                String loggedInUser = Preferences.getString("userName", null);
+                String loggedInUser = Preferences.getString(OAuthConstant.USERNAME, null);
                 if (loggedInUser != null) {
                     Intent intent = new Intent(SignupActivity.this, MainActivity.class);
                     startActivity(intent);
