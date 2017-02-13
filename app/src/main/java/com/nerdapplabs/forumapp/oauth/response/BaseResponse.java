@@ -2,6 +2,10 @@ package com.nerdapplabs.forumapp.oauth.response;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Created by Mohd. Shariq on 01/02/17.
+ */
+
 public class BaseResponse {
 
     @SerializedName("code")

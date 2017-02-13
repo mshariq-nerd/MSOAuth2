@@ -69,7 +69,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     *  Method used to validate form data
+     * @return valid Boolean for valid data
+     */
     public boolean validate() {
         boolean valid = true;
 

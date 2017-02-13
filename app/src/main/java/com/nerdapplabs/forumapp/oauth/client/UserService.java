@@ -22,6 +22,9 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+/**
+ * Created by Mohd. Shariq on 23/01/17.
+ */
 
 public class UserService {
     private IUserService _userService;
@@ -45,8 +48,8 @@ public class UserService {
     /**
      * To get logged in user profile
      *
-     * @param token
-     * @return
+     * @param token AccessToken for valid user
+     * @return Object User
      * @throws IOException
      */
     public User getUser(final String token) throws IOException {
@@ -66,7 +69,6 @@ public class UserService {
                 if (null != baseResponse && baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
                     user.setCode(baseResponse.getCode());
                 } else if (null != baseResponse && baseResponse.getCode() == 0) {
-                    // TODO: Api side fix required for valid HTTP code return
                     user.setCode(OAuthConstant.HTTP_UNAUTHORIZED);
                 }
             } catch (IOException e) {
@@ -124,6 +126,12 @@ public class UserService {
         return baseResponse;
     }
 
+    /**
+     *
+     * @param changePasswordRequest object with change password values
+     * @return Success Response
+     * @throws IOException
+     */
     public BaseResponse changeOldPassword(ChangePasswordRequest changePasswordRequest) throws IOException {
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put(OAuthConstant.AUTHORIZATION, OAuthConstant.BEARER + " " + Preferences.getString(OAuthConstant.ACCESS_TOKEN, null));

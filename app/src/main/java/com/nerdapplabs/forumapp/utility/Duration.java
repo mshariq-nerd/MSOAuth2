@@ -3,7 +3,7 @@ package com.nerdapplabs.forumapp.utility;
 import android.support.design.widget.Snackbar;
 
 /**
- * Created by mohd on 03/02/17.
+ * Created by Mohd. Shariq on 03/02/17.
  */
 
 public enum  Duration {SHORT, LONG, CUSTOM, INFINITE;

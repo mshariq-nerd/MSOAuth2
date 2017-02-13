@@ -24,6 +24,7 @@ import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
 import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener {
@@ -39,7 +40,16 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
          *  This method call is to change
          *  the language of the application.
          */
-        changeAppLanguage();
+        try {
+            Properties properties = ReadForumProperties.getPropertiesValues();
+            String savedLocale = Preferences.getString(OAuthConstant.APP_LOCALE, Locale.getDefault().getLanguage());
+            if (!savedLocale.equals(properties.getProperty("LOCALE"))) {
+                Log.e(TAG, "Locale changed in properties file:" + properties.getProperty("LOCALE"));
+                changeAppLanguage();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         setContentView(R.layout.activity_main);
 
@@ -85,23 +95,21 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
         MSOAuth2.getInstance().setConnectivityListener(this);
 
         // Get logged in UserName
-        String userName = Preferences.getString("userName", null);
+        String userName = Preferences.getString(OAuthConstant.USERNAME, null);
         if (null != userName) {
             updateNavigationHeaderView(userName);
         }
     }
 
     /**
-     * Method to update Navigation Drawer header values for logged in user
-     *
-     * @param userName
+     * Method to update Navigation Drawer header values for logged in user.
+     * Display User name
+     * @param userName String  userName
      */
     private void updateNavigationHeaderView(String userName) {
         View headerView = navigationView.getHeaderView(0);
         TextView drawerUsername = (TextView) headerView.findViewById(R.id.drawer_username);
         drawerUsername.setText(userName);
-        // disable click listener
-        drawerUsername.setClickable(false);
     }
 
     /**
@@ -110,7 +118,15 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
      * @param v view type
      */
     public void onDrawerHeaderClick(View v) {
-        Intent intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
+
+        // Get logged in UserName
+        String userName = Preferences.getString(OAuthConstant.USERNAME, null);
+        Intent intent;
+        if (null != userName) {
+            intent = new Intent(getApplicationContext(), UserProfileActivity.class);
+        } else {
+            intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
+        }
         startActivity(intent);
         finish();
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
@@ -129,16 +145,7 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
-            if (null != accessToken) {
-                Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
-                startActivity(intent);
-                finish();
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-            }
-            return true;
-        } else if (id == android.R.id.home) {
+        if (id == android.R.id.home) {
             mDrawerLayout.openDrawer(GravityCompat.START);
         }
         return super.onOptionsItemSelected(item);
@@ -157,6 +164,8 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
             Properties properties = ReadForumProperties.getPropertiesValues();
             Log.d(TAG, "languageCode " + properties.getProperty("LOCALE"));
             LocaleHelper.setLocale(this, properties.getProperty("LOCALE"));
+            // Set 'locale' settings in application preferences
+            Preferences.putString(OAuthConstant.APP_LOCALE, properties.getProperty("LOCALE"));
         } catch (IOException e) {
             e.printStackTrace();
         }

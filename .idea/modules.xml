@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ForumApp.iml" filepath="$PROJECT_DIR$/ForumApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/msforum/msforum.iml" filepath="$PROJECT_DIR$/msforum/msforum.iml" />
     </modules>
   </component>
 </project>

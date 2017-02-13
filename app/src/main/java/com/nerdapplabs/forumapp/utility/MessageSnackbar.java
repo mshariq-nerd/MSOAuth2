@@ -6,8 +6,6 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
-import com.nerdapplabs.forumapp.activities.UserProfileActivity;
-
 /**
  * Created by Mohd. Shariq on 03/02/17.
  */

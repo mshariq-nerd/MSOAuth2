@@ -1,5 +1,9 @@
 package com.nerdapplabs.forumapp.utility;
 
+/**
+ * Created by Mohd. Shariq on 01/02/17.
+ */
+
 public enum ErrorType {
     SUCCESS, ERROR, UPDATE, WARNING, CUSTOM;
 

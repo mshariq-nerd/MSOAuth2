@@ -20,7 +20,6 @@ import com.nerdapplabs.forumapp.MSOAuth2;
 import com.nerdapplabs.forumapp.R;
 import com.nerdapplabs.forumapp.oauth.client.OauthService;
 import com.nerdapplabs.forumapp.oauth.constant.OAuthConstant;
-import com.nerdapplabs.forumapp.utility.Duration;
 import com.nerdapplabs.forumapp.utility.ErrorType;
 import com.nerdapplabs.forumapp.utility.MessageSnackbar;
 import com.nerdapplabs.forumapp.utility.NetworkConnectivity;
@@ -58,6 +57,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         btnLogin.setOnClickListener(this);
         txtForgotPasswordLink.setOnClickListener(this);
 
+        // Handle password change messages through intent from ChangePasswordActivity
         Intent intent = getIntent();
         if (null != intent.getStringExtra("success_msg")) {
             MessageSnackbar.showMessage(LoginActivity.this, intent.getStringExtra("success_msg"), ErrorType.SUCCESS);
@@ -67,7 +67,6 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
             intent.removeExtra("failure_msg");
         }
     }
-
 
     @Override
     protected void onResume() {
@@ -90,7 +89,9 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
     }
 
     /**
-     * Method for client side validation
+     * Method for client side form data validation
+     *
+     * @return valid Boolean type for valid data
      */
     public boolean validate() {
         boolean valid = true;
@@ -169,13 +170,12 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
             if (NetworkConnectivity.isConnected()) {
                 try {
                     isNetworkConnected = true;
-                    OauthService oauthService = new OauthService();
                     // Api call for access token
-                    responseMessage = oauthService.getAccessToken(LoginActivity.this, userName, password);
+                    responseMessage = new OauthService().getAccessToken(LoginActivity.this, userName, password);
                     // Read access token from preferences
                     accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
                     if (accessToken != null) {
-                        Preferences.putString("userName", userName);
+                        Preferences.putString(OAuthConstant.USERNAME, userName);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

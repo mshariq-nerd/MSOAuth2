@@ -1,8 +1,5 @@
 package com.nerdapplabs.forumapp.oauth.constant;
 
-import android.content.Context;
-import android.content.res.Resources;
-
 import com.nerdapplabs.forumapp.MSOAuth2;
 
 import java.io.FileNotFoundException;
@@ -11,7 +8,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Created by mohd on 23/01/17.
+ * Created by Mohd. Shariq on 23/01/17.
  */
 
 public class ReadForumProperties {

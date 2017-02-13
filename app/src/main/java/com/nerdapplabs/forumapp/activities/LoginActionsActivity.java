@@ -72,7 +72,6 @@ public class LoginActionsActivity extends AppCompatActivity implements View.OnCl
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();

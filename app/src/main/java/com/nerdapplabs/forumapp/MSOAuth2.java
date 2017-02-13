@@ -11,7 +11,7 @@ import com.nerdapplabs.forumapp.utility.Preferences;
 import java.io.IOException;
 
 /**
- * Created by mohd on 20/01/17.
+ * Created by Mohd. Shariq on 20/01/17.
  */
 
 public class MSOAuth2 extends Application {

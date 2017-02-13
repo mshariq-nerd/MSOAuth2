@@ -6,6 +6,9 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 
+/**
+ * Created by Mohd. Shariq on 23/01/17.
+ */
 public interface IOauthService {
 
     @POST("user/access/token")

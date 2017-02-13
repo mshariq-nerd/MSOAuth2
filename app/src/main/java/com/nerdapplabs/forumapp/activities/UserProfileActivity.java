@@ -27,7 +27,8 @@ import com.nerdapplabs.forumapp.utility.Preferences;
 
 import java.io.IOException;
 
-public class UserProfileActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener, View.OnClickListener {
+public class UserProfileActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener,
+        View.OnClickListener {
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     private TextView txtUserProfileName, txtUserName,
             txtUserEmail, txtUserDOB;

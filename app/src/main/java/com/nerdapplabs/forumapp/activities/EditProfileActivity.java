@@ -36,13 +36,9 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
     private static final String TAG = EditProfileActivity.class.getSimpleName();
     private EditText edtUserName, edtFirstName,
             edtLastName, edtEmail, edtDateOfBirth;
-
     private Button btnSave;
-
-
     private int year, month, day;
     private DatePickerDialog datePickerDialog;
-
     User userObj = null;
 
     @Override
@@ -91,7 +87,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
         userObj = (User) intent.getSerializableExtra("User");
         Log.i(TAG, userObj.getUserName());
 
-        // Set User information to EditFields to update
+        // Set User information to Edit Fields to update
         if (userObj == null) {
             throw new NullPointerException("User must not be null");
         } else {
@@ -126,6 +122,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
 
     @Override
     public void onClick(View view) {
+        // Update record when save button clicked
         if (view.getId() == R.id.btn_save) {
             if (!validate()) {
                 return;
@@ -136,6 +133,10 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
         }
     }
 
+    /**
+     *  Method used to validate form data
+     * @return valid Boolean for valid data
+     */
     public boolean validate() {
         boolean valid = true;
 
@@ -232,8 +233,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
                     isNetworkConnected = true;
                     // Read access token from preferences
                     String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
-                    UserService userService = new UserService();
-                    baseResponse = userService.updateProfile(user, accessToken);
+                    baseResponse = new UserService().updateProfile(user, accessToken);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -248,6 +248,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
             if (isConnected) {
                 if (baseResponse != null) {
                     if (baseResponse.getCode() == OAuthConstant.HTTP_OK || baseResponse.getCode() == OAuthConstant.HTTP_CREATED) {
+                        Preferences.putString(OAuthConstant.USERNAME, user.getUserName());
                         MessageSnackbar.showMessage(EditProfileActivity.this, baseResponse.getShowMessage(), ErrorType.SUCCESS);
                     } else if (baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
                         MessageSnackbar.showMessage(EditProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
