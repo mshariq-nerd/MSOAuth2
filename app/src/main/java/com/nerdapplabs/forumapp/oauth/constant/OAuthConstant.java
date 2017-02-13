@@ -19,6 +19,7 @@ public class OAuthConstant {
     public static final String EXPIRES_IN = "expires_in";
     public static final String TOKEN_TYPE = "token_type";
     public static final String X_ACCEPT_VERSION = "X-Accept-Version";
+    public static final String APP_LOCALE = "locale";
     public static final int HTTP_OK = 200;
     public static final int HTTP_CREATED = 201;
     public static final int HTTP_FORBIDDEN = 403;

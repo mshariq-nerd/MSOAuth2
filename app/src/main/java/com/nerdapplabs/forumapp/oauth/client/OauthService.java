@@ -57,7 +57,7 @@ public class OauthService {
      */
     public String getAccessToken(final Context context, String userName, String password) throws IOException {
         ReadForumProperties readForumProperties = new ReadForumProperties();
-        Properties properties = readForumProperties.getPropertiesValues();
+        Properties properties = ReadForumProperties.getPropertiesValues();
         AccessToken accessTokenRequest = new AccessToken();
         accessTokenRequest.setClientId(properties.getProperty("CLIENT_ID"));
         accessTokenRequest.setClientSecret(properties.getProperty("CLIENT_SECRET"));

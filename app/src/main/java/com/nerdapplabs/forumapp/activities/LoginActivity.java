@@ -169,13 +169,12 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
             if (NetworkConnectivity.isConnected()) {
                 try {
                     isNetworkConnected = true;
-                    OauthService oauthService = new OauthService();
                     // Api call for access token
-                    responseMessage = oauthService.getAccessToken(LoginActivity.this, userName, password);
+                    responseMessage = new OauthService().getAccessToken(LoginActivity.this, userName, password);
                     // Read access token from preferences
                     accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
                     if (accessToken != null) {
-                        Preferences.putString("userName", userName);
+                        Preferences.putString(OAuthConstant.USERNAME, userName);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

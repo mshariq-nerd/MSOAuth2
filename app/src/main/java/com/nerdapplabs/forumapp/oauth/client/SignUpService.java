@@ -56,7 +56,7 @@ public class SignUpService {
      */
     public String registerUser(final Context context, SignUpRequest requestObject) throws IOException {
         ReadForumProperties readForumProperties = new ReadForumProperties();
-        Properties properties = readForumProperties.getPropertiesValues();
+        Properties properties = ReadForumProperties.getPropertiesValues();
         requestObject.setClientId(properties.getProperty("CLIENT_ID"));
         requestObject.setClientSecret(properties.getProperty("CLIENT_SECRET"));
         Call<SignUpResponse> call = signUpService().signUp(requestObject);
@@ -67,7 +67,7 @@ public class SignUpService {
             String userName = response.body().getUserName();
             // save access token and user name in Preferences
             Preferences.putString(OAuthConstant.ACCESS_TOKEN, token.getAccessToken());
-            Preferences.putString("userName", userName);
+            Preferences.putString(OAuthConstant.USERNAME, userName);
             message = response.body().getShowMessage();
         } else {
             Gson gson = new GsonBuilder().create();

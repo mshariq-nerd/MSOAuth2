@@ -232,8 +232,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
                     isNetworkConnected = true;
                     // Read access token from preferences
                     String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
-                    UserService userService = new UserService();
-                    baseResponse = userService.updateProfile(user, accessToken);
+                    baseResponse = new UserService().updateProfile(user, accessToken);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -248,6 +247,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
             if (isConnected) {
                 if (baseResponse != null) {
                     if (baseResponse.getCode() == OAuthConstant.HTTP_OK || baseResponse.getCode() == OAuthConstant.HTTP_CREATED) {
+                        Preferences.putString(OAuthConstant.USERNAME, user.getUserName());
                         MessageSnackbar.showMessage(EditProfileActivity.this, baseResponse.getShowMessage(), ErrorType.SUCCESS);
                     } else if (baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
                         MessageSnackbar.showMessage(EditProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
