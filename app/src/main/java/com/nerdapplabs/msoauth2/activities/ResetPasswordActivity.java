@@ -70,9 +70,9 @@ public class ResetPasswordActivity extends AppCompatActivity implements NetworkC
     public boolean validate() {
         boolean valid = true;
 
-        String email = edtUserName.getText().toString();
+        String userName = edtUserName.getText().toString();
 
-        if (email.isEmpty() || email.length() < 4) {
+        if (userName.isEmpty()) {
             edtUserName.setError(getString(R.string.username_validation_error));
             valid = false;
         } else {
@@ -101,9 +101,8 @@ public class ResetPasswordActivity extends AppCompatActivity implements NetworkC
             Log.d(TAG, "ResetPassword");
             if (!validate()) {
                 return;
-            } else {
-                new ResetPasswordAsyncTaskRunner().execute();
             }
+            new ResetPasswordAsyncTaskRunner().execute();
         }
     }
 
@@ -147,31 +146,34 @@ public class ResetPasswordActivity extends AppCompatActivity implements NetworkC
         protected void onPostExecute(Boolean isConnected) {
             super.onPostExecute(isConnected);
             progressDialog.dismiss();
-            if (isConnected) {
-                if (null != response) {
-                    if (response.getCode() == OAuthConstant.HTTP_OK || response.getCode() == OAuthConstant.HTTP_CREATED) {
-                        Intent intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
-                        intent.putExtra("EMAIL_SENT_MESSAGE", response.getShowMessage());
-                        startActivity(intent);
-                        finish();
-                        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                    } else if (response.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
-                        MessageSnackbar.showMessage(ResetPasswordActivity.this, getString(R.string.server_error), ErrorType.ERROR);
-                    } else if (response.getCode() == OAuthConstant.HTTP_UNAUTHORIZED) {
-                        Preferences.clear();
-                        Intent intent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
-                        intent.putExtra("failure_msg", getString(R.string.session_expired_message));
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                        finish();
-                    } else {
-                        MessageSnackbar.showMessage(ResetPasswordActivity.this, response.getShowMessage(), ErrorType.ERROR);
-                    }
-                } else {
-                    MessageSnackbar.showMessage(ResetPasswordActivity.this, getString(R.string.server_error), ErrorType.ERROR);
-                }
-            } else {
+            if (!isConnected) {
                 NetworkConnectivity.showNetworkConnectMessage(ResetPasswordActivity.this, false);
+                return;
+            }
+
+            Intent intent;
+            switch (response.getCode()) {
+                case OAuthConstant.HTTP_INTERNAL_SERVER_ERROR:
+                    MessageSnackbar.showMessage(ResetPasswordActivity.this, getString(R.string.server_error), ErrorType.ERROR);
+                    break;
+                case OAuthConstant.HTTP_BAD_REQUEST:
+                    MessageSnackbar.showMessage(ResetPasswordActivity.this, response.getShowMessage(), ErrorType.ERROR);
+                    break;
+                case OAuthConstant.HTTP_SERVER_NOT_FOUND_ERROR:
+                    MessageSnackbar.showMessage(ResetPasswordActivity.this, getString(R.string.server_not_found_error), ErrorType.ERROR);
+                    break;
+                case OAuthConstant.HTTP_UNAUTHORIZED:
+                    MessageSnackbar.showMessage(ResetPasswordActivity.this, response.getShowMessage(), ErrorType.ERROR);
+                    break;
+                case OAuthConstant.HTTP_OK:
+                case OAuthConstant.HTTP_CREATED:
+                    Preferences.clear();
+                    intent = new Intent(getApplicationContext(), LoginActionsActivity.class);
+                    intent.putExtra("EMAIL_SENT_MESSAGE", response.getShowMessage());
+                    startActivity(intent);
+                    finish();
+                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    break;
             }
         }
     }

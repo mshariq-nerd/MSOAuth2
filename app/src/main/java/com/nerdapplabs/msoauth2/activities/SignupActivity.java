@@ -22,7 +22,6 @@ import com.nerdapplabs.msoauth2.R;
 import com.nerdapplabs.msoauth2.oauth.client.SignUpService;
 import com.nerdapplabs.msoauth2.oauth.constant.OAuthConstant;
 import com.nerdapplabs.msoauth2.oauth.request.SignUpRequest;
-import com.nerdapplabs.msoauth2.utility.Duration;
 import com.nerdapplabs.msoauth2.utility.ErrorType;
 import com.nerdapplabs.msoauth2.utility.MessageSnackbar;
 import com.nerdapplabs.msoauth2.utility.NetworkConnectivity;
@@ -70,7 +69,6 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
         }
 
         calendar = Calendar.getInstance();
-
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -108,7 +106,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
         String password = edtPassword.getText().toString();
         String confirmPassword = edtConfirmPassword.getText().toString();
 
-        if (firstName.isEmpty() || firstName.length() < 4) {
+        if (firstName.isEmpty()) {
             edtFirstName.setError(getString(R.string.username_validation_error));
             valid = false;
         } else {
@@ -136,7 +134,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
             edtDateOfBirth.setError(null);
         }
 
-        if (displayName.isEmpty() || displayName.length() < 4) {
+        if (displayName.isEmpty()) {
             edtDisplayName.setError(getString(R.string.display_name_validation_error));
             valid = false;
         } else {
@@ -150,16 +148,11 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
             edtPassword.setError(null);
         }
 
-        if (confirmPassword.isEmpty() || confirmPassword.length() < 4 || confirmPassword.length() > 10) {
-            edtConfirmPassword.setError(getString(R.string.password_validation_error));
+        if (!confirmPassword.equals(password)) {
+            edtConfirmPassword.setError(getString(R.string.password_match_error));
             valid = false;
         } else {
-            if (!confirmPassword.equals(password)) {
-                edtConfirmPassword.setError(getString(R.string.password_match_error));
-                valid = false;
-            } else {
-                edtConfirmPassword.setError(null);
-            }
+            edtConfirmPassword.setError(null);
         }
 
         return valid;
@@ -256,22 +249,21 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
         protected void onPostExecute(Boolean isConnected) {
             super.onPostExecute(isConnected);
             progressDialog.dismiss();
-            if (isConnected) {
-                String loggedInUser = Preferences.getString(OAuthConstant.USERNAME, null);
-                if (loggedInUser != null) {
-                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                    finish();
-                } else {
-                    if (!responseMessage.isEmpty()) {
-                        MessageSnackbar.with(SignupActivity.this, null).type(ErrorType.ERROR)
-                                .message(responseMessage).duration(Duration.LONG).show();
-                    }
-                }
-            } else {
+            if (!isConnected) {
                 NetworkConnectivity.showNetworkConnectMessage(SignupActivity.this, false);
+                return;
             }
+
+            String loggedInUser = Preferences.getString(OAuthConstant.USERNAME, null);
+            if (loggedInUser == null) {
+                MessageSnackbar.showMessage(SignupActivity.this, responseMessage, ErrorType.ERROR);
+                return;
+            }
+
+            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            finish();
         }
     }
 

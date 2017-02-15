@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -133,31 +134,28 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         protected void onPostExecute(Boolean isConnected) {
             super.onPostExecute(isConnected);
             progressDialog.dismiss();
-            if (isConnected) {
-                if (null != user) {
-                    if (user.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
-                        MessageSnackbar.showMessage(UserProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
-                    } else if (user.getCode() == OAuthConstant.HTTP_UNAUTHORIZED) {
-                        Preferences.clear();
-                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                        intent.putExtra("failure_msg", getString(R.string.session_expired_message));
-                        startActivity(intent);
-                        finish();
-                        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                    } else if (user.getCode() == OAuthConstant.HTTP_OK || user.getCode() == OAuthConstant.HTTP_CREATED) {
-                        txtUserProfileName.setText(user.getFirstName() + " " + user.getLastName());
-                        txtUserName.setText(user.getUserName());
-                        txtUserEmail.setText(user.getEmailAddress());
-                        txtUserDOB.setText(user.getDob());
-                        MessageSnackbar.showMessage(UserProfileActivity.this, user.getShowMessage(), ErrorType.SUCCESS);
-                    } else {
-                        MessageSnackbar.showMessage(UserProfileActivity.this, user.getShowMessage(), ErrorType.ERROR);
-                    }
-                } else {
-                    MessageSnackbar.showMessage(UserProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
-                }
-            } else {
+            if (!isConnected) {
                 NetworkConnectivity.showNetworkConnectMessage(UserProfileActivity.this, false);
+                return;
+            }
+
+            switch (user.getCode()) {
+                case OAuthConstant.HTTP_INTERNAL_SERVER_ERROR:
+                    MessageSnackbar.showMessage(UserProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
+                    break;
+                case OAuthConstant.HTTP_UNAUTHORIZED:
+                    pageNavigationActions(OAuthConstant.HTTP_UNAUTHORIZED);
+                    break;
+                case OAuthConstant.HTTP_SERVER_NOT_FOUND_ERROR:
+                    Preferences.clear();
+                    pageNavigationActions(OAuthConstant.HTTP_SERVER_NOT_FOUND_ERROR);
+                    break;
+                case OAuthConstant.HTTP_OK:
+                    updateUserProfile();
+                    break;
+                case OAuthConstant.HTTP_CREATED:
+                    updateUserProfile();
+                    break;
             }
         }
     }
@@ -166,10 +164,8 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
-            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            pageNavigationActions(id);
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -182,14 +178,39 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         builder.setPositiveButton(R.string.alert_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Log.d(TAG, " " + which);
                 Preferences.clear();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish();
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                pageNavigationActions(which);
             }
         });
         builder.setNegativeButton(R.string.alert_cancel, null);
         builder.show();
+    }
+
+    private void pageNavigationActions(int code) {
+        Intent intent;
+        switch (code) {
+            case OAuthConstant.HTTP_UNAUTHORIZED:
+                intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("failure_msg", getString(R.string.session_expired_message));
+                break;
+            case OAuthConstant.HTTP_SERVER_NOT_FOUND_ERROR:
+                intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("failure_msg", getString(R.string.server_not_found_error));
+                break;
+            default:
+                intent = new Intent(getApplicationContext(), MainActivity.class);
+        }
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+    }
+
+    private void updateUserProfile() {
+        txtUserProfileName.setText(user.getFirstName() + " " + user.getLastName());
+        txtUserName.setText(user.getUserName());
+        txtUserEmail.setText(user.getEmailAddress());
+        txtUserDOB.setText(user.getDob());
+        MessageSnackbar.showMessage(UserProfileActivity.this, user.getShowMessage(), ErrorType.SUCCESS);
     }
 }

@@ -83,10 +83,9 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         Log.d(TAG, "login");
         if (!validate()) {
             return;
-        } else {
-            AsyncTaskRunner runner = new AsyncTaskRunner();
-            runner.execute();
         }
+        AsyncTaskRunner runner = new AsyncTaskRunner();
+        runner.execute();
     }
 
     /**
@@ -97,10 +96,10 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
     public boolean validate() {
         boolean valid = true;
 
-        String email = edtUserName.getText().toString();
+        String userName = edtUserName.getText().toString();
         String password = edtPassword.getText().toString();
 
-        if (email.isEmpty() || email.length() < 4) {
+        if (userName.isEmpty()) {
             edtUserName.setError(getString(R.string.username_validation_error));
             valid = false;
         } else {
@@ -189,18 +188,18 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         protected void onPostExecute(Boolean isConnected) {
             super.onPostExecute(isConnected);
             progressDialog.dismiss();
-            if (isConnected) {
-                if (null != accessToken) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                    finish();
-                } else {
-                    MessageSnackbar.showMessage(LoginActivity.this, responseMessage, ErrorType.ERROR);
-                }
-            } else {
+            if (!isConnected) {
                 NetworkConnectivity.showNetworkConnectMessage(LoginActivity.this, false);
+                return;
             }
+            if (null == accessToken) {
+                MessageSnackbar.showMessage(LoginActivity.this, responseMessage, ErrorType.ERROR);
+                return;
+            }
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            finish();
         }
     }
 

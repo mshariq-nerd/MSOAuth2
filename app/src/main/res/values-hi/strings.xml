@@ -4,7 +4,6 @@
     <string name="password">पासवर्ड</string>
     <string name="login">लॉगिन</string>
     <string name="sign_up">खाता नहीं है? साइन अप करें</string>
-    <string name="change_language">भाषा बदलें</string>
     <string name="display_name">प्रदर्शित होने वाला नाम</string>
     <string name="dob">जन्म तिथि</string>
 </resources>

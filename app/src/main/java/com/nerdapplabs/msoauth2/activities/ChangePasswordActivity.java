@@ -62,17 +62,16 @@ public class ChangePasswordActivity extends AppCompatActivity {
         });
     }
 
-
     private void changePassword() {
         if (!validate()) {
             return;
-        } else {
-            new ChangePasswordAsyncTaskRunner().execute();
         }
+        new ChangePasswordAsyncTaskRunner().execute();
     }
 
     /**
-     *  Method used to validate form data
+     * Method used to validate form data
+     *
      * @return valid Boolean for valid data
      */
     public boolean validate() {
@@ -95,17 +94,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
         } else {
             edtNewPassword.setError(null);
         }
-
-        if (confirmPassword.isEmpty() || confirmPassword.length() < 4 || confirmPassword.length() > 10) {
-            edtConfirmPassword.setError(getString(R.string.password_validation_error));
+        if (!confirmPassword.equals(newPassword)) {
+            edtConfirmPassword.setError(getString(R.string.password_match_error));
             valid = false;
         } else {
-            if (!confirmPassword.equals(newPassword)) {
-                edtConfirmPassword.setError(getString(R.string.password_match_error));
-                valid = false;
-            } else {
-                edtConfirmPassword.setError(null);
-            }
+            edtConfirmPassword.setError(null);
         }
 
         if (newPassword.equals(oldPassword)) {
@@ -160,32 +153,38 @@ public class ChangePasswordActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean isConnected) {
             super.onPostExecute(isConnected);
             progressDialog.dismiss();
-            if (isConnected) {
-                if (null != baseResponse) {
-                    if (baseResponse.getCode() == OAuthConstant.HTTP_OK || (baseResponse.getCode() == OAuthConstant.HTTP_CREATED)) {
-                        Preferences.clear();
-                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                        intent.putExtra("success_msg", baseResponse.getShowMessage());
-                        startActivity(intent);
-                        finish();
-                        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                    } else if (baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
-                        MessageSnackbar.showMessage(ChangePasswordActivity.this, getString(R.string.server_error), ErrorType.ERROR);
-                    } else if (baseResponse.getCode() == OAuthConstant.HTTP_UNAUTHORIZED) {
-                        Preferences.clear();
-                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                        intent.putExtra("failure_msg", getString(R.string.session_expired_message));
-                        startActivity(intent);
-                        finish();
-                        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                    } else {
-                        MessageSnackbar.showMessage(ChangePasswordActivity.this, baseResponse.getShowMessage(), ErrorType.ERROR);
-                    }
-                } else {
-                    MessageSnackbar.showMessage(ChangePasswordActivity.this, getString(R.string.server_error), ErrorType.ERROR);
-                }
-            } else {
+            if (!isConnected) {
                 NetworkConnectivity.showNetworkConnectMessage(ChangePasswordActivity.this, false);
+                return;
+            }
+            Intent intent;
+            switch (baseResponse.getCode()) {
+                case OAuthConstant.HTTP_INTERNAL_SERVER_ERROR:
+                    MessageSnackbar.showMessage(ChangePasswordActivity.this, getString(R.string.server_error), ErrorType.ERROR);
+                    break;
+                case OAuthConstant.HTTP_BAD_REQUEST:
+                    MessageSnackbar.showMessage(ChangePasswordActivity.this, baseResponse.getShowMessage(), ErrorType.ERROR);
+                    break;
+                case OAuthConstant.HTTP_SERVER_NOT_FOUND_ERROR:
+                    MessageSnackbar.showMessage(ChangePasswordActivity.this, getString(R.string.server_not_found_error), ErrorType.ERROR);
+                    break;
+                case OAuthConstant.HTTP_UNAUTHORIZED:
+                    Preferences.clear();
+                    intent = new Intent(ChangePasswordActivity.this, LoginActivity.class);
+                    intent.putExtra("failure_msg", getString(R.string.session_expired_message));
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    finish();
+                    break;
+                case OAuthConstant.HTTP_OK:
+                case OAuthConstant.HTTP_CREATED:
+                    Preferences.clear();
+                    intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    intent.putExtra("success_msg", baseResponse.getShowMessage());
+                    startActivity(intent);
+                    finish();
+                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    break;
             }
         }
     }

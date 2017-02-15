@@ -18,10 +18,12 @@ import android.widget.TextView;
 import com.nerdapplabs.msoauth2.MSOAuth2;
 import com.nerdapplabs.msoauth2.R;
 import com.nerdapplabs.msoauth2.oauth.constant.OAuthConstant;
-import com.nerdapplabs.msoauth2.oauth.constant.ReadForumProperties;
+import com.nerdapplabs.msoauth2.utility.ErrorType;
 import com.nerdapplabs.msoauth2.utility.LocaleHelper;
+import com.nerdapplabs.msoauth2.utility.MessageSnackbar;
 import com.nerdapplabs.msoauth2.utility.NetworkConnectivity;
 import com.nerdapplabs.msoauth2.utility.Preferences;
+import com.nerdapplabs.msoauth2.utility.ReadProperties;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
          *  the language of the application.
          */
         try {
-            Properties properties = ReadForumProperties.getPropertiesValues();
+            Properties properties = ReadProperties.getPropertiesValues();
             String savedLocale = Preferences.getString(OAuthConstant.APP_LOCALE, Locale.getDefault().getLanguage());
             if (!savedLocale.equals(properties.getProperty("LOCALE"))) {
                 Log.e(TAG, "Locale changed in properties file:" + properties.getProperty("LOCALE"));
@@ -85,6 +87,13 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
                         return true;
                     }
                 });
+
+        // Handle password change messages through intent from ChangePasswordActivity
+        Intent intent = getIntent();
+        if (null != intent.getStringExtra("failure_msg")) {
+            MessageSnackbar.showMessage(MainActivity.this, intent.getStringExtra("failure_msg"), ErrorType.ERROR);
+            intent.removeExtra("failure_msg");
+        }
     }
 
 
@@ -104,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
     /**
      * Method to update Navigation Drawer header values for logged in user.
      * Display User name
+     *
      * @param userName String  userName
      */
     private void updateNavigationHeaderView(String userName) {
@@ -161,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
      */
     private void changeAppLanguage() {
         try {
-            Properties properties = ReadForumProperties.getPropertiesValues();
+            Properties properties = ReadProperties.getPropertiesValues();
             Log.d(TAG, "languageCode " + properties.getProperty("LOCALE"));
             LocaleHelper.setLocale(this, properties.getProperty("LOCALE"));
             // Set 'locale' settings in application preferences

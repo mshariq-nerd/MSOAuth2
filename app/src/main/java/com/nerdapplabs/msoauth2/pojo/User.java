@@ -1,7 +1,7 @@
 package com.nerdapplabs.msoauth2.pojo;
 
 import com.google.gson.annotations.SerializedName;
-import com.nerdapplabs.msoauth2.oauth.constant.ReadForumProperties;
+import com.nerdapplabs.msoauth2.utility.ReadProperties;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -15,7 +15,7 @@ public class User implements Serializable {
 
     public User() {
         try {
-            Properties properties = ReadForumProperties.getPropertiesValues();
+            Properties properties = ReadProperties.getPropertiesValues();
             this.locale = properties.getProperty("LOCALE");
         } catch (IOException e) {
             e.printStackTrace();

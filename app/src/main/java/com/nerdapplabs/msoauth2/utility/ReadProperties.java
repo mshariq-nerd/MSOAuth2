@@ -1,4 +1,4 @@
-package com.nerdapplabs.msoauth2.oauth.constant;
+package com.nerdapplabs.msoauth2.utility;
 
 import com.nerdapplabs.msoauth2.MSOAuth2;
 
@@ -11,7 +11,7 @@ import java.util.Properties;
  * Created by Mohd. Shariq on 23/01/17.
  */
 
-public class ReadForumProperties {
+public class ReadProperties {
     public static Properties getPropertiesValues() throws IOException {
         Properties properties = new Properties();
         String propertiesFileName = "app.properties";
@@ -22,5 +22,10 @@ public class ReadForumProperties {
             throw new FileNotFoundException("property file '" + propertiesFileName + "' not found in the classpath");
         }
         return properties;
+    }
+
+    public static String buildURL() throws IOException {
+        Properties properties = ReadProperties.getPropertiesValues();
+        return properties.getProperty("AUTHENTICATION_SERVER_URL");
     }
 }

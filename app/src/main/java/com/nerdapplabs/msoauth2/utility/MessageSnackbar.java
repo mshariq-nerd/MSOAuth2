@@ -132,7 +132,7 @@ public class MessageSnackbar {
         }
     }
 
-    public static void showMessage(Context context, String message, ErrorType type){
+    public static void showMessage(Context context, String message, ErrorType type) {
         MessageSnackbar.with(context, null).type(type)
                 .message(message).duration(Duration.LONG).show();
     }
