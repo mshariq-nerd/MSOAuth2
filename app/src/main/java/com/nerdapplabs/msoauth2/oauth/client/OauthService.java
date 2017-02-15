@@ -1,17 +1,18 @@
 package com.nerdapplabs.msoauth2.oauth.client;
 
 import android.content.Context;
+import android.webkit.URLUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nerdapplabs.msoauth2.R;
 import com.nerdapplabs.msoauth2.oauth.constant.OAuthConstant;
-import com.nerdapplabs.msoauth2.oauth.constant.ReadForumProperties;
 import com.nerdapplabs.msoauth2.oauth.request.HeaderInterceptor;
 import com.nerdapplabs.msoauth2.oauth.response.BaseResponse;
 import com.nerdapplabs.msoauth2.oauth.service.IOauthService;
 import com.nerdapplabs.msoauth2.pojo.AccessToken;
 import com.nerdapplabs.msoauth2.utility.Preferences;
+import com.nerdapplabs.msoauth2.utility.ReadProperties;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -28,21 +29,24 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class OauthService {
-    private IOauthService _oauthService;
 
     public IOauthService accessTokenService() throws IOException {
-        Properties properties = ReadForumProperties.getPropertiesValues();
+        String URL = ReadProperties.buildURL();
+        Boolean isValid = URLUtil.isValidUrl(URL);
+        if (URL.isEmpty() || !isValid) {
+            return null;
+        }
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder httpClient = new OkHttpClient().newBuilder();
         httpClient.addNetworkInterceptor(new HeaderInterceptor());
         OkHttpClient client = httpClient.addInterceptor(interceptor).build();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(properties.getProperty("AUTHENTICATION_SERVER_URL"))
+                .baseUrl(URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
-        _oauthService = retrofit.create(IOauthService.class);
+        IOauthService _oauthService = retrofit.create(IOauthService.class);
         return _oauthService;
     }
 
@@ -56,16 +60,22 @@ public class OauthService {
      * @throws IOException
      */
     public String getAccessToken(final Context context, String userName, String password) throws IOException {
-        Properties properties = ReadForumProperties.getPropertiesValues();
+        Properties properties = ReadProperties.getPropertiesValues();
         AccessToken accessTokenRequest = new AccessToken();
         accessTokenRequest.setClientId(properties.getProperty("CLIENT_ID"));
         accessTokenRequest.setClientSecret(properties.getProperty("CLIENT_SECRET"));
         accessTokenRequest.setGrantType(OAuthConstant.PASSWORD);
         accessTokenRequest.setUserName(userName);
         accessTokenRequest.setPassword(password);
-        Call<AccessToken> call = accessTokenService().getAccessToken(accessTokenRequest);
-        Response<AccessToken> response = call.execute();
+        IOauthService iOauthService = accessTokenService();
         String message = null;
+        if (null == iOauthService) {
+            message = context.getString(R.string.server_not_found_error);
+            return message;
+        }
+        Call<AccessToken> call = iOauthService.getAccessToken(accessTokenRequest);
+        Response<AccessToken> response = call.execute();
+
         if (response.isSuccessful() && response.body() != null) {
             // save access token in Preferences
             String accessToken = response.body().getAccessToken();

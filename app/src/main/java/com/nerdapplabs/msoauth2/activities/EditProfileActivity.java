@@ -128,15 +128,15 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
         if (view.getId() == R.id.btn_save) {
             if (!validate()) {
                 return;
-            } else {
-                EditProfileAsyncTaskRunner editProfileAsyncTaskRunner = new EditProfileAsyncTaskRunner();
-                editProfileAsyncTaskRunner.execute();
             }
+            EditProfileAsyncTaskRunner editProfileAsyncTaskRunner = new EditProfileAsyncTaskRunner();
+            editProfileAsyncTaskRunner.execute();
         }
     }
 
     /**
-     *  Method used to validate form data
+     * Method used to validate form data
+     *
      * @return valid Boolean for valid data
      */
     public boolean validate() {
@@ -148,7 +148,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
         String dob = edtDateOfBirth.getText().toString();
         String userName = edtUserName.getText().toString();
 
-        if (firstName.isEmpty() || firstName.length() < 4) {
+        if (firstName.isEmpty()) {
             edtFirstName.setError(getString(R.string.username_validation_error));
             valid = false;
         } else {
@@ -176,7 +176,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
             edtDateOfBirth.setError(null);
         }
 
-        if (userName.isEmpty() || userName.length() < 4) {
+        if (userName.isEmpty()) {
             edtUserName.setError(getString(R.string.display_name_validation_error));
             valid = false;
         } else {
@@ -247,19 +247,22 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
         protected void onPostExecute(Boolean isConnected) {
             super.onPostExecute(isConnected);
             progressDialog.dismiss();
-            if (isConnected) {
-                if (baseResponse != null) {
-                    if (baseResponse.getCode() == OAuthConstant.HTTP_OK || baseResponse.getCode() == OAuthConstant.HTTP_CREATED) {
-                        Preferences.putString(OAuthConstant.USERNAME, user.getUserName());
-                        MessageSnackbar.showMessage(EditProfileActivity.this, baseResponse.getShowMessage(), ErrorType.SUCCESS);
-                    } else if (baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
-                        MessageSnackbar.showMessage(EditProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
-                    } else {
-                        MessageSnackbar.showMessage(EditProfileActivity.this, baseResponse.getShowMessage(), ErrorType.ERROR);
-                    }
-                } else {
-                    NetworkConnectivity.showNetworkConnectMessage(EditProfileActivity.this, false);
-                }
+            if (!isConnected) {
+                NetworkConnectivity.showNetworkConnectMessage(EditProfileActivity.this, false);
+                return;
+            }
+            switch (baseResponse.getCode()) {
+                case OAuthConstant.HTTP_INTERNAL_SERVER_ERROR:
+                    MessageSnackbar.showMessage(EditProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
+                    break;
+                case OAuthConstant.HTTP_SERVER_NOT_FOUND_ERROR:
+                    MessageSnackbar.showMessage(EditProfileActivity.this, getString(R.string.server_not_found_error), ErrorType.ERROR);
+                    break;
+                case OAuthConstant.HTTP_OK:
+                case OAuthConstant.HTTP_CREATED:
+                    Preferences.putString(OAuthConstant.USERNAME, user.getUserName());
+                    MessageSnackbar.showMessage(EditProfileActivity.this, baseResponse.getShowMessage(), ErrorType.SUCCESS);
+                    break;
             }
         }
     }

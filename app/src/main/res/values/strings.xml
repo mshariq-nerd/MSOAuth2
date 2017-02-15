@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">MSOAuth2</string>
-    <string name="title_activity_login">LoginActivity</string>
     <string name="email">Email</string>
     <string name="login">Log in</string>
     <string name="forgot_password">Forgot Password?</string>
@@ -18,15 +17,14 @@
     <string name="create_account">Create Account</string>
     <string name="dob">DOB</string>
     <string name="settings">Settings</string>
-    <string name="profile">Profile</string>
-    <string name="change_language">Change App Language:</string>
-    <string name="login_option">Profile</string>
     <string name="reset_password">Reset Password</string>
     <string name="profile_name">Login</string>
     <string name="sign_up">Sign Up</string>
 
     <string name="internet_connected">Connected to Internet</string>
     <string name="internet_connection_error">Unable to connect. Check your network connection.</string>
+    <string name="server_not_found_error">Please configure valid URL in app.properties file.</string>
+
     <string name="authenticating">Authenticating...</string>
     <string name="server_error">Failed to connect to server.</string>
 
@@ -39,11 +37,9 @@
 
     <string name="email_validation_error">Enter a valid email address.</string>
     <string name="dob_validation_error">Enter valid DOB.</string>
-    <string name="sign_up_success">Registration complete. Welcome!.</string>
     <string name="date_picker_title">Select Date</string>
     <string name="logout">Sign out</string>
     <string name="save">Save</string>
-    <string name="logout_message">Logout successfully</string>
     <string name="logout_alert_message">Do you want to logout?</string>
     <string name="session_expired_message">Session expired. Please login again</string>
     <string name="alert_ok">Ok</string>
