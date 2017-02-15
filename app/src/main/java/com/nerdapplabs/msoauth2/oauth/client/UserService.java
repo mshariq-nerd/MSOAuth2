@@ -34,8 +34,9 @@ public class UserService {
         String URL = ReadProperties.buildURL();
         Boolean isValid = URLUtil.isValidUrl(URL);
         // To check if base URL is valid
-        if (URL.isEmpty() || !isValid) return null;
-
+        if (URL.isEmpty() || !isValid) {
+            return null;
+        }
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder httpClient = new OkHttpClient().newBuilder();
@@ -60,13 +61,13 @@ public class UserService {
 
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put(OAuthConstant.AUTHORIZATION, OAuthConstant.BEARER + " " + token);
-        IUserService service = userService();
+        IUserService iUserService = userService();
         User user = new User();
-        if (null == service) {
+        if (null == iUserService) {
             user.setCode(OAuthConstant.HTTP_SERVER_NOT_FOUND_ERROR);
             return user;
         }
-        Call<User> call = service.profile(headerMap);
+        Call<User> call = iUserService.profile(headerMap);
         Response<User> response = call.execute();
         if (response.isSuccessful() && response.body() != null) {
             return response.body();

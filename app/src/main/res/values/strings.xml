@@ -23,7 +23,7 @@
 
     <string name="internet_connected">Connected to Internet</string>
     <string name="internet_connection_error">Unable to connect. Check your network connection.</string>
-    <string name="server_not_found_error">Please Configure valid URL in app.properties file.</string>
+    <string name="server_not_found_error">Please configure valid URL in app.properties file.</string>
 
     <string name="authenticating">Authenticating...</string>
     <string name="server_error">Failed to connect to server.</string>

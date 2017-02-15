@@ -68,32 +68,32 @@ public class SignUpService {
         requestObject.setClientSecret(properties.getProperty("CLIENT_SECRET"));
         ISignUpService iSignUpService = signUpService();
         String message = null;
-        if (null != iSignUpService) {
-            Call<SignUpResponse> call = iSignUpService.signUp(requestObject);
-            Response<SignUpResponse> response = call.execute();
-            if (response.isSuccessful() && response.body() != null) {
-                AccessToken token = response.body().getAccessToken();
-                String userName = response.body().getUserName();
-                // save access token and user name in Preferences
-                Preferences.putString(OAuthConstant.ACCESS_TOKEN, token.getAccessToken());
-                Preferences.putString(OAuthConstant.USERNAME, userName);
-                message = response.body().getShowMessage();
-            } else {
-                Gson gson = new GsonBuilder().create();
-                BaseResponse baseResponse;
-                try {
-                    baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
-                    if (baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
-                        message = context.getString(R.string.server_error);
-                    } else {
-                        message = baseResponse.getShowMessage();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
+        if (null == iSignUpService) {
             message = context.getString(R.string.server_not_found_error);
+            return message;
+        }
+        Call<SignUpResponse> call = iSignUpService.signUp(requestObject);
+        Response<SignUpResponse> response = call.execute();
+        if (response.isSuccessful() && response.body() != null) {
+            AccessToken token = response.body().getAccessToken();
+            String userName = response.body().getUserName();
+            // save access token and user name in Preferences
+            Preferences.putString(OAuthConstant.ACCESS_TOKEN, token.getAccessToken());
+            Preferences.putString(OAuthConstant.USERNAME, userName);
+            message = response.body().getShowMessage();
+        } else {
+            Gson gson = new GsonBuilder().create();
+            BaseResponse baseResponse;
+            try {
+                baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
+                if (baseResponse.getCode() == OAuthConstant.HTTP_INTERNAL_SERVER_ERROR) {
+                    message = context.getString(R.string.server_error);
+                } else {
+                    message = baseResponse.getShowMessage();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return message;
     }

@@ -157,7 +157,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 NetworkConnectivity.showNetworkConnectMessage(ChangePasswordActivity.this, false);
                 return;
             }
-            Intent intent;
             switch (baseResponse.getCode()) {
                 case OAuthConstant.HTTP_INTERNAL_SERVER_ERROR:
                     MessageSnackbar.showMessage(ChangePasswordActivity.this, getString(R.string.server_error), ErrorType.ERROR);
@@ -169,25 +168,34 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     MessageSnackbar.showMessage(ChangePasswordActivity.this, getString(R.string.server_not_found_error), ErrorType.ERROR);
                     break;
                 case OAuthConstant.HTTP_UNAUTHORIZED:
-                    Preferences.clear();
-                    intent = new Intent(ChangePasswordActivity.this, LoginActivity.class);
-                    intent.putExtra("failure_msg", getString(R.string.session_expired_message));
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                    finish();
+                    pageNavigationActions(OAuthConstant.HTTP_UNAUTHORIZED, getString(R.string.session_expired_message));
                     break;
                 case OAuthConstant.HTTP_OK:
                 case OAuthConstant.HTTP_CREATED:
-                    Preferences.clear();
-                    intent = new Intent(getApplicationContext(), LoginActivity.class);
-                    intent.putExtra("success_msg", baseResponse.getShowMessage());
-                    startActivity(intent);
-                    finish();
-                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    pageNavigationActions(OAuthConstant.HTTP_CREATED, baseResponse.getShowMessage());
                     break;
             }
         }
     }
+
+
+    private void pageNavigationActions(int code, String message) {
+        Preferences.clear();
+        Intent intent;
+        switch (code) {
+            case OAuthConstant.HTTP_UNAUTHORIZED:
+                intent = new Intent(ChangePasswordActivity.this, LoginActivity.class);
+                intent.putExtra("failure_msg", message);
+                break;
+            default:
+                intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("success_msg", message);
+        }
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
