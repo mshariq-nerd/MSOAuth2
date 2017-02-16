@@ -144,6 +144,7 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
                     MessageSnackbar.showMessage(UserProfileActivity.this, getString(R.string.server_error), ErrorType.ERROR);
                     break;
                 case OAuthConstant.HTTP_UNAUTHORIZED:
+                    Preferences.clear();
                     pageNavigationActions(OAuthConstant.HTTP_UNAUTHORIZED);
                     break;
                 case OAuthConstant.HTTP_SERVER_NOT_FOUND_ERROR:
@@ -151,8 +152,6 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
                     pageNavigationActions(OAuthConstant.HTTP_SERVER_NOT_FOUND_ERROR);
                     break;
                 case OAuthConstant.HTTP_OK:
-                    updateUserProfile();
-                    break;
                 case OAuthConstant.HTTP_CREATED:
                     updateUserProfile();
                     break;
