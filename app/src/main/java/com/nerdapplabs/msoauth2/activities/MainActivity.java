@@ -42,16 +42,11 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
          *  This method call is to change
          *  the language of the application.
          */
-        try {
-            Properties properties = ReadProperties.getPropertiesValues();
-            String savedLocale = Preferences.getString(OAuthConstant.APP_LOCALE, Locale.getDefault().getLanguage());
-            if (!savedLocale.equals(properties.getProperty("LOCALE"))) {
-                Log.e(TAG, "Locale changed in properties file:" + properties.getProperty("LOCALE"));
-                changeAppLanguage();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        String savedLocale = Preferences.getString(OAuthConstant.APP_LOCALE, null);
+        if (null == savedLocale) {
+            changeAppLanguage();
         }
+
 
         setContentView(R.layout.activity_main);
 
@@ -157,6 +152,11 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
         int id = item.getItemId();
         if (id == android.R.id.home) {
             mDrawerLayout.openDrawer(GravityCompat.START);
+        }
+
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }

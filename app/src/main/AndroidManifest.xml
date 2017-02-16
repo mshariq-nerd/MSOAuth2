@@ -55,7 +55,8 @@
 
         <activity android:name="com.nerdapplabs.msoauth2.activities.UserProfileActivity" />
         <activity android:name="com.nerdapplabs.msoauth2.activities.EditProfileActivity" />
-        <activity android:name="com.nerdapplabs.msoauth2.activities.ChangePasswordActivity"></activity>
+        <activity android:name="com.nerdapplabs.msoauth2.activities.ChangePasswordActivity"/>
+        <activity android:name="com.nerdapplabs.msoauth2.activities.SettingsActivity"/>
     </application>
 
 </manifest>

@@ -51,4 +51,7 @@
     <string name="reset_password_activity_title">Reset Password</string>
     <string name="signup_activity_title">Sign up</string>
     <string name="user_profile_activity_title">User Profile</string>
+    <string name="title_list_preference">Change App Language</string>
+    <string name="language_list_preference_key">list_preference</string>
+    <string name="default_language">English</string>
 </resources>

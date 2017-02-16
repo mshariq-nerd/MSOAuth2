@@ -258,6 +258,9 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
                 case OAuthConstant.HTTP_SERVER_NOT_FOUND_ERROR:
                     MessageSnackbar.showMessage(EditProfileActivity.this, getString(R.string.server_not_found_error), ErrorType.ERROR);
                     break;
+                case OAuthConstant.HTTP_BAD_REQUEST:
+                    MessageSnackbar.showMessage(EditProfileActivity.this, baseResponse.getShowMessage(), ErrorType.ERROR);
+                    break;
                 case OAuthConstant.HTTP_OK:
                 case OAuthConstant.HTTP_CREATED:
                     Preferences.putString(OAuthConstant.USERNAME, user.getUserName());
