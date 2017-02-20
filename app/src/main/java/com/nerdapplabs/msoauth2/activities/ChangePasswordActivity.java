@@ -16,7 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.nerdapplabs.msoauth2.R;
-import com.nerdapplabs.msoauth2.oauth.client.UserService;
+import com.nerdapplabs.msoauth2.oauth.client.UserServiceClient;
 import com.nerdapplabs.msoauth2.oauth.constant.OAuthConstant;
 import com.nerdapplabs.msoauth2.oauth.request.ChangePasswordRequest;
 import com.nerdapplabs.msoauth2.oauth.response.BaseResponse;
@@ -141,7 +141,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             if (NetworkConnectivity.isConnected()) {
                 try {
                     isNetworkConnected = true;
-                    baseResponse = new UserService().changeOldPassword(changePasswordRequest);
+                    baseResponse = new UserServiceClient().changeOldPassword(changePasswordRequest);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

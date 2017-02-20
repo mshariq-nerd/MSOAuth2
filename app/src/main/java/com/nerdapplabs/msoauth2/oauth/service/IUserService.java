@@ -20,15 +20,15 @@ import retrofit2.http.Query;
 public interface IUserService {
 
     @POST("user/profile/show")
-    Call<User> profile(@HeaderMap Map<String, String> headers);
+    Call<User> profile();
 
     @POST("user/profile/edit")
-    Call<BaseResponse> editProfile(@HeaderMap Map<String, String> headers, @Body User user);
+    Call<BaseResponse> editProfile(@Body User user);
 
 
     @GET("user/resetting/request")
     Call<BaseResponse> requestNewPassword(@Query("username") String username);
 
     @POST("user/profile/change-password")
-    Call<BaseResponse> changeOldPassword(@HeaderMap Map<String, String> headers, @Body ChangePasswordRequest user);
+    Call<BaseResponse> changeOldPassword(@Body ChangePasswordRequest user);
 }

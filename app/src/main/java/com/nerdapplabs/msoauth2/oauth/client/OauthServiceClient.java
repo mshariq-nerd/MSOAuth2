@@ -1,13 +1,11 @@
 package com.nerdapplabs.msoauth2.oauth.client;
 
 import android.content.Context;
-import android.webkit.URLUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nerdapplabs.msoauth2.R;
 import com.nerdapplabs.msoauth2.oauth.constant.OAuthConstant;
-import com.nerdapplabs.msoauth2.oauth.request.HeaderInterceptor;
 import com.nerdapplabs.msoauth2.oauth.response.BaseResponse;
 import com.nerdapplabs.msoauth2.oauth.service.IOauthService;
 import com.nerdapplabs.msoauth2.pojo.AccessToken;
@@ -17,38 +15,16 @@ import com.nerdapplabs.msoauth2.utility.ReadProperties;
 import java.io.IOException;
 import java.util.Properties;
 
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.nerdapplabs.msoauth2.oauth.client.ServiceProvider.createService;
 
 /**
  * Created by Mohd. Shariq on 23/01/17.
  */
 
-public class OauthService {
-
-    public IOauthService accessTokenService() throws IOException {
-        String URL = ReadProperties.buildURL();
-        Boolean isValid = URLUtil.isValidUrl(URL);
-        if (URL.isEmpty() || !isValid) {
-            return null;
-        }
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder httpClient = new OkHttpClient().newBuilder();
-        httpClient.addNetworkInterceptor(new HeaderInterceptor());
-        OkHttpClient client = httpClient.addInterceptor(interceptor).build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-        IOauthService _oauthService = retrofit.create(IOauthService.class);
-        return _oauthService;
-    }
+public class OauthServiceClient {
 
     /**
      * Method to get accessToken for a valid user
@@ -67,7 +43,7 @@ public class OauthService {
         accessTokenRequest.setGrantType(OAuthConstant.PASSWORD);
         accessTokenRequest.setUserName(userName);
         accessTokenRequest.setPassword(password);
-        IOauthService iOauthService = accessTokenService();
+        IOauthService iOauthService = createService(IOauthService.class);
         String message = null;
         if (null == iOauthService) {
             message = context.getString(R.string.server_not_found_error);
@@ -80,6 +56,8 @@ public class OauthService {
             // save access token in Preferences
             String accessToken = response.body().getAccessToken();
             Preferences.putString(OAuthConstant.ACCESS_TOKEN, accessToken);
+            Preferences.putString(OAuthConstant.REFRESH_TOKEN, response.body().getRefreshToken());
+            Preferences.putString(OAuthConstant.TOKEN_TYPE, response.body().getTokenType());
         } else {
             Gson gson = new GsonBuilder().create();
             BaseResponse baseResponse;

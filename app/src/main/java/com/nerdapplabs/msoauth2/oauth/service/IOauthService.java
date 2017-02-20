@@ -13,4 +13,7 @@ public interface IOauthService {
 
     @POST("user/access/token")
     Call<AccessToken> getAccessToken(@Body AccessToken accessTokenRequest);
+
+    @POST("user/refresh/token")
+    Call<AccessToken> getRefreshAccessToken(@Body AccessToken accessTokenRequest);
 }

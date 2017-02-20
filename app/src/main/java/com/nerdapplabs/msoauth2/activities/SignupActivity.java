@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.nerdapplabs.msoauth2.MSOAuth2;
 import com.nerdapplabs.msoauth2.R;
-import com.nerdapplabs.msoauth2.oauth.client.SignUpService;
+import com.nerdapplabs.msoauth2.oauth.client.SignUpServiceClient;
 import com.nerdapplabs.msoauth2.oauth.constant.OAuthConstant;
 import com.nerdapplabs.msoauth2.oauth.request.SignUpRequest;
 import com.nerdapplabs.msoauth2.utility.ErrorType;
@@ -237,7 +237,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
             if (NetworkConnectivity.isConnected()) {
                 try {
                     isNetworkConnected = true;
-                    responseMessage = new SignUpService().registerUser(SignupActivity.this, signUpRequest);
+                    responseMessage = new SignUpServiceClient().registerUser(SignupActivity.this, signUpRequest);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

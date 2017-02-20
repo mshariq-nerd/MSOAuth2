@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.nerdapplabs.msoauth2.MSOAuth2;
 import com.nerdapplabs.msoauth2.R;
-import com.nerdapplabs.msoauth2.oauth.client.UserService;
+import com.nerdapplabs.msoauth2.oauth.client.UserServiceClient;
 import com.nerdapplabs.msoauth2.oauth.constant.OAuthConstant;
 import com.nerdapplabs.msoauth2.oauth.response.BaseResponse;
 import com.nerdapplabs.msoauth2.utility.ErrorType;
@@ -134,7 +134,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements NetworkC
             if (NetworkConnectivity.isConnected()) {
                 try {
                     isNetworkConnected = true;
-                    response = new UserService().resetPassword(userName.trim());
+                    response = new UserServiceClient().resetPassword(userName.trim());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
