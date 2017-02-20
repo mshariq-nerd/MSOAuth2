@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.nerdapplabs.msoauth2.MSOAuth2;
 import com.nerdapplabs.msoauth2.R;
-import com.nerdapplabs.msoauth2.oauth.client.UserService;
+import com.nerdapplabs.msoauth2.oauth.client.UserServiceClient;
 import com.nerdapplabs.msoauth2.oauth.constant.OAuthConstant;
 import com.nerdapplabs.msoauth2.oauth.response.BaseResponse;
 import com.nerdapplabs.msoauth2.pojo.User;
@@ -235,7 +235,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
                     isNetworkConnected = true;
                     // Read access token from preferences
                     String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
-                    baseResponse = new UserService().updateProfile(user, accessToken);
+                    baseResponse = new UserServiceClient().updateProfile(user, accessToken);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.nerdapplabs.msoauth2.MSOAuth2;
 import com.nerdapplabs.msoauth2.R;
-import com.nerdapplabs.msoauth2.oauth.client.OauthService;
+import com.nerdapplabs.msoauth2.oauth.client.OauthServiceClient;
 import com.nerdapplabs.msoauth2.oauth.constant.OAuthConstant;
 import com.nerdapplabs.msoauth2.utility.ErrorType;
 import com.nerdapplabs.msoauth2.utility.MessageSnackbar;
@@ -171,7 +171,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
                 try {
                     isNetworkConnected = true;
                     // Api call for access token
-                    responseMessage = new OauthService().getAccessToken(LoginActivity.this, userName, password);
+                    responseMessage = new OauthServiceClient().getAccessToken(LoginActivity.this, userName, password);
                     // Read access token from preferences
                     accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
                     if (accessToken != null) {

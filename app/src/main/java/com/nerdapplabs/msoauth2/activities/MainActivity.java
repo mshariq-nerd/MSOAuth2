@@ -26,7 +26,6 @@ import com.nerdapplabs.msoauth2.utility.Preferences;
 import com.nerdapplabs.msoauth2.utility.ReadProperties;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener {

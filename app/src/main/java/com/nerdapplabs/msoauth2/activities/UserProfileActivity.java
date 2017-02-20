@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.nerdapplabs.msoauth2.MSOAuth2;
 import com.nerdapplabs.msoauth2.R;
-import com.nerdapplabs.msoauth2.oauth.client.UserService;
+import com.nerdapplabs.msoauth2.oauth.client.UserServiceClient;
 import com.nerdapplabs.msoauth2.oauth.constant.OAuthConstant;
 import com.nerdapplabs.msoauth2.pojo.User;
 import com.nerdapplabs.msoauth2.utility.ErrorType;
@@ -122,7 +122,7 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
                     // Read access token from preferences
                     String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
                     // Get user profile details
-                    user = new UserService().getUser(accessToken);
+                    user = new UserServiceClient().getUserProfile(accessToken);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
