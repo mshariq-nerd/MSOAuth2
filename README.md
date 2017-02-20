@@ -1,12 +1,13 @@
 ## MSOAuth2 Android client ##
+
 This repository contains an example of a sign up/sign in process using OAuth 2.0. An API client implementation that
 follows OAuth 2.0 mechanism for user authentication using [Retrofit2](https://square.github.io/retrofit/).
 
-### Configuration ###
+## Configuration ##
 * Compatible with Android API Level 17 (Android 4.2) and higher
 * Version 1.0
 
-### Library Used (Using gradle) ###
+## Library Used (Using gradle) ##
 ```
 compile 'com.android.support:design:25.1.1'
 compile 'com.wdullaer:materialdatetimepicker:3.1.0'
@@ -16,7 +17,7 @@ compile 'com.squareup.retrofit2:retrofit:2.1.0'
 compile 'com.squareup.okhttp3:logging-interceptor:3.3.1'
 ```
 
-### Quick Setup ###
+## Quick Setup ##
 Once you are setup with the web part [authOauth](https://github.com/nerdapplabs/authOauth/blob/master/README.md) and had added a valid OAuth2.0 client.
 Do required changes in /app.properties file in assets folder.
 ```
@@ -37,7 +38,7 @@ public interface IOauthService {
  }
 ```
 
-### Localization ###
+## Localization ##
 Change **LOCALE** value in **app.properties** file in assets folder to change application language.
 e.g.
 ```
@@ -58,9 +59,8 @@ e.g.
 
 Rebuild the app and localization done!. For more information please read [Supporting Different Languages](https://developer.android.com/training/basics/supporting-devices/languages.html#CreateDirs)
 
-Stay tuned, more to come. Check **TODO** list.
+Stay tuned, more to come.
 
-### TODO ###
-1. Refresh token implementation.
-2. Allow language selection in settings. Then app.properties {Locale} value will work as a default value
-and user can choose App language at run time via settings.
+## Pull requests are welcome ##
+Since This is an open source project, I would like to know your opinion and/or suggestions. **Pull-Requests are most welcome!**.
+
