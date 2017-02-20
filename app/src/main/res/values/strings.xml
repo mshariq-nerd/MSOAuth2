@@ -25,7 +25,11 @@
     <string name="internet_connection_error">Unable to connect. Check your network connection.</string>
     <string name="server_not_found_error">Please configure valid URL in app.properties file.</string>
 
-    <string name="authenticating">Authenticating...</string>
+    <string name="login_authentication">Please wait… we are logging you in</string>
+    <string name="sign_up_authentication">Please wait… we are signing you in</string>
+    <string name="loading">Loading… Please wait</string>
+    <string name="password_reset_message">Please wait, request in progress</string>
+    <string name="update_profile_message">Please wait, updating your changes</string>
     <string name="server_error">Failed to connect to server.</string>
 
     <string name="username_validation_error">Enter a valid user name.</string>
@@ -54,4 +58,6 @@
     <string name="title_list_preference">Change App Language</string>
     <string name="language_list_preference_key">list_preference</string>
     <string name="default_language">English</string>
+    <string name="welcome_message">Successfully logged in, Welcome!</string>
+
 </resources>

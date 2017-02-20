@@ -219,7 +219,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
             imm.hideSoftInputFromWindow(btnSignUp.getWindowToken(),
                     InputMethodManager.RESULT_UNCHANGED_SHOWN);
             progressDialog.setIndeterminate(true);
-            progressDialog.setMessage(getString(R.string.authenticating));
+            progressDialog.setMessage(getString(R.string.sign_up_authentication));
             progressDialog.show();
         }
 

@@ -159,7 +159,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
             super.onPreExecute();
             hideSoftKeyboard();
             progressDialog.setIndeterminate(true);
-            progressDialog.setMessage(getString(R.string.authenticating));
+            progressDialog.setMessage(getString(R.string.login_authentication));
             progressDialog.show();
         }
 

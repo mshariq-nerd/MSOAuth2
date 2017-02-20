@@ -124,7 +124,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements NetworkC
             imm.hideSoftInputFromWindow(btnRestPassword.getWindowToken(),
                     InputMethodManager.RESULT_UNCHANGED_SHOWN);
             progressDialog.setIndeterminate(true);
-            progressDialog.setMessage(getString(R.string.authenticating));
+            progressDialog.setMessage(getString(R.string.password_reset_message));
             progressDialog.show();
         }
 

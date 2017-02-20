@@ -24,14 +24,11 @@ public class UserServiceClient {
     /**
      * To get logged in user profile
      *
-     * @param token AccessToken for valid user
      * @return Object User
      * @throws IOException
      */
-    public User getUserProfile(final String token) throws IOException {
+    public User getUserProfile() throws IOException {
 
-        //Map<String, String> headerMap = new HashMap<>();
-        //headerMap.put(OAuthConstant.AUTHORIZATION, OAuthConstant.BEARER + " " + token);
         String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
         IUserService iUserService = createService(IUserService.class, accessToken);
         User user = new User();
@@ -65,14 +62,11 @@ public class UserServiceClient {
      * Method to update user profile
      *
      * @param user  User  object to update
-     * @param token String AccessToken for network requestNewPassword
      * @return BaseResponse
      * @throws IOException
      */
-    public BaseResponse updateProfile(User user, String token) throws IOException {
+    public BaseResponse updateProfile(User user) throws IOException {
 
-        //Map<String, String> headerMap = new HashMap<>();
-        //headerMap.put(OAuthConstant.AUTHORIZATION, OAuthConstant.BEARER + " " + token);
         String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
         IUserService iUserService = createService(IUserService.class, accessToken);
         BaseResponse baseResponse = new BaseResponse();
@@ -128,8 +122,7 @@ public class UserServiceClient {
      * @throws IOException
      */
     public BaseResponse changeOldPassword(ChangePasswordRequest changePasswordRequest) throws IOException {
-        // Map<String, String> headerMap = new HashMap<>();
-        // headerMap.put(OAuthConstant.AUTHORIZATION, OAuthConstant.BEARER + " " + );
+
         String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
         IUserService iUserService = createService(IUserService.class, accessToken);
         BaseResponse baseResponse = new BaseResponse();

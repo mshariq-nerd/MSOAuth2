@@ -218,7 +218,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
             imm.hideSoftInputFromWindow(btnSave.getWindowToken(),
                     InputMethodManager.RESULT_UNCHANGED_SHOWN);
             progressDialog.setIndeterminate(true);
-            progressDialog.setMessage(getString(R.string.authenticating));
+            progressDialog.setMessage(getString(R.string.update_profile_message));
             progressDialog.show();
         }
 
@@ -227,15 +227,11 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
             user.setFirstName(firstName);
             user.setLastName(lastName);
             user.setDob(dob);
-            user.setUserName(userName);
-            user.setEmailAddress(email);
             Boolean isNetworkConnected = false;
             if (NetworkConnectivity.isConnected()) {
                 try {
                     isNetworkConnected = true;
-                    // Read access token from preferences
-                    String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
-                    baseResponse = new UserServiceClient().updateProfile(user, accessToken);
+                    baseResponse = new UserServiceClient().updateProfile(user);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -263,7 +259,6 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
                     break;
                 case OAuthConstant.HTTP_OK:
                 case OAuthConstant.HTTP_CREATED:
-                    Preferences.putString(OAuthConstant.USERNAME, user.getUserName());
                     MessageSnackbar.showMessage(EditProfileActivity.this, baseResponse.getShowMessage(), ErrorType.SUCCESS);
                     break;
             }

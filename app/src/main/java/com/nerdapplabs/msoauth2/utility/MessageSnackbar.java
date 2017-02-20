@@ -6,6 +6,8 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
+import com.nerdapplabs.msoauth2.R;
+
 /**
  * Created by Mohd. Shariq on 03/02/17.
  */
@@ -36,6 +38,7 @@ public class MessageSnackbar {
             view = fab;
             snackbar = android.support.design.widget.Snackbar
                     .make(view, "", snackDuration);
+
         }
 
         isCustomView = false;
@@ -101,6 +104,8 @@ public class MessageSnackbar {
         View snackBarView = getSnackBarLayout();
         if (snackBarView != null) {
             snackBarView.setBackgroundColor(colorId);
+            TextView textView = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(context.getResources().getColor(R.color.white));
         }
 
         return messageSnackbar;
