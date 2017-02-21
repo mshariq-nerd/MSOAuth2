@@ -9,7 +9,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -17,6 +16,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.ConfirmPassword;
+import com.mobsandgeeks.saripaar.annotation.Email;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
+import com.mobsandgeeks.saripaar.annotation.Password;
 import com.nerdapplabs.msoauth2.MSOAuth2;
 import com.nerdapplabs.msoauth2.R;
 import com.nerdapplabs.msoauth2.oauth.client.SignUpServiceClient;
@@ -26,21 +31,46 @@ import com.nerdapplabs.msoauth2.utility.ErrorType;
 import com.nerdapplabs.msoauth2.utility.MessageSnackbar;
 import com.nerdapplabs.msoauth2.utility.NetworkConnectivity;
 import com.nerdapplabs.msoauth2.utility.Preferences;
+import com.nerdapplabs.msoauth2.utility.Utility;
+import com.nerdapplabs.msoauth2.validation.UserName;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 
 public class SignupActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener,
-        DatePickerDialog.OnDateSetListener, View.OnClickListener {
+        DatePickerDialog.OnDateSetListener, View.OnClickListener, Validator.ValidationListener {
     private static final String TAG = SignupActivity.class.getSimpleName();
-    private Calendar calendar;
     private DatePickerDialog datePickerDialog;
-    private EditText edtFirstName, edtLastName, edtEmail, edtDateOfBirth,
-            edtDisplayName, edtPassword, edtConfirmPassword;
+
+    @NotEmpty
+    private EditText edtFirstName;
+
+    @NotEmpty
+    private EditText edtLastName;
+
+    @Email
+    private EditText edtEmail;
+
+    @NotEmpty
+    private EditText edtDateOfBirth;
+
+    @UserName(messageResId = R.string.username_validation_error, scheme = UserName.Scheme.ALPHA_NUMERIC)
+    private EditText edtDisplayName;
+
+    @Password(messageResId = R.string.password_validation_error, scheme = Password.Scheme.ANY)
+    private EditText edtPassword;
+
+    @ConfirmPassword
+    private EditText edtConfirmPassword;
+
+
     private Button btnSignUp;
 
     private int year, month, day;
+
+    private Validator validator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +98,19 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // current date after 3 months
+        Calendar yearBeforeHundredYears = Calendar.getInstance();
+        yearBeforeHundredYears.add(Calendar.YEAR, 100);
+
+        // current date before 3 months
+        Calendar yearBeforeFiveYears = Calendar.getInstance();
+        yearBeforeFiveYears.add(Calendar.YEAR, -5);
+
 
         edtDateOfBirth.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +118,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
                 datePickerDialog = DatePickerDialog.newInstance(SignupActivity.this, year, month, day);
                 datePickerDialog.setThemeDark(false);
                 datePickerDialog.showYearPickerFirst(false);
+                datePickerDialog.setYearRange(Utility.getDobStartYear(), Utility.getDobEndYear());
                 datePickerDialog.setAccentColor(ContextCompat.getColor(SignupActivity.this, R.color.white));
                 datePickerDialog.setTitle(getString(R.string.date_picker_title));
                 datePickerDialog.show(getFragmentManager(), "DatePickerDialog");
@@ -86,76 +126,19 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
         });
 
         btnSignUp.setOnClickListener(this);
+
+        // Instantiate a new Validator
+        validator = new Validator(this);
+        validator.setValidationListener(this);
+        Validator.registerAnnotation(UserName.class);
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
         // register internet connection status listener
         MSOAuth2.getInstance().setConnectivityListener(this);
-    }
-
-    public boolean validate() {
-        boolean valid = true;
-
-        String firstName = edtFirstName.getText().toString();
-        String lastName = edtLastName.getText().toString();
-        String email = edtEmail.getText().toString();
-        String dob = edtDateOfBirth.getText().toString();
-        String displayName = edtDisplayName.getText().toString();
-        String password = edtPassword.getText().toString();
-        String confirmPassword = edtConfirmPassword.getText().toString();
-
-        if (firstName.isEmpty()) {
-            edtFirstName.setError(getString(R.string.username_validation_error));
-            valid = false;
-        } else {
-            edtFirstName.setError(null);
-        }
-
-        if (lastName.isEmpty()) {
-            edtLastName.setError(getString(R.string.username_validation_error));
-            valid = false;
-        } else {
-            edtLastName.setError(null);
-        }
-
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            edtEmail.setError(getString(R.string.email_validation_error));
-            valid = false;
-        } else {
-            edtEmail.setError(null);
-        }
-
-        if (dob.isEmpty()) {
-            edtDateOfBirth.setError(getString(R.string.dob_validation_error));
-            valid = false;
-        } else {
-            edtDateOfBirth.setError(null);
-        }
-
-        if (displayName.isEmpty()) {
-            edtDisplayName.setError(getString(R.string.display_name_validation_error));
-            valid = false;
-        } else {
-            edtDisplayName.setError(null);
-        }
-
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            edtPassword.setError(getString(R.string.password_validation_error));
-            valid = false;
-        } else {
-            edtPassword.setError(null);
-        }
-
-        if (!confirmPassword.equals(password)) {
-            edtConfirmPassword.setError(getString(R.string.password_match_error));
-            valid = false;
-        } else {
-            edtConfirmPassword.setError(null);
-        }
-
-        return valid;
     }
 
 
@@ -175,26 +158,27 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.btn_signup) {
-            signUp();
-        }
-    }
-
-    /**
-     * Method to login into Application
-     */
-    public void signUp() {
-        Log.d(TAG, "Signup");
-        if (!validate()) {
-            return;
-        } else {
-            SignupAsyncTaskRunner signupAsyncTaskRunner = new SignupAsyncTaskRunner();
-            signupAsyncTaskRunner.execute();
+            validator.validate();
         }
     }
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         NetworkConnectivity.showNetworkConnectMessage(SignupActivity.this, isConnected);
+    }
+
+    @Override
+    public void onValidationSucceeded() {
+        new SignupAsyncTaskRunner().execute();
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(this);
+            ((EditText) view).setError(message);
+        }
     }
 
     /**
@@ -206,7 +190,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
         String email = edtEmail.getText().toString();
         String dob = edtDateOfBirth.getText().toString();
         String userName = edtDisplayName.getText().toString();
-        String password = edtPassword.getText().toString();
+        String password = edtConfirmPassword.getText().toString();
         SignUpRequest signUpRequest = new SignUpRequest();
         String responseMessage;
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
@@ -219,7 +203,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
             imm.hideSoftInputFromWindow(btnSignUp.getWindowToken(),
                     InputMethodManager.RESULT_UNCHANGED_SHOWN);
             progressDialog.setIndeterminate(true);
-            progressDialog.setMessage(getString(R.string.authenticating));
+            progressDialog.setMessage(getString(R.string.sign_up_authentication));
             progressDialog.show();
         }
 

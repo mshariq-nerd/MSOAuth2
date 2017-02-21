@@ -13,6 +13,16 @@
 
         <!-- Add Actionbar header-->
         <include layout="@layout/actionbar_header_toolbar" />
+
+        <TextView
+            android:id="@+id/txt_welcome_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/accent"
+            android:textSize="16sp"
+            android:textStyle="bold|italic" />
     </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.NavigationView

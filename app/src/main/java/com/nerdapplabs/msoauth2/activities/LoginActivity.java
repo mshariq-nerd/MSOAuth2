@@ -16,6 +16,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.nerdapplabs.msoauth2.MSOAuth2;
 import com.nerdapplabs.msoauth2.R;
 import com.nerdapplabs.msoauth2.oauth.client.OauthServiceClient;
@@ -26,13 +29,20 @@ import com.nerdapplabs.msoauth2.utility.NetworkConnectivity;
 import com.nerdapplabs.msoauth2.utility.Preferences;
 
 import java.io.IOException;
+import java.util.List;
 
-public class LoginActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener, View.OnClickListener {
-    private static final String TAG = LoginActivity.class.getSimpleName();
+public class LoginActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener,
+        View.OnClickListener, Validator.ValidationListener {
+
+    @NotEmpty
     private EditText edtUserName;
+
+    @NotEmpty
     private EditText edtPassword;
+
     private Button btnLogin;
-    private TextView txtForgotPasswordLink;
+
+    private Validator validator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +64,8 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         edtUserName = (EditText) findViewById(R.id.edt_user_name);
         edtPassword = (EditText) findViewById(R.id.edt_password);
         btnLogin = (Button) findViewById(R.id.btn_login);
-        txtForgotPasswordLink = (TextView) findViewById(R.id.txt_link_forgot_password);
+
+        TextView txtForgotPasswordLink = (TextView) findViewById(R.id.txt_link_forgot_password);
         btnLogin.setOnClickListener(this);
         txtForgotPasswordLink.setOnClickListener(this);
 
@@ -67,6 +78,10 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
             MessageSnackbar.showMessage(LoginActivity.this, intent.getStringExtra("failure_msg"), ErrorType.ERROR);
             intent.removeExtra("failure_msg");
         }
+
+        // Instantiate a new Validator
+        validator = new Validator(this);
+        validator.setValidationListener(this);
     }
 
     @Override
@@ -76,45 +91,6 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         MSOAuth2.getInstance().setConnectivityListener(this);
     }
 
-    /**
-     * Method to login into Application
-     */
-    public void login() {
-        Log.d(TAG, "login");
-        if (!validate()) {
-            return;
-        }
-        AsyncTaskRunner runner = new AsyncTaskRunner();
-        runner.execute();
-    }
-
-    /**
-     * Method for client side form data validation
-     *
-     * @return valid Boolean type for valid data
-     */
-    public boolean validate() {
-        boolean valid = true;
-
-        String userName = edtUserName.getText().toString();
-        String password = edtPassword.getText().toString();
-
-        if (userName.isEmpty()) {
-            edtUserName.setError(getString(R.string.username_validation_error));
-            valid = false;
-        } else {
-            edtUserName.setError(null);
-        }
-
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            edtPassword.setError(getString(R.string.password_validation_error));
-            valid = false;
-        } else {
-            edtPassword.setError(null);
-        }
-
-        return valid;
-    }
 
     /**
      * OnClick method for handling user login and forgot password actions
@@ -124,7 +100,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.btn_login) {
-            login();
+            validator.validate();
         } else {
             Intent intent = new Intent(getApplicationContext(), ResetPasswordActivity.class);
             startActivity(intent);
@@ -143,6 +119,21 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
         NetworkConnectivity.showNetworkConnectMessage(LoginActivity.this, isConnected);
     }
 
+    @Override
+    public void onValidationSucceeded() {
+        AsyncTaskRunner runner = new AsyncTaskRunner();
+        runner.execute();
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(this);
+            ((EditText) view).setError(message);
+        }
+    }
+
     /**
      * Inner class for handling Async data loading
      */
@@ -159,7 +150,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkConnectiv
             super.onPreExecute();
             hideSoftKeyboard();
             progressDialog.setIndeterminate(true);
-            progressDialog.setMessage(getString(R.string.authenticating));
+            progressDialog.setMessage(getString(R.string.login_authentication));
             progressDialog.show();
         }
 

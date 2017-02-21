@@ -109,7 +109,7 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         protected void onPreExecute() {
             super.onPreExecute();
             progressDialog.setIndeterminate(true);
-            progressDialog.setMessage(getString(R.string.authenticating));
+            progressDialog.setMessage(getString(R.string.loading));
             progressDialog.show();
         }
 
@@ -119,10 +119,8 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
             if (NetworkConnectivity.isConnected()) {
                 try {
                     isNetworkConnected = true;
-                    // Read access token from preferences
-                    String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
                     // Get user profile details
-                    user = new UserServiceClient().getUserProfile(accessToken);
+                    user = new UserServiceClient().getUserProfile();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -210,6 +208,5 @@ public class UserProfileActivity extends AppCompatActivity implements NetworkCon
         txtUserName.setText(user.getUserName());
         txtUserEmail.setText(user.getEmailAddress());
         txtUserDOB.setText(user.getDob());
-        MessageSnackbar.showMessage(UserProfileActivity.this, user.getShowMessage(), ErrorType.SUCCESS);
     }
 }

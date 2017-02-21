@@ -99,7 +99,10 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
 
         // Get logged in UserName
         String userName = Preferences.getString(OAuthConstant.USERNAME, null);
+
+        TextView txtWelcomeMsg = (TextView) findViewById(R.id.txt_welcome_msg);
         if (null != userName) {
+            txtWelcomeMsg.setText(String.format("%s %s", getString(R.string.welcome_message), userName));
             updateNavigationHeaderView(userName);
         }
     }

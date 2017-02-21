@@ -32,6 +32,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/user_name"
+                    android:enabled="false"
                     android:inputType="textPersonName" />
             </android.support.design.widget.TextInputLayout>
 
@@ -94,6 +95,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/email"
+                    android:enabled="false"
                     android:inputType="textEmailAddress" />
             </android.support.design.widget.TextInputLayout>
 

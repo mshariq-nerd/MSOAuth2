@@ -17,6 +17,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.nerdapplabs.msoauth2.MSOAuth2;
 import com.nerdapplabs.msoauth2.R;
 import com.nerdapplabs.msoauth2.oauth.client.UserServiceClient;
@@ -26,21 +29,38 @@ import com.nerdapplabs.msoauth2.pojo.User;
 import com.nerdapplabs.msoauth2.utility.ErrorType;
 import com.nerdapplabs.msoauth2.utility.MessageSnackbar;
 import com.nerdapplabs.msoauth2.utility.NetworkConnectivity;
-import com.nerdapplabs.msoauth2.utility.Preferences;
+import com.nerdapplabs.msoauth2.utility.Utility;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 
 public class EditProfileActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener,
-        DatePickerDialog.OnDateSetListener, View.OnClickListener {
+        DatePickerDialog.OnDateSetListener, View.OnClickListener, Validator.ValidationListener {
     private static final String TAG = EditProfileActivity.class.getSimpleName();
-    private EditText edtUserName, edtFirstName,
-            edtLastName, edtEmail, edtDateOfBirth;
+
+    private EditText edtUserName;
+
+    @NotEmpty
+    private EditText edtFirstName;
+
+    @NotEmpty
+    private EditText edtLastName;
+
+    private EditText edtEmail;
+
+    @NotEmpty
+    private EditText edtDateOfBirth;
+
     private Button btnSave;
+
     private int year, month, day;
+
     private DatePickerDialog datePickerDialog;
     User userObj = null;
+
+    private  Validator validator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +98,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
                 datePickerDialog = DatePickerDialog.newInstance(EditProfileActivity.this, year, month, day);
                 datePickerDialog.setThemeDark(false);
                 datePickerDialog.showYearPickerFirst(false);
+                datePickerDialog.setYearRange(Utility.getDobStartYear(), Utility.getDobEndYear());
                 datePickerDialog.setAccentColor(ContextCompat.getColor(EditProfileActivity.this, R.color.white));
                 datePickerDialog.setTitle(getString(R.string.date_picker_title));
                 datePickerDialog.show(getFragmentManager(), "DatePickerDialog");
@@ -113,6 +134,9 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
             }
         }
 
+        validator = new Validator(this);
+        validator.setValidationListener(this);
+
     }
 
     @Override
@@ -126,64 +150,8 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
     public void onClick(View view) {
         // Update record when save button clicked
         if (view.getId() == R.id.btn_save) {
-            if (!validate()) {
-                return;
-            }
-            EditProfileAsyncTaskRunner editProfileAsyncTaskRunner = new EditProfileAsyncTaskRunner();
-            editProfileAsyncTaskRunner.execute();
+           validator.validate();
         }
-    }
-
-    /**
-     * Method used to validate form data
-     *
-     * @return valid Boolean for valid data
-     */
-    public boolean validate() {
-        boolean valid = true;
-
-        String firstName = edtFirstName.getText().toString();
-        String lastName = edtLastName.getText().toString();
-        String email = edtEmail.getText().toString();
-        String dob = edtDateOfBirth.getText().toString();
-        String userName = edtUserName.getText().toString();
-
-        if (firstName.isEmpty()) {
-            edtFirstName.setError(getString(R.string.username_validation_error));
-            valid = false;
-        } else {
-            edtFirstName.setError(null);
-        }
-
-        if (lastName.isEmpty()) {
-            edtLastName.setError(getString(R.string.username_validation_error));
-            valid = false;
-        } else {
-            edtLastName.setError(null);
-        }
-
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            edtEmail.setError(getString(R.string.email_validation_error));
-            valid = false;
-        } else {
-            edtEmail.setError(null);
-        }
-
-        if (dob.isEmpty()) {
-            edtDateOfBirth.setError(getString(R.string.dob_validation_error));
-            valid = false;
-        } else {
-            edtDateOfBirth.setError(null);
-        }
-
-        if (userName.isEmpty()) {
-            edtUserName.setError(getString(R.string.display_name_validation_error));
-            valid = false;
-        } else {
-            edtUserName.setError(null);
-        }
-
-        return valid;
     }
 
     @Override
@@ -195,6 +163,20 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         String date = (++monthOfYear) + "/" + dayOfMonth + "/" + year;
         edtDateOfBirth.setText(date);
+    }
+
+    @Override
+    public void onValidationSucceeded() {
+        new EditProfileAsyncTaskRunner().execute();
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(this);
+            ((EditText) view).setError(message);
+        }
     }
 
     /**
@@ -218,7 +200,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
             imm.hideSoftInputFromWindow(btnSave.getWindowToken(),
                     InputMethodManager.RESULT_UNCHANGED_SHOWN);
             progressDialog.setIndeterminate(true);
-            progressDialog.setMessage(getString(R.string.authenticating));
+            progressDialog.setMessage(getString(R.string.update_profile_message));
             progressDialog.show();
         }
 
@@ -227,15 +209,11 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
             user.setFirstName(firstName);
             user.setLastName(lastName);
             user.setDob(dob);
-            user.setUserName(userName);
-            user.setEmailAddress(email);
             Boolean isNetworkConnected = false;
             if (NetworkConnectivity.isConnected()) {
                 try {
                     isNetworkConnected = true;
-                    // Read access token from preferences
-                    String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
-                    baseResponse = new UserServiceClient().updateProfile(user, accessToken);
+                    baseResponse = new UserServiceClient().updateProfile(user);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -263,7 +241,6 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
                     break;
                 case OAuthConstant.HTTP_OK:
                 case OAuthConstant.HTTP_CREATED:
-                    Preferences.putString(OAuthConstant.USERNAME, user.getUserName());
                     MessageSnackbar.showMessage(EditProfileActivity.this, baseResponse.getShowMessage(), ErrorType.SUCCESS);
                     break;
             }

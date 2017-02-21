@@ -40,7 +40,7 @@ public class MSOAuth2 extends Application {
         return mInstance;
     }
 
-    public static Context getContext() throws IOException {
+    public static Context getContext() {
         return mInstance.getApplicationContext();
     }
 

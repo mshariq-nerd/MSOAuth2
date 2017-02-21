@@ -25,13 +25,18 @@
     <string name="internet_connection_error">Unable to connect. Check your network connection.</string>
     <string name="server_not_found_error">Please configure valid URL in app.properties file.</string>
 
-    <string name="authenticating">Authenticating...</string>
+    <string name="login_authentication">Please wait… we are logging you in</string>
+    <string name="sign_up_authentication">Please wait… we are signing you in</string>
+    <string name="loading">Loading… Please wait</string>
+    <string name="password_reset_message">Please wait, request in progress</string>
+    <string name="update_profile_message">Please wait, updating your changes</string>
     <string name="server_error">Failed to connect to server.</string>
 
-    <string name="username_validation_error">Enter a valid user name.</string>
+    <string name="username_validation_error">Username should be 3–16 characters long with any lowercase letter (a-z),
+        number (0-9), an underscore, or a hyphen</string>
     <string name="display_name_validation_error">Enter a valid display name.</string>
 
-    <string name="password_validation_error">Between 4 and 10 alphanumeric characters.</string>
+    <string name="password_validation_error">Minimum 6 alphanumeric characters required.</string>
     <string name="password_match_error">Password do not match.</string>
     <string name="password_duplicate_error">New password should not be same as old password.</string>
 
@@ -54,4 +59,7 @@
     <string name="title_list_preference">Change App Language</string>
     <string name="language_list_preference_key">list_preference</string>
     <string name="default_language">English</string>
+    <string name="welcome_message">Welcome!</string>
+
+
 </resources>

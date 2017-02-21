@@ -15,6 +15,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.ConfirmPassword;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
+import com.mobsandgeeks.saripaar.annotation.Order;
+import com.mobsandgeeks.saripaar.annotation.Password;
 import com.nerdapplabs.msoauth2.R;
 import com.nerdapplabs.msoauth2.oauth.client.UserServiceClient;
 import com.nerdapplabs.msoauth2.oauth.constant.OAuthConstant;
@@ -26,11 +32,24 @@ import com.nerdapplabs.msoauth2.utility.NetworkConnectivity;
 import com.nerdapplabs.msoauth2.utility.Preferences;
 
 import java.io.IOException;
+import java.util.List;
 
-public class ChangePasswordActivity extends AppCompatActivity {
+public class ChangePasswordActivity extends AppCompatActivity implements Validator.ValidationListener {
 
-    EditText edtOldPassword, edtNewPassword, edtConfirmPassword;
-    Button btnChangePassword;
+    @NotEmpty
+    @Order(1)
+    private EditText edtOldPassword;
+
+    @Password(messageResId = R.string.password_validation_error, scheme = Password.Scheme.ALPHA_NUMERIC)
+    @Order(2)
+    private EditText edtNewPassword;
+
+    @ConfirmPassword
+    @Order(3)
+    private EditText edtConfirmPassword;
+
+    private Button btnChangePassword;
+    Validator validator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,56 +79,30 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 changePassword();
             }
         });
+
+        validator = new Validator(this);
+        validator.setValidationListener(this);
     }
 
     private void changePassword() {
-        if (!validate()) {
-            return;
-        }
+        // form validation
+        validator.validate();
+    }
+
+    @Override
+    public void onValidationSucceeded() {
         new ChangePasswordAsyncTaskRunner().execute();
     }
 
-    /**
-     * Method used to validate form data
-     *
-     * @return valid Boolean for valid data
-     */
-    public boolean validate() {
-        boolean valid = true;
-
-        String oldPassword = edtOldPassword.getText().toString();
-        String newPassword = edtNewPassword.getText().toString();
-        String confirmPassword = edtConfirmPassword.getText().toString();
-
-        if (oldPassword.isEmpty() || oldPassword.length() < 4 || oldPassword.length() > 10) {
-            edtOldPassword.setError(getString(R.string.password_validation_error));
-            valid = false;
-        } else {
-            edtOldPassword.setError(null);
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(this);
+            ((EditText) view).setError(message);
         }
-
-        if (newPassword.isEmpty() || newPassword.length() < 4 || newPassword.length() > 10) {
-            edtNewPassword.setError(getString(R.string.password_validation_error));
-            valid = false;
-        } else {
-            edtNewPassword.setError(null);
-        }
-        if (!confirmPassword.equals(newPassword)) {
-            edtConfirmPassword.setError(getString(R.string.password_match_error));
-            valid = false;
-        } else {
-            edtConfirmPassword.setError(null);
-        }
-
-        if (newPassword.equals(oldPassword)) {
-            edtNewPassword.setError(getString(R.string.password_duplicate_error));
-            valid = false;
-        } else {
-            edtNewPassword.setError(null);
-        }
-
-        return valid;
     }
+
 
     /**
      * Inner class for handling Async data loading
@@ -129,7 +122,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(btnChangePassword.getWindowToken(),
                     InputMethodManager.RESULT_UNCHANGED_SHOWN);
             progressDialog.setIndeterminate(true);
-            progressDialog.setMessage(getString(R.string.authenticating));
+            progressDialog.setMessage(getString(R.string.password_reset_message));
             progressDialog.show();
         }
 
