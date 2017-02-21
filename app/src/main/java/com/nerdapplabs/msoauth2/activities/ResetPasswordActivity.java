@@ -16,6 +16,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.nerdapplabs.msoauth2.MSOAuth2;
 import com.nerdapplabs.msoauth2.R;
 import com.nerdapplabs.msoauth2.oauth.client.UserServiceClient;
@@ -27,12 +30,18 @@ import com.nerdapplabs.msoauth2.utility.NetworkConnectivity;
 import com.nerdapplabs.msoauth2.utility.Preferences;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ResetPasswordActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener,
-        View.OnClickListener {
+        View.OnClickListener, Validator.ValidationListener {
     private static final String TAG = ResetPasswordActivity.class.getSimpleName();
+
+    @NotEmpty
     private EditText edtUserName;
+
     private Button btnRestPassword;
+
+    private Validator validator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +63,9 @@ public class ResetPasswordActivity extends AppCompatActivity implements NetworkC
         edtUserName = (EditText) findViewById(R.id.edt_username);
         btnRestPassword = (Button) findViewById(R.id.btn_reset_password);
         btnRestPassword.setOnClickListener(this);
+
+        validator = new Validator(this);
+        validator.setValidationListener(this);
     }
 
 
@@ -64,24 +76,6 @@ public class ResetPasswordActivity extends AppCompatActivity implements NetworkC
         MSOAuth2.getInstance().setConnectivityListener(this);
     }
 
-    /**
-     * Method for client side validation
-     */
-    public boolean validate() {
-        boolean valid = true;
-
-        String userName = edtUserName.getText().toString();
-
-        if (userName.isEmpty()) {
-            edtUserName.setError(getString(R.string.username_validation_error));
-            valid = false;
-        } else {
-            edtUserName.setError(null);
-        }
-
-
-        return valid;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -99,16 +93,27 @@ public class ResetPasswordActivity extends AppCompatActivity implements NetworkC
     public void onClick(View view) {
         if (view.getId() == R.id.btn_reset_password) {
             Log.d(TAG, "ResetPassword");
-            if (!validate()) {
-                return;
-            }
-            new ResetPasswordAsyncTaskRunner().execute();
+            validator.validate();
         }
     }
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         NetworkConnectivity.showNetworkConnectMessage(this, isConnected);
+    }
+
+    @Override
+    public void onValidationSucceeded() {
+        new ResetPasswordAsyncTaskRunner().execute();
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(this);
+            ((EditText) view).setError(message);
+        }
     }
 
     private class ResetPasswordAsyncTaskRunner extends AsyncTask<Void, Void, Boolean> {

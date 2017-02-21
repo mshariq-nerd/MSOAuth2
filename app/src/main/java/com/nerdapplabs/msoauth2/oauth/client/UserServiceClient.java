@@ -61,7 +61,7 @@ public class UserServiceClient {
     /**
      * Method to update user profile
      *
-     * @param user  User  object to update
+     * @param user User  object to update
      * @return BaseResponse
      * @throws IOException
      */
@@ -95,8 +95,7 @@ public class UserServiceClient {
      * @throws IOException
      */
     public BaseResponse resetPassword(final String userName) throws IOException {
-        String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
-        IUserService iUserService = createService(IUserService.class, accessToken);
+        IUserService iUserService = createService(IUserService.class);
         BaseResponse baseResponse = new BaseResponse();
         if (null == iUserService) {
             baseResponse.setCode(OAuthConstant.HTTP_SERVER_NOT_FOUND_ERROR);
