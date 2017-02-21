@@ -9,7 +9,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -119,7 +118,7 @@ public class SignupActivity extends AppCompatActivity implements NetworkConnecti
                 datePickerDialog = DatePickerDialog.newInstance(SignupActivity.this, year, month, day);
                 datePickerDialog.setThemeDark(false);
                 datePickerDialog.showYearPickerFirst(false);
-                datePickerDialog.setYearRange(Utility.getYearBeforeHundredYears(), Utility.getYearBeforeFiveYears());
+                datePickerDialog.setYearRange(Utility.getDobStartYear(), Utility.getDobEndYear());
                 datePickerDialog.setAccentColor(ContextCompat.getColor(SignupActivity.this, R.color.white));
                 datePickerDialog.setTitle(getString(R.string.date_picker_title));
                 datePickerDialog.show(getFragmentManager(), "DatePickerDialog");

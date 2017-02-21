@@ -17,10 +17,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.mobsandgeeks.saripaar.DateFormats;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
-import com.mobsandgeeks.saripaar.annotation.Future;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.nerdapplabs.msoauth2.MSOAuth2;
 import com.nerdapplabs.msoauth2.R;
@@ -100,7 +98,7 @@ public class EditProfileActivity extends AppCompatActivity implements NetworkCon
                 datePickerDialog = DatePickerDialog.newInstance(EditProfileActivity.this, year, month, day);
                 datePickerDialog.setThemeDark(false);
                 datePickerDialog.showYearPickerFirst(false);
-                datePickerDialog.setYearRange(Utility.getYearBeforeHundredYears(), Utility.getYearBeforeFiveYears());
+                datePickerDialog.setYearRange(Utility.getDobStartYear(), Utility.getDobEndYear());
                 datePickerDialog.setAccentColor(ContextCompat.getColor(EditProfileActivity.this, R.color.white));
                 datePickerDialog.setTitle(getString(R.string.date_picker_title));
                 datePickerDialog.show(getFragmentManager(), "DatePickerDialog");

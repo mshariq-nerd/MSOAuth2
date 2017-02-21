@@ -8,13 +8,13 @@ import java.util.Calendar;
 
 public class Utility {
 
-    public static int getYearBeforeHundredYears() {
+    public static int getDobStartYear() {
         Calendar prevYear = Calendar.getInstance();
         prevYear.add(Calendar.YEAR, -105);
         return prevYear.get(Calendar.YEAR);
     }
 
-    public static int getYearBeforeFiveYears() {
+    public static int getDobEndYear() {
         Calendar prevYear = Calendar.getInstance();
         prevYear.add(Calendar.YEAR, -5);
         return prevYear.get(Calendar.YEAR);
