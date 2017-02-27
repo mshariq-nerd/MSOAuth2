@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
@@ -42,6 +43,12 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements NetworkConnectivity.ConnectivityReceiverListener {
+
+    /**
+     * Id to identify a camera permission request.
+     */
+    private static final int REQUEST_READ_STORAGE = 1;
+
     private static final String TAG = MainActivity.class.getSimpleName();
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
@@ -245,21 +252,16 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectivi
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
-                }
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_READ_STORAGE) {
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 return;
             }
+            // permission denied, Disable the
+            // functionality that depends on this permission.
+            Toast.makeText(MainActivity.this, getString(R.string.permission_denied_message), Toast.LENGTH_SHORT).show();
+
         }
     }
 }

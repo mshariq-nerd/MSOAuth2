@@ -60,6 +60,7 @@
     <string name="language_list_preference_key">list_preference</string>
     <string name="default_language">English</string>
     <string name="welcome_message">Welcome!</string>
+    <string name="permission_denied_message">Permission denied to read your External storage</string>
 
 
 </resources>
