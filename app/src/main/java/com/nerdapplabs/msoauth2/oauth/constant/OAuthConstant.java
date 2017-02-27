@@ -17,6 +17,7 @@ public class OAuthConstant {
     public static final String BEARER = "Bearer";
     public static final String BASIC = "Basic";
     public static final String EXPIRES_IN = "expires_in";
+    public static final String IMAGE_URI = "image_uri";
     public static final String TOKEN_TYPE = "token_type";
     public static final String X_ACCEPT_VERSION = "X-Accept-Version";
     public static final String APP_LOCALE = "locale";

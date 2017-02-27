@@ -1,5 +1,9 @@
 package com.nerdapplabs.msoauth2.oauth.client;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nerdapplabs.msoauth2.oauth.constant.OAuthConstant;
@@ -9,8 +13,13 @@ import com.nerdapplabs.msoauth2.oauth.service.IUserService;
 import com.nerdapplabs.msoauth2.pojo.User;
 import com.nerdapplabs.msoauth2.utility.Preferences;
 
+import java.io.File;
 import java.io.IOException;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -138,6 +147,33 @@ public class UserServiceClient {
             baseResponse = gson.fromJson(response.errorBody().string(), BaseResponse.class);
         }
         return baseResponse;
+    }
+
+
+    public void editProfilePic(String imagePath) throws IOException {
+        String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
+        File file = new File(imagePath);
+        RequestBody reqFile = RequestBody.create(MediaType.parse("image/.jpg"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), reqFile);
+        IUserService iUserService = createService(IUserService.class, accessToken);
+
+        Call<ResponseBody> call = iUserService.editProfilePic(body);
+        Response<ResponseBody> response = call.execute();
+
+        if (response.isSuccessful() && response.body() != null) {
+            Log.d("EditProfilePic", response.body().toString());
+        }
+    }
+
+    public Bitmap getProfilePic() throws IOException {
+        String accessToken = Preferences.getString(OAuthConstant.ACCESS_TOKEN, null);
+        IUserService iUserService = createService(IUserService.class, accessToken);
+        Call<ResponseBody> call = iUserService.getProfilePic();
+        Response<ResponseBody> response = call.execute();
+        if (response.isSuccessful() && response.body() != null) {
+            return BitmapFactory.decodeStream(response.body().byteStream());
+        }
+        return null;
     }
 }
 

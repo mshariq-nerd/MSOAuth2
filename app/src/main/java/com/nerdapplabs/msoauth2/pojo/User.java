@@ -43,14 +43,14 @@ public class User implements Serializable {
     @SerializedName("password")
     private String password;
 
-    @SerializedName("email_confirmation")
-    private String emailConfirmation;
-
     @SerializedName("show_message")
     private String showMessage;
 
     @SerializedName("_locale")
     private String locale;
+
+    @SerializedName("image_url")
+    private String imageURL;
 
 
     public String getUserName() {
@@ -101,13 +101,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public String getEmailConfirmation() {
-        return emailConfirmation;
-    }
 
-    public void setEmailConfirmation(String emailConfirmation) {
-        this.emailConfirmation = emailConfirmation;
-    }
 
     public String getShowMessage() {
         return showMessage;
@@ -124,4 +118,13 @@ public class User implements Serializable {
     public void setCode(int code) {
         this.code = code;
     }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
 }
