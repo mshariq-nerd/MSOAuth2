@@ -11,9 +11,9 @@ import retrofit2.http.POST;
  */
 public interface IOauthService {
 
-    @POST("user/access/token")
+    @POST("api/user/access/token")
     Call<AccessToken> getAccessToken(@Body AccessToken accessTokenRequest);
 
-    @POST("user/refresh/token")
+    @POST("api/user/refresh/token")
     Call<AccessToken> getRefreshAccessToken(@Body AccessToken accessTokenRequest);
 }

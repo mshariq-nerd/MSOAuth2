@@ -20,17 +20,17 @@
             <ImageView
                 android:id="@+id/header_cover_image"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/mdtp_done_background_color" />
+                android:layout_height="80dp"
+                android:scaleType="center" />
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/user_profile_photo"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_below="@+id/header_cover_image"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="-60dp"
+                android:foregroundGravity="center"
                 android:background="@drawable/ic_face_black_48dp"
                 android:elevation="10dp"
                 android:scaleType="centerCrop" />
@@ -148,11 +148,14 @@
     </ScrollView>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/btn_edit_profile"
+        android:id="@+id/btn_change_profile_pic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_action_edit"
-        app:layout_anchor="@id/header_cover_image"
-        app:layout_anchorGravity="bottom|end" />
+        android:layout_marginTop="120dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_action_camera"
+        app:backgroundTint="@color/white"
+        app:fabSize="mini"
+        app:layout_anchor="@id/user_profile_photo"
+        app:layout_anchorGravity="top|right" />
 </android.support.design.widget.CoordinatorLayout>
